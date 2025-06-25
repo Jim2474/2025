@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "board.h": "c",
+        "stm32f4xx_hal.h": "c",
+        "mytimer.h": "c"
+    }
+}

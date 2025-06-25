@@ -1,0 +1,26 @@
+--cpu=Cortex-M4.fp.sp
+"2025e_car\startup_stm32f407xx.o"
+"2025e_car\main.o"
+"2025e_car\gpio.o"
+"2025e_car\stm32f4xx_it.o"
+"2025e_car\stm32f4xx_hal_msp.o"
+"2025e_car\stm32f4xx_hal_tim.o"
+"2025e_car\stm32f4xx_hal_tim_ex.o"
+"2025e_car\stm32f4xx_hal_rcc.o"
+"2025e_car\stm32f4xx_hal_rcc_ex.o"
+"2025e_car\stm32f4xx_hal_flash.o"
+"2025e_car\stm32f4xx_hal_flash_ex.o"
+"2025e_car\stm32f4xx_hal_flash_ramfunc.o"
+"2025e_car\stm32f4xx_hal_gpio.o"
+"2025e_car\stm32f4xx_hal_dma_ex.o"
+"2025e_car\stm32f4xx_hal_dma.o"
+"2025e_car\stm32f4xx_hal_pwr.o"
+"2025e_car\stm32f4xx_hal_pwr_ex.o"
+"2025e_car\stm32f4xx_hal_cortex.o"
+"2025e_car\stm32f4xx_hal.o"
+"2025e_car\stm32f4xx_hal_exti.o"
+"2025e_car\system_stm32f4xx.o"
+--strict --scatter "2025e_car\2025e_car.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "2025e_car.map" -o 2025e_car\2025e_car.axf
