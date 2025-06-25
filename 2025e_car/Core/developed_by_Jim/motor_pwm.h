@@ -2,6 +2,9 @@
 #define __MOTOR_PWM_H
 
 /*
+
+左轮编码器：PA6 PA7
+右轮编码器：PD12 PD13
 左轮正转 TIM1_CH1  PE9
 左轮反转 TIM1_CH2  PE11
 右轮正转 TIM1_CH3  PE13

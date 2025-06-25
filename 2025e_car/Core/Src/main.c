@@ -47,8 +47,15 @@
 //小车初始�?
 void car_init(void)
 {
-  Motor_PWM_StartAll();
+  
+  Motor_PWM_StartAll();//TIM1 pwm
+  HAL_TIM_Base_Start_IT(&htim2);//1ms??
 
+// ????????(TIM3)
+HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
+
+// ????????(TIM4)
+HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
 
 }
 /* USER CODE END PV */
@@ -96,6 +103,7 @@ int main(void)
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */

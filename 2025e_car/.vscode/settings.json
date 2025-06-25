@@ -2,6 +2,9 @@
     "files.associations": {
         "board.h": "c",
         "stm32f4xx_hal.h": "c",
-        "mytimer.h": "c"
+        "mytimer.h": "c",
+        "tim.h": "c",
+        "motor_pwm.h": "c",
+        "stdio.h": "c"
     }
 }
