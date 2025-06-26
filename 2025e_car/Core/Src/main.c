@@ -79,7 +79,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  car_init();
+ 
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -105,7 +105,7 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM4_Init();
   /* USER CODE BEGIN 2 */
-
+  car_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -117,6 +117,20 @@ int main(void)
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
+}
+void TIM2_Task_100Hz(void)
+{
+  // 100Hz task, called every 10ms
+ 
+}
+
+
+void TIM2_Task_1000Hz(void)
+{
+  // 1kHz task, called every 1ms
+  Motor_PWM_Output(0,0);//???pid?? 
+  
+  
 }
 
 /**
