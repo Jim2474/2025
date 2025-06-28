@@ -15,5 +15,8 @@
 #include "Mytimer.h"
 #include "Encoder.h"
 #include "M_pid.h"
+#include "jy61p.h"
+#include "M_usart.h"
+
 
 #endif

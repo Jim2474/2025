@@ -427,21 +427,5 @@ void HAL_TIM_Encoder_MspDeInit(TIM_HandleTypeDef* tim_encoderHandle)
 }
 
 /* USER CODE BEGIN 1 */
-// 1000Hz�?100Hz定时任务回调函数（用户可在其他文件实现）
-__weak void TIM2_Task_1000Hz(void) {}
-__weak void TIM2_Task_100Hz(void) {}
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-{
-    if(htim->Instance == TIM2)
-    {
-        static uint8_t cnt_100Hz = 0;
-        TIM2_Task_1000Hz(); // �?1ms调用�?�?
-        if(++cnt_100Hz >= 10)
-        {
-            cnt_100Hz = 0;
-            TIM2_Task_100Hz(); // �?10ms调用�?�?
-        }
-    }
-}
 /* USER CODE END 1 */
