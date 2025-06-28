@@ -5,6 +5,9 @@
         "mytimer.h": "c",
         "tim.h": "c",
         "motor_pwm.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "main.h": "c",
+        "encoder.h": "c",
+        "m_pid.h": "c"
     }
 }

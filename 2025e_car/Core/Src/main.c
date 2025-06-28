@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "i2c.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -45,19 +46,20 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-//小车初始�?
+//小车初始�?
 void car_init(void)
 {
   
   Motor_PWM_StartAll();//TIM1 pwm
   HAL_TIM_Base_Start_IT(&htim2);//1ms??
-
-// ????????(TIM3)
-HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-
-// ????????(TIM4)
-HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
-
+  // 启动左轮编码�?(TIM3)
+  HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
+  // 启动右轮编码�?(TIM4)
+  HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
+  // 初始化PID控制�?
+  wheels_pid_init();
+  // 设置初始目标速度�?0
+  set_target_speed(0.0f, 0.0f);
 }
 /* USER CODE END PV */
 
@@ -111,8 +113,10 @@ int main(void)
   MX_USART2_UART_Init();
   MX_USART3_UART_Init();
   MX_USART6_UART_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
   car_init();
+  set_target_speed(20.0f, 20.0f);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -124,20 +128,6 @@ int main(void)
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
-}
-void TIM2_Task_100Hz(void)
-{
-  // 100Hz task, called every 10ms
- 
-}
-
-
-void TIM2_Task_1000Hz(void)
-{
-  // 1kHz task, called every 1ms
-  Motor_PWM_Output(0,0);//???pid?? 
-  
-  
 }
 
 /**

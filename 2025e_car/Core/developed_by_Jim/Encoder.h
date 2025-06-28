@@ -7,11 +7,16 @@
 Total Pulses = 500 * 28 * 4 =56000 转一圈 56000脉冲
 
 */
+extern volatile float left_wheel_rpm;
+extern volatile float right_wheel_rpm;
+extern volatile float left_wheel_speed;
+extern volatile float right_wheel_speed;
+
     #define WHEEL_D 6.0f
 
 void encoder_count();
 
-void Calculate_speed(left_wheel_rpm, right_wheel_rpm);
+void Calculate_speed(float left_wheel_rpm, float right_wheel_rpm);
 
 #endif
 

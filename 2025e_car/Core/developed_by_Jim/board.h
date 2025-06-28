@@ -13,5 +13,7 @@
 //用户函数
 #include "motor_pwm.h"
 #include "Mytimer.h"
+#include "Encoder.h"
+#include "M_pid.h"
 
 #endif
