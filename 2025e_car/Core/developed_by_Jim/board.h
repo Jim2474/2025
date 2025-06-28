@@ -6,6 +6,8 @@
 #include "stdint.h"
 #include "tim.h"
 #include "main.h"
+#include "gpio.h"
+#include "M_pid.h"
 
 
 //用户函数
