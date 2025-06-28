@@ -50,7 +50,7 @@
 void car_init(void)
 {
   
-  Motor_PWM_StartAll();//TIM1 pwm
+  Motor_PWM_StartAll();//TIM1 pwm11
   HAL_TIM_Base_Start_IT(&htim2);//1ms??
   // 启动左轮编码器(TIM3)
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
