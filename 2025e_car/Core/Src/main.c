@@ -46,22 +46,25 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-//小车初始化
+//小车初始�?
 void car_init(void)
 {
   
   Motor_PWM_StartAll();//TIM1 pwm11
   HAL_TIM_Base_Start_IT(&htim2);//1ms??
-  // 启动左轮编码器(TIM3)
+  // 启动左轮编码�?(TIM3)
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-  // 启动右轮编码器(TIM4)
+  // 启动右轮编码�?(TIM4)
   HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
   	HAL_UART_Receive_IT(&huart3, &USART3_RxData, 1);
 
-  // 初始化PID控制器
+  // 初始化PID控制�?
   pid_init_all();
   // 设置初始目标速度0
   set_target_speed(0.0f, 0.0f);
+  
+  // 初始化导航系�?
+  navy_init();
 }
 /* USER CODE END PV */
 
@@ -75,25 +78,28 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 void TIM2_Task_1000Hz(void)
 {
-  // 1000Hz任务，每1ms执行一次
+  // 1000Hz任务，每1ms执行�?�?
   
-  // 1. 更新编码器计数和转速计算
+  // 1. 更新编码器计数和转�?�计�?
   encoder_count();
   
-  // 2. 计算线速度
+  // 2. 计算线�?�度
   Calculate_speed(left_wheel_rpm, right_wheel_rpm);
 }
 
 void TIM2_Task_100Hz(void)
 {
-  // 100Hz任务，每10ms执行一次
+  // 100Hz任务，每10ms执行�?�?
   
-  // 1. 执行PID控制计算和电机输出
+  // 1. 更新当前位置坐标
+  updatePosition();
+  
+  // 2. 执行PID控制计算和电机输�?
   // 包含速度环和转向环的控制
   wheels_pid_control_auto_with_yaw();
   
-  // 2. 可以添加其他低频任务，如LED状态更新、按键检测等
-  // 这里暂时不添加其他任务
+  // 3. 可以添加其他低频任务，如LED状�?�更新�?�按键检测等
+  // 这里暂时不添加其他任�?
 }
 /* USER CODE END 0 */
 
@@ -133,10 +139,13 @@ int main(void)
   MX_UART4_Init();
   MX_UART5_Init();
   MX_USART1_UART_Init();
-  MX_USART2_UART_Init();
   MX_USART3_UART_Init();
   MX_USART6_UART_Init();
   MX_I2C1_Init();
+  MX_I2C2_Init();
+  MX_I2C3_Init();
+  MX_TIM5_Init();
+  MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   car_init();
   set_target_speed(20.0f, 20.0f);

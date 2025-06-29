@@ -17,6 +17,7 @@
 #include "M_pid.h"
 #include "jy61p.h"
 #include "M_usart.h"
+#include "M_navy.h"
 
 
 #endif

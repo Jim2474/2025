@@ -11,6 +11,7 @@
         "m_pid.h": "c",
         "jy61p.h": "c",
         "usart.h": "c",
-        "m_usart.h": "c"
+        "m_usart.h": "c",
+        "m_navy.h": "c"
     }
 }
