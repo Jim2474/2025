@@ -11,8 +11,6 @@ static float lastRightWheelDist = 0.0f;  // 上次右轮累计行驶距离
 static float totalLeftDist = 0.0f;       // 左轮总行驶距离
 static float totalRightDist = 0.0f;      // 右轮总行驶距离
 
-
-
 static NavyState_t navyState = NAVY_STATE_IDLE;    // 当前导航状态
 static float targetDistanceThreshold = 0.5f;       // 到达目标的距离阈值(dm)
 static float targetVelocity = 10.0f;               // 导航时的目标速度(cm/s)
