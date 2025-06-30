@@ -18,6 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "dma.h"
 #include "i2c.h"
 #include "tim.h"
 #include "usart.h"
@@ -46,24 +47,24 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-//小车初始化
+//小车初始�?
 void car_init(void)
 {
   
   Motor_PWM_StartAll();//TIM1 pwm11
   HAL_TIM_Base_Start_IT(&htim2);//1ms定时
-  // 启动左轮编码器(TIM3)
+  // 启动左轮编码�?(TIM3)
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-  // 启动右轮编码器(TIM4)
+  // 启动右轮编码�?(TIM4)
   HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
-  	HAL_UART_Receive_IT(&huart3, &USART3_RxData, 1);
+  Uart_Init();
 
-  // 初始化PID控制器
+  // 初始化PID控制�?
   pid_init_all();
   // 设置初始目标速度0
   set_target_speed(0.0f, 0.0f);
   
-  // 初始化导航系统
+  // 初始化导航系�?
   navy_init();
 }
 /* USER CODE END PV */
@@ -78,18 +79,18 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 void TIM2_Task_1000Hz(void)
 {
-  // 1000Hz任务，每1ms执行一次
+  // 1000Hz任务，每1ms执行�?�?
   
-  // 1. 更新编码器计数和转速计数
+  // 1. 更新编码器计数和转�?�计�?
   encoder_count();
   
-  // 2. 计算线速度
+  // 2. 计算线�?�度
   Calculate_speed(left_wheel_rpm, right_wheel_rpm);
 }
 
 void TIM2_Task_100Hz(void)
 {
-  // 100Hz任务，每10ms执行一次
+  // 100Hz任务，每10ms执行�?�?
   
   // 1. 更新当前位置坐标
   updatePosition();
@@ -97,12 +98,12 @@ void TIM2_Task_100Hz(void)
   // 2. 更新导航控制
   updateNavigation();
   
-  // 3. 执行PID控制计算和电机输出
+  // 3. 执行PID控制计算和电机输�?
   // 包含速度环和转向环的控制
   wheels_pid_control_auto_with_yaw();
   
-  // 4. 可以添加其他低频任务，如LED状态更新、按键检测等
-  // 这里暂时不添加其他任务
+  // 4. 可以添加其他低频任务，如LED状�?�更新�?�按键检测等
+  // 这里暂时不添加其他任�?
 }
 
 /**
@@ -112,21 +113,21 @@ void TIM2_Task_100Hz(void)
  */
 void navyTest(float x, float y)
 {
-  // 设置导航参数 - 可根据实际情况调整
-  setNavigationParameters(0.5f, 15.0f, 45.0f);  // 距离阈值0.5dm，线速度15cm/s，最大角速度45°/s
+  // 设置导航参数 - 可根据实际情况调�?
+  setNavigationParameters(0.5f, 15.0f, 45.0f);  // 距离阈�??0.5dm，线速度15cm/s，最大角速度45°/s
   
-  // 开始导航到目标点
+  // �?始导航到目标�?
   if (startNavigation(x, y))
   {
-    printf("开始导航到目标点: (%.2f, %.2f)\r\n", x, y);
+    printf("�?始导航到目标�?: (%.2f, %.2f)\r\n", x, y);
     
     // 等待导航完成
     while (getNavigationState() == NAVY_STATE_MOVING)
     {
-      // 每隔一秒输出当前位置
+      // 每隔�?秒输出当前位�?
       HAL_Delay(1000);
       Position_t pos = getCurrentPosition();
-      printf("当前位置: (%.2f, %.2f), 航向角: %.2f°\r\n", 
+      printf("当前位置: (%.2f, %.2f), 航向�?: %.2f°\r\n", 
              pos.x, pos.y, rad2deg(pos.theta));
     }
     
@@ -142,7 +143,7 @@ void navyTest(float x, float y)
   }
   else
   {
-    printf("无法开始导航，请检查当前状态或目标点是否有效\r\n");
+    printf("无法�?始导航，请检查当前状态或目标点是否有效\r\n");
   }
 }
 /* USER CODE END 0 */
@@ -176,6 +177,7 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_TIM1_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
