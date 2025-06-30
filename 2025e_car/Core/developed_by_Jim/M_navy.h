@@ -18,6 +18,13 @@ typedef struct {
     float theta;    // 航向角，单位：弧度
 } Position_t;
 
+// 导航状态枚举
+typedef enum {
+    NAVY_STATE_IDLE,       // 空闲状态
+    NAVY_STATE_MOVING,     // 移动状态
+    NAVY_STATE_ARRIVED     // 已到达目标
+} NavyState_t;
+
 // 全局位置变量
 extern Position_t currentPosition;  // 当前位置
 extern Position_t targetPosition;   // 目标位置
@@ -54,5 +61,23 @@ float rad2deg(float rad);
 
 // 角度转换为弧度
 float deg2rad(float deg);
+
+// 计算目标点相对于当前位置的方向角
+float calculateTargetAngle(void);
+
+// 开始导航到目标点
+uint8_t startNavigation(float x, float y);
+
+// 停止当前导航
+void stopNavigation(void);
+
+// 获取当前导航状态
+NavyState_t getNavigationState(void);
+
+// 设置导航参数
+void setNavigationParameters(float distThreshold, float velocity, float angVelocity);
+
+// 更新导航控制
+void updateNavigation(void);
 
 #endif
