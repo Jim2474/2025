@@ -32,7 +32,7 @@
 右轮正转 TIM1_CH3  PE13
 右轮反转 TIM1_CH4  PE14
 
-TIM1：双通道PWM输出
+TIM1：四通道PWM输出
 TIM2：1ms定时
 TIM3：左轮编码器
 TIM4：右轮编码器

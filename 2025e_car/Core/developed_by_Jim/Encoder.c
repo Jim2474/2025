@@ -11,7 +11,7 @@ volatile float left_wheel_speed = 0.0f;//速度
 volatile float right_wheel_speed = 0.0f;
 
 // 定义脉冲常量
-#define PULSES_PER_REVOLUTION 56000.0f  // 500 * 28 * 4 = 56000脉冲/转
+#define PULSES_PER_REVOLUTION 1456.0f  // 500 * 28 * 4 = 56000脉冲/转  13*28*4=1456
 #define MS_PER_MINUTE 60000.0f          // 1分钟 = 60000毫秒
 
 // --- 在1ms的中断回调函数中 调用 注意：保护变量

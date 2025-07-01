@@ -45,3 +45,5 @@
 2025e_car\mytimer.o: ..\Core\developed_by_Jim\Encoder.h
 2025e_car\mytimer.o: ..\Core\developed_by_Jim\jy61p.h
 2025e_car\mytimer.o: ..\Core\developed_by_Jim\M_usart.h
+2025e_car\mytimer.o: ..\Core\developed_by_Jim\M_navy.h
+2025e_car\mytimer.o: F:\1_keil5\ARM\ARMCC\Bin\..\include\math.h
