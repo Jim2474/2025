@@ -31,6 +31,8 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+extern int32_t left_encoder_count;
+extern int32_t right_encoder_count;
 
 /* USER CODE END PTD */
 
@@ -47,26 +49,27 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-//小车初始�???????
+//小车初始�??????????
 void car_init(void)
 {
   
   Motor_PWM_StartAll();//TIM1 pwm11
   HAL_TIM_Base_Start_IT(&htim2);//1ms定时
-  // 启动左轮编码�???????(TIM3)
+  // 启动左轮编码�??????????(TIM3)
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-  // 启动右轮编码�???????(TIM4)
+  // 启动右轮编码�??????????(TIM4)
   HAL_TIM_Encoder_Start(&htim4, TIM_CHANNEL_ALL);
   Uart_Init();
       
-  // 初始化PID控制�???????
+  // 初始化PID控制�??????????
   pid_init_all();
   // 设置初始目标速度0
-  set_target_speed(50.0f, 50.0f);
-  
-  // 初始化导航系�???????
+  set_target_speed(30.0f, 30.0f);
+  // 初始化导航系�??????????
   navy_init();
+	
 }
+int jim =0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -79,31 +82,33 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 void TIM2_Task_1000Hz(void)
 {
-  // 1000Hz任务，每1ms执行�???????�???????
-  
-  // 1. 更新编码器计数和转�?�计�???????
+  // 1000Hz任务，每1ms执行�??????????�??????????
+  //HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1);
+  // 1. 更新编码器计数和转�?�计�??????????
   encoder_count();
-  
   // 2. 计算线�?�度
   Calculate_speed(left_wheel_rpm, right_wheel_rpm);
 }
 
 void TIM2_Task_100Hz(void)
 {
-  // 100Hz任务，每10ms执行�???????�???????
-  
+  // 100Hz任务，每10ms执行�??????????�??????????
+    HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1);
+
+//HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1);
   // 1. 更新当前位置坐标
   updatePosition();
-  
+ 	//HAL_UART_Transmit(&huart3, (uint8_t *)&jim, 1, HAL_MAX_DELAY);
+//printf("%f,%f\n",g_left_target_speed,g_right_target_speed);
   // 2. 更新导航控制
  // updateNavigation();
   
-  // 3. 执行PID控制计算和电机输�???????
+  // 3. 执行PID控制计算和电机输�??????????
   // 包含速度环和转向环的控制
   //wheels_pid_control_auto_with_yaw();
   wheels_pid_control_auto();
   // 4. 可以添加其他低频任务，如LED状�?�更新�?�按键检测等
-  // 这里暂时不添加其他任�???????
+  // 这里暂时不添加其他任�??????????
 }
 
 /**
@@ -113,21 +118,21 @@ void TIM2_Task_100Hz(void)
  */
 void navyTest(float x, float y)
 {
-  // 设置导航参数 - 可根据实际情况调�???????
+  // 设置导航参数 - 可根据实际情况调�??????????
   setNavigationParameters(0.5f, 15.0f, 45.0f);  // 距离阈�??0.5dm，线速度15cm/s，最大角速度45°/s
   
-  // �???????始导航到目标�???????
+  // �??????????始导航到目标�??????????
   if (startNavigation(x, y))
   {
-    printf("�???????始导航到目标�???????: (%.2f, %.2f)\r\n", x, y);
+    printf("�??????????始导航到目标�??????????: (%.2f, %.2f)\r\n", x, y);
     
     // 等待导航完成
     while (getNavigationState() == NAVY_STATE_MOVING)
     {
-      // 每隔�???????秒输出当前位�???????
+      // 每隔�??????????秒输出当前位�??????????
       HAL_Delay(1000);
       Position_t pos = getCurrentPosition();
-      printf("当前位置: (%.2f, %.2f), 航向�???????: %.2f°\r\n", 
+      printf("当前位置: (%.2f, %.2f), 航向�??????????: %.2f°\r\n", 
              pos.x, pos.y, rad2deg(pos.theta));
     }
     
@@ -143,7 +148,7 @@ void navyTest(float x, float y)
   }
   else
   {
-    printf("无法�???????始导航，请检查当前状态或目标点是否有效\r\n");
+    printf("无法�??????????始导航，请检查当前状态或目标点是否有效\r\n");
   }
 }
 /* USER CODE END 0 */
@@ -157,6 +162,7 @@ int main(void)
 
   /* USER CODE BEGIN 1 */
  
+
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -189,13 +195,13 @@ int main(void)
   MX_USART6_UART_Init();
   MX_I2C1_Init();
   MX_I2C2_Init();
-  MX_I2C3_Init();
   MX_USART2_UART_Init();
   MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
   car_init();
   Uart_Init();
-  set_target_speed(20.0f, 20.0f);
+//   HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1);
+//HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET);  // PWMA使能
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -208,12 +214,13 @@ int main(void)
 
 
 //      // 左轮正转
-//      __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 600);    // AIN1=PWM
+//     __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, 570);    // AIN1=PWM
 //      __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_2, 0);      // AIN2=0
-
-//      // 右轮正转
-//      __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, 600);    // BIN1=PWM
+//   int qwe=580;
+////      // 右轮正转
+//      __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, qwe);    // BIN1=PWM
 //      __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, 0);      // BIN2=0
+//	  printf("%d\n",qwe);
 
     /*
     if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET)
@@ -251,12 +258,14 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 25;
-  RCC_OscInitStruct.PLL.PLLN = 336;
+  RCC_OscInitStruct.PLL.PLLM = 4;
+  RCC_OscInitStruct.PLL.PLLN = 168;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = 4;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -277,6 +286,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
+  HAL_RCC_MCOConfig(RCC_MCO1, RCC_MCO1SOURCE_HSI, RCC_MCODIV_1);
 }
 
 /* USER CODE BEGIN 4 */

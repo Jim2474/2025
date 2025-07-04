@@ -5,12 +5,17 @@
 // 定时器2中断调度
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
+ 
+
     if(htim->Instance == TIM2)
     {
+
         static uint8_t cnt_100Hz = 0;
         TIM2_Task_1000Hz(); // 每1ms调用一次
         if(++cnt_100Hz >= 10)
-        {
+        {   
+ // HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET);  // PWMA使能
+			 //HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1);
             cnt_100Hz = 0;
             TIM2_Task_100Hz(); // 每10ms调用一次
         }

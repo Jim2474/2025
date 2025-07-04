@@ -12,7 +12,8 @@
         "jy61p.h": "c",
         "usart.h": "c",
         "m_usart.h": "c",
-        "m_navy.h": "c"
+        "m_navy.h": "c",
+        "dma.h": "c"
     },
     "cmake.sourceDirectory": "G:/2025E/2025e_car/Drivers/CMSIS/DSP/Source/DistanceFunctions"
 }

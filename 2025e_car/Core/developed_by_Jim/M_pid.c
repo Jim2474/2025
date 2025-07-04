@@ -10,12 +10,12 @@ PID_TypeDef yaw_pid;
 #define DT_100HZ 0.01f // 100Hz的周期为10ms
 
 // 左右轮PID参数宏定义
-#define LEFT_WHEEL_KP 2.5f
-#define LEFT_WHEEL_KI 0.1f
-#define LEFT_WHEEL_KD 0.05f
-#define RIGHT_WHEEL_KP 2.5f
-#define RIGHT_WHEEL_KI 0.1f
-#define RIGHT_WHEEL_KD 0.05f
+#define LEFT_WHEEL_KP 8.0f
+#define LEFT_WHEEL_KI 0.4f
+#define LEFT_WHEEL_KD 0.2f
+#define RIGHT_WHEEL_KP 8.0f
+#define RIGHT_WHEEL_KI 0.4f
+#define RIGHT_WHEEL_KD 0.2f
 
 // 转向环PID参数宏定义
 #define YAW_KP 2.0f
@@ -95,6 +95,7 @@ void set_target_speed(float left, float right)
 {
     g_left_target_speed = left;
     g_right_target_speed = right;
+	
 }
 
 // 设置目标航向角函数
@@ -107,6 +108,7 @@ void set_target_yaw(float yaw)
 float left_wheel_pid_control(float target_speed)
 {
     return pid_calc(&left_wheel_pid, target_speed, left_wheel_speed);
+	
 }
 
 // 右轮PID速度控制
@@ -143,6 +145,8 @@ void wheels_pid_control(float left_target_speed, float right_target_speed)
     float left_pwm = left_wheel_pid_control(left_target_speed);    // 计算左轮PID输出
     float right_pwm = right_wheel_pid_control(right_target_speed); // 计算右轮PID输出
     Motor_PWM_Output((int16_t)left_pwm, (int16_t)right_pwm);    // 输出PWM到电机
+    printf("112actual:%f,%f,%d,%d,%f,%d\n",left_wheel_speed, right_wheel_speed,(int16_t)g_left_target_speed,(int16_t)g_right_target_speed,left_wheel_pid.kp,(int16_t)left_pwm); // 打印实际速度
+	//printf("pwm:%f,%f\n",left_pwm,right_pwm);
 }
 
 
@@ -192,4 +196,5 @@ void pid_reset(PID_TypeDef *pid)
 void wheels_pid_control_auto(void)
 {
     wheels_pid_control(g_left_target_speed, g_right_target_speed);
+    //printf("%d,%d\n",(int16_t)g_left_target_speed,(int16_t)g_right_target_speed);
 }

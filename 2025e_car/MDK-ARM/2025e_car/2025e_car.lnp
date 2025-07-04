@@ -34,7 +34,7 @@
 "2025e_car\motor_pwm.o"
 "2025e_car\mytimer.o"
 "2025e_car\m_navy.o"
---strict --scatter "2025e_car\2025e_car.sct"
+--library_type=microlib --strict --scatter "2025e_car\2025e_car.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers
 --list "2025e_car.map" -o 2025e_car\2025e_car.axf
