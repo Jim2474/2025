@@ -1,6 +1,6 @@
 ---
 description: 
-globs: 
+globs: core
 alwaysApply: false
 ---
 # 嵌入式系统编程专家指南

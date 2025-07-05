@@ -1,0 +1,12 @@
+[
+    {
+        "key": "ctrl+leftclick",
+        "command": "editor.action.revealDefinition",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "f12",
+        "command": "editor.action.revealDefinition",
+        "when": "editorTextFocus"
+    }
+] 

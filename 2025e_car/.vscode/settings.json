@@ -15,5 +15,20 @@
         "m_navy.h": "c",
         "dma.h": "c"
     },
-    "cmake.sourceDirectory": "G:/2025E/2025e_car/Drivers/CMSIS/DSP/Source/DistanceFunctions"
+    "cmake.sourceDirectory": "G:/2025E/2025e_car/Drivers/CMSIS/DSP/Source/DistanceFunctions",
+    "C_Cpp.intelliSenseEngine": "default",
+    "C_Cpp.default.includePath": [
+        "${workspaceFolder}/**",
+        "${workspaceFolder}/Core/Inc",
+        "${workspaceFolder}/Drivers/STM32F4xx_HAL_Driver/Inc",
+        "${workspaceFolder}/Drivers/CMSIS/Device/ST/STM32F4xx/Include",
+        "${workspaceFolder}/Drivers/CMSIS/Include"
+    ],
+    "C_Cpp.default.defines": [
+        "USE_HAL_DRIVER",
+        "STM32F407xx"
+    ],
+    "C_Cpp.default.cStandard": "c11",
+    "C_Cpp.default.cppStandard": "c++17",
+    "C_Cpp.default.intelliSenseMode": "msvc-x64"
 }

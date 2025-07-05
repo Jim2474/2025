@@ -12,7 +12,7 @@ extern volatile float right_wheel_rpm;
 extern  float left_wheel_speed;
 extern  float right_wheel_speed;
 
-    #define WHEEL_D 6.0f
+    #define WHEEL_D 6.5f
 
 void encoder_count();
 

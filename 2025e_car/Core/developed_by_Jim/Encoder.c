@@ -23,20 +23,20 @@ void encoder_count()
     last_left_encoder = current_left_count;
     // 累加总脉冲数，用于长期计算
     left_encoder_count += left_pulse_diff;
-       // printf("count:%d\n",left_encoder_count);
+    
 
     // 计算RPM: (脉冲差/每转脉冲数) * (毫秒/分钟)
     // 1ms采样时间下: (脉冲差/56000) * 60000
     left_wheel_rpm = (left_pulse_diff / PULSES_PER_REVOLUTION) * MS_PER_MINUTE;
 
     // --- 处理右轮 ---
-    uint16_t current_right_count = (uint16_t)__HAL_TIM_GET_COUNTER(&htim4);
+    uint16_t current_right_count = (uint16_t)__HAL_TIM_GET_COUNTER(&htim5);
     int16_t right_pulse_diff = (int16_t)(current_right_count - last_right_encoder);
     last_right_encoder = current_right_count;
     
     // 累加总脉冲数，用于长期计算
     right_encoder_count += right_pulse_diff;
-    
+      // printf("count:%d,%d\n",left_encoder_count,right_encoder_count);
     // 计算RPM
     right_wheel_rpm = (right_pulse_diff / PULSES_PER_REVOLUTION) * MS_PER_MINUTE;
 }

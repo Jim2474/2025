@@ -10,12 +10,12 @@ PID_TypeDef yaw_pid;
 #define DT_100HZ 0.01f // 100Hz的周期为10ms
 
 // 左右轮PID参数宏定义
-#define LEFT_WHEEL_KP 8.0f
-#define LEFT_WHEEL_KI 0.4f
-#define LEFT_WHEEL_KD 0.2f
-#define RIGHT_WHEEL_KP 8.0f
-#define RIGHT_WHEEL_KI 0.4f
-#define RIGHT_WHEEL_KD 0.2f
+#define LEFT_WHEEL_KP 75.0f
+#define LEFT_WHEEL_KI 8.5f
+#define LEFT_WHEEL_KD 0.0f
+#define RIGHT_WHEEL_KP 75.0f
+#define RIGHT_WHEEL_KI 8.5f
+#define RIGHT_WHEEL_KD 0.0f
 
 // 转向环PID参数宏定义
 #define YAW_KP 2.0f
@@ -46,6 +46,11 @@ float pid_calc(PID_TypeDef *pid, float set, float actual)
     pid->set = set;
     pid->actual = actual;
     pid->err = pid->set - pid->actual;
+
+    // 添加死区控制：当误差小于目标值的10%时，输出为0
+    if (fabs(pid->err) < fabs(pid->set) * 0.1f) {
+        return 0.0f;
+    }
 
     // 积分项考虑采样时间
     pid->err_sum += pid->err * DT_100HZ;
