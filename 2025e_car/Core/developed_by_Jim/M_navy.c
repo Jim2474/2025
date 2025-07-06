@@ -94,8 +94,11 @@ Position_t getTargetPosition(void)
 void updatePosition(void)
 {
     // 1. 计算左右轮的行驶距离增量（单位：dm）
-    float leftWheelDist = (totalLeftDist + (left_wheel_speed * POSITION_UPDATE_INTERVAL)) / 10.0f;  // cm转换为dm
-    float rightWheelDist = (totalRightDist + (right_wheel_speed * POSITION_UPDATE_INTERVAL)) / 10.0f;
+    // 添加校准系数0.92来修正距离误差(60cm实际走了65cm，比例约为60/65=0.92)
+    float calibrationFactor = 0.92f;
+    
+    float leftWheelDist = (totalLeftDist + (left_wheel_speed * POSITION_UPDATE_INTERVAL * calibrationFactor)) / 10.0f;  // cm转换为dm
+    float rightWheelDist = (totalRightDist + (right_wheel_speed * POSITION_UPDATE_INTERVAL * calibrationFactor)) / 10.0f;
     
     float delta_Left_Dist = leftWheelDist - lastLeftWheelDist;
     float delta_Right_Dist = rightWheelDist - lastRightWheelDist;
@@ -103,8 +106,8 @@ void updatePosition(void)
     // 更新累计距离
     lastLeftWheelDist = leftWheelDist;
     lastRightWheelDist = rightWheelDist;
-    totalLeftDist += left_wheel_speed * POSITION_UPDATE_INTERVAL;  // 累加当前速度对应的距离
-    totalRightDist += right_wheel_speed * POSITION_UPDATE_INTERVAL;
+    totalLeftDist += left_wheel_speed * POSITION_UPDATE_INTERVAL * calibrationFactor;  // 累加当前速度对应的距离
+    totalRightDist += right_wheel_speed * POSITION_UPDATE_INTERVAL * calibrationFactor;
     
     // 2. 计算中心点行驶距离和角度变化
     float delta_Dist = (delta_Left_Dist + delta_Right_Dist) / 2.0f;  // 中心点行驶距离
@@ -282,7 +285,7 @@ void updateNavigation_control(void)
         velocityControl = targetVelocity * 0.3f;
     
     // 如果接近目标点，减速
-    if (distance < 3.0f)
+    if (distance < 1.0f)
     {
         velocityControl *= (distance / 3.0f);
         if (velocityControl < 5.0f) // 最小速度限制
