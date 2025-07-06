@@ -976,6 +976,26 @@
               <FileType>5</FileType>
               <FilePath>..\Core\developed_by_Jim\M_navy.h</FilePath>
             </File>
+            <File>
+              <FileName>OLED.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\developed_by_Jim\OLED.c</FilePath>
+            </File>
+            <File>
+              <FileName>OLED.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\developed_by_Jim\OLED.h</FilePath>
+            </File>
+            <File>
+              <FileName>OLED_Data.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\developed_by_Jim\OLED_Data.c</FilePath>
+            </File>
+            <File>
+              <FileName>OLED_Data.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\developed_by_Jim\OLED_Data.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

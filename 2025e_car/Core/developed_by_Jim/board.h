@@ -20,7 +20,7 @@
 #include "jy61p.h"
 #include "M_usart.h"
 #include "M_navy.h"
-
+#include "oled.h"
 
 //资源分配表：
 /*

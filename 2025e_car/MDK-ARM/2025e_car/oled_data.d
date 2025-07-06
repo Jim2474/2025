@@ -1,4 +1,6 @@
-2025e_car/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
+2025e_car/oled_data.o: ..\Core\developed_by_Jim\OLED_Data.c \
+  ..\Core\developed_by_Jim\OLED_Data.h \
+  F:\1_keil5\ARM\ARMCLANG\include\stdint.h ..\Core\Inc\main.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h \
   ..\Core\Inc\stm32f4xx_hal_conf.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc.h \
@@ -6,7 +8,6 @@
   ..\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h \
   ..\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f407xx.h \
   ..\Drivers\CMSIS\Include\core_cm4.h \
-  F:\1_keil5\ARM\ARMCLANG\include\stdint.h \
   G:\2025E\2025e_car\Drivers\CMSIS\Include\cmsis_version.h \
   G:\2025E\2025e_car\Drivers\CMSIS\Include\cmsis_compiler.h \
   G:\2025E\2025e_car\Drivers\CMSIS\Include\cmsis_armclang.h \
@@ -30,14 +31,4 @@
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pwr_ex.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h \
-  ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_uart.h \
-  ..\Core\Inc\dma.h ..\Core\Inc\i2c.h ..\Core\Inc\tim.h \
-  ..\Core\Inc\usart.h ..\Core\Inc\gpio.h \
-  ..\Core\developed_by_Jim\board.h \
-  F:\1_keil5\ARM\ARMCLANG\include\stdio.h \
-  ..\Core\developed_by_Jim\M_pid.h ..\Core\developed_by_Jim\motor_pwm.h \
-  ..\Core\developed_by_Jim\Mytimer.h ..\Core\developed_by_Jim\Encoder.h \
-  ..\Core\developed_by_Jim\jy61p.h ..\Core\developed_by_Jim\M_usart.h \
-  ..\Core\developed_by_Jim\M_navy.h \
-  F:\1_keil5\ARM\ARMCLANG\include\math.h ..\Core\developed_by_Jim\oled.h \
-  ..\Core\developed_by_Jim\OLED_Data.h
+  ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_uart.h

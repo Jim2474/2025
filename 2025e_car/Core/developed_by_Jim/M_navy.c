@@ -236,6 +236,7 @@ void setNavigationParameters(float distThreshold, float velocity, float angVeloc
 {
     targetDistanceThreshold = distThreshold;
     targetVelocity = velocity;
+    
     maxAngularVelocity = angVelocity;
 }
 

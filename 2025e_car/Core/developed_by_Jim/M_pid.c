@@ -18,11 +18,11 @@ PID_TypeDef yaw_pid;
 #define RIGHT_WHEEL_KD 0.0f
 
 // 转向环PID参数宏定义
-#define YAW_KP 2.0f
-#define YAW_KI 0.05f
-#define YAW_KD 0.2f
-#define YAW_OUT_MAX 500.0f // 转向输出限幅
-#define YAW_OUT_MIN -500.0f
+#define YAW_KP 1.2f
+#define YAW_KI 0.0f
+#define YAW_KD 0.0f
+#define YAW_OUT_MAX 400.0f // 转向输出限幅
+#define YAW_OUT_MIN -400.0f
 
 // 初始化PID结构体
 void pid_init(PID_TypeDef *pid, float kp, float ki, float kd, float out_max, float out_min)
@@ -46,6 +46,14 @@ float pid_calc(PID_TypeDef *pid, float set, float actual)
     pid->set = set;
     pid->actual = actual;
     pid->err = pid->set - pid->actual;
+
+    // // 添加死区控制：当实际速度达到目标速度的90%时，输出为0
+    // // 对于速度控制，只在目标速度不为0时应用死区
+    // if (pid->set != 0.0f && fabsf(pid->actual) >= fabsf(pid->set) * 0.95f &&
+    //     ((pid->set > 0 && pid->actual > 0) || (pid->set < 0 && pid->actual < 0)))
+    // {
+    //     return 0.0f;
+    // }
 
     // 积分项考虑采样时间
     pid->err_sum += pid->err * DT_100HZ;
@@ -95,7 +103,6 @@ void set_target_speed(float left, float right)
 {
     g_left_target_speed = left;
     g_right_target_speed = right;
-	
 }
 
 // 设置目标航向角函数
@@ -108,7 +115,6 @@ void set_target_yaw(float yaw)
 float left_wheel_pid_control(float target_speed)
 {
     return pid_calc(&left_wheel_pid, target_speed, left_wheel_speed);
-	
 }
 
 // 右轮PID速度控制
@@ -122,44 +128,43 @@ float normalize_angle(float angle)
 {
     // 先将角度转换到-360到360度范围内
     angle = fmodf(angle, 360.0f);
-    
+
     // 然后转换到-180到180度范围内
     if (angle > 180.0f)
         angle -= 360.0f;
     else if (angle < -180.0f)
         angle += 360.0f;
-    
+
     return angle;
 }
 
 // 航向角PID控制
 float yaw_pid_control(float target_yaw)
 {
-    float current_yaw = IMU_data.YawZ;  // 获取当前航向角（已转换为-180到180度范围）
-    
+    float current_yaw = IMU_data.YawZ; // 获取当前航向角（已转换为-180到180度范围）
+
     // 计算航向角误差，并进行规范化处理
     float yaw_error = normalize_angle(target_yaw - current_yaw);
-    
+
     // 使用规范化后的误差进行PID计算
-    yaw_pid.set = 0;  // 设置目标误差为0
-    yaw_pid.actual = -yaw_error;  // 当前误差作为反馈值，取负是为了保持控制方向一致
-    
+    yaw_pid.set = 0;             // 设置目标误差为0
+    yaw_pid.actual = -yaw_error; // 当前误差作为反馈值，取负是为了保持控制方向一致
+
     // 计算PID输出
     float output = pid_calc(&yaw_pid, yaw_pid.set, yaw_pid.actual);
-    
+
     return output;
 }
 
 // 双轮PID速度控制，计算并输出PWM
 void wheels_pid_control(float left_target_speed, float right_target_speed)
 {
-    float left_pwm = left_wheel_pid_control(left_target_speed);    // 计算左轮PID输出
-    float right_pwm = right_wheel_pid_control(right_target_speed); // 计算右轮PID输出
-    Motor_PWM_Output((int16_t)left_pwm, (int16_t)right_pwm);    // 输出PWM到电机
-    printf("112actual:%f,%f,%d,%f,%f,%d\n",currentPosition.x*10, currentPosition.y*10,(int16_t)g_left_target_speed,IMU_data.YawZ,left_wheel_pid.kp,(int16_t)left_pwm); // 打印实际速度
-	//printf("pwm:%f,%f\n",left_pwm,right_pwm);
+    float left_pwm = left_wheel_pid_control(left_target_speed);                                                                                                                 // 计算左轮PID输出
+    float right_pwm = right_wheel_pid_control(right_target_speed);                                                                                                              // 计算右轮PID输出
+    Motor_PWM_Output((int16_t)left_pwm, (int16_t)right_pwm);                                                                                                                    // 输出PWM到电机
+    printf("112actual:%f,%f,%d,%f,%f,%d\n", left_wheel_speed, right_wheel_speed, (int16_t)g_left_target_speed, IMU_data.YawZ, left_wheel_pid.kp, (int16_t)left_pwm); // 打印实际速度
+                                                                                                                                                                                // printf("pwm:%f,%f\n",left_pwm,right_pwm);
 }
-
 
 // 带转向控制的PID速度控制
 void wheels_pid_control_with_yaw(float base_speed, float target_yaw)
@@ -173,16 +178,15 @@ void wheels_pid_control_with_yaw(float base_speed, float target_yaw)
 
     // 输出到电机
     wheels_pid_control(left_speed, right_speed);
-    
 }
 
 // 使用全局目标速度和航向角的PID控制
 void wheels_pid_control_auto_with_yaw(void)
 {
-    float yaw_output = yaw_pid_control(g_target_yaw);   // 计算转向PID输出
-    float left_speed = g_left_target_speed - yaw_output;    // 根据转向输出调整左右轮速度
+    float yaw_output = yaw_pid_control(g_target_yaw);    // 计算转向PID输出
+    float left_speed = g_left_target_speed - yaw_output; // 根据转向输出调整左右轮速度
     float right_speed = g_right_target_speed + yaw_output;
-    wheels_pid_control(left_speed, right_speed);  // 输出到电机
+    wheels_pid_control(left_speed, right_speed); // 输出到电机
 }
 
 // 重置所有PID控制器
@@ -206,6 +210,6 @@ void pid_reset(PID_TypeDef *pid)
 // 使用全局目标速度的PID控制
 void wheels_pid_control_auto(void)
 {
-    wheels_pid_control(g_left_target_speed, g_right_target_speed);
-    //printf("%d,%d\n",(int16_t)g_left_target_speed,(int16_t)g_right_target_speed);
+     wheels_pid_control(g_left_target_speed, g_right_target_speed);
+
 }
