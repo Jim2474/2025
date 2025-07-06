@@ -78,6 +78,6 @@ NavyState_t getNavigationState(void);
 void setNavigationParameters(float distThreshold, float velocity, float angVelocity);
 
 // 更新导航控制
-void updateNavigation(void);
+void updateNavigation_control(void);
 
 #endif

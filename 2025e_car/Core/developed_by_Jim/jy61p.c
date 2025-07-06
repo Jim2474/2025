@@ -115,7 +115,16 @@ void get_jy61p(uint8_t RxData)
 		// 解析姿态角数据
 		if (jy61p_Buffer[1] == 0x53)
 		{
-			IMU_data.YawZ = (float)(((jy61p_Buffer[7] << 8) | jy61p_Buffer[6]) / 32768.0 * 180);
+			// 获取原始角度值（0-360度）
+			float raw_yaw = (float)(((jy61p_Buffer[7] << 8) | jy61p_Buffer[6]) / 32768.0 * 180);
+			
+			// 将角度转换为-180到180度范围
+			if (raw_yaw > 180.0f)
+			{
+				raw_yaw -= 360.0f;
+			}
+			
+			IMU_data.YawZ = raw_yaw;
 		}
 		// 解析完毕，清空数据包和计数器
 	}

@@ -10,11 +10,11 @@ PID_TypeDef yaw_pid;
 #define DT_100HZ 0.01f // 100Hz的周期为10ms
 
 // 左右轮PID参数宏定义
-#define LEFT_WHEEL_KP 75.0f
-#define LEFT_WHEEL_KI 8.5f
+#define LEFT_WHEEL_KP 65.0f
+#define LEFT_WHEEL_KI 30.0f
 #define LEFT_WHEEL_KD 0.0f
-#define RIGHT_WHEEL_KP 75.0f
-#define RIGHT_WHEEL_KI 8.5f
+#define RIGHT_WHEEL_KP 65.0f
+#define RIGHT_WHEEL_KI 30.0f
 #define RIGHT_WHEEL_KD 0.0f
 
 // 转向环PID参数宏定义
@@ -47,11 +47,6 @@ float pid_calc(PID_TypeDef *pid, float set, float actual)
     pid->actual = actual;
     pid->err = pid->set - pid->actual;
 
-    // 添加死区控制：当误差小于目标值的10%时，输出为0
-    if (fabs(pid->err) < fabs(pid->set) * 0.1f) {
-        return 0.0f;
-    }
-
     // 积分项考虑采样时间
     pid->err_sum += pid->err * DT_100HZ;
 
@@ -67,7 +62,7 @@ float pid_calc(PID_TypeDef *pid, float set, float actual)
     // PID输出计算
     pid->out = pid->kp * pid->err + pid->ki * pid->err_sum + pid->kd * d_err;
 
-    // 输出限幅
+    // 输出限幅下降，PID系统需要时间恢复
     if (pid->out > pid->out_max)
         pid->out = pid->out_max;
     if (pid->out < pid->out_min)
@@ -125,22 +120,33 @@ float right_wheel_pid_control(float target_speed)
 // 处理航向角差值，确保在-180到180度范围内
 float normalize_angle(float angle)
 {
-    while (angle > 180.0f)
+    // 先将角度转换到-360到360度范围内
+    angle = fmodf(angle, 360.0f);
+    
+    // 然后转换到-180到180度范围内
+    if (angle > 180.0f)
         angle -= 360.0f;
-    while (angle < -180.0f)
+    else if (angle < -180.0f)
         angle += 360.0f;
+    
     return angle;
 }
 
 // 航向角PID控制
 float yaw_pid_control(float target_yaw)
 {
-    float current_yaw = IMU_data.YawZ;// 获取当前航向角
-    float yaw_error = normalize_angle(target_yaw - current_yaw);// 计算航向角误差，并进行规范化处理
+    float current_yaw = IMU_data.YawZ;  // 获取当前航向角（已转换为-180到180度范围）
+    
+    // 计算航向角误差，并进行规范化处理
+    float yaw_error = normalize_angle(target_yaw - current_yaw);
+    
     // 使用规范化后的误差进行PID计算
     yaw_pid.set = 0;  // 设置目标误差为0
     yaw_pid.actual = -yaw_error;  // 当前误差作为反馈值，取负是为了保持控制方向一致
-    float output = pid_calc(&yaw_pid, yaw_pid.set, yaw_pid.actual); // 计算PID输出
+    
+    // 计算PID输出
+    float output = pid_calc(&yaw_pid, yaw_pid.set, yaw_pid.actual);
+    
     return output;
 }
 
@@ -150,7 +156,7 @@ void wheels_pid_control(float left_target_speed, float right_target_speed)
     float left_pwm = left_wheel_pid_control(left_target_speed);    // 计算左轮PID输出
     float right_pwm = right_wheel_pid_control(right_target_speed); // 计算右轮PID输出
     Motor_PWM_Output((int16_t)left_pwm, (int16_t)right_pwm);    // 输出PWM到电机
-    printf("112actual:%f,%f,%d,%d,%f,%d\n",left_wheel_speed, right_wheel_speed,(int16_t)g_left_target_speed,(int16_t)g_right_target_speed,left_wheel_pid.kp,(int16_t)left_pwm); // 打印实际速度
+    printf("112actual:%f,%f,%d,%f,%f,%d\n",currentPosition.x*10, currentPosition.y*10,(int16_t)g_left_target_speed,IMU_data.YawZ,left_wheel_pid.kp,(int16_t)left_pwm); // 打印实际速度
 	//printf("pwm:%f,%f\n",left_pwm,right_pwm);
 }
 

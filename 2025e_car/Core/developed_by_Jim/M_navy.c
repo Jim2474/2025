@@ -87,7 +87,8 @@ Position_t getTargetPosition(void)
 }
 
 /**
- * @brief 更新当前位置（在TIM2_Task_100Hz中调用）
+ * @brief 更新当前位置（在TIM2_Task_100Hz中调用）#####################################################################
+ * ################################################################################################################
  * 使用编码器数据和陀螺仪数据更新位置
  */
 void updatePosition(void)
@@ -114,6 +115,8 @@ void updatePosition(void)
     // 4. 使用航向角和行驶距离更新位置坐标
     currentPosition.x += delta_Dist * cosf(currentPosition.theta);
     currentPosition.y += delta_Dist * sinf(currentPosition.theta);
+    //printf("Position: (%.2f, %.2f), Theta: %.2f\n", 
+          // currentPosition.x*10, currentPosition.y*10, rad2deg(currentPosition.theta));
 }
 
 /**
@@ -237,10 +240,10 @@ void setNavigationParameters(float distThreshold, float velocity, float angVeloc
 }
 
 /**
- * @brief 更新导航控制
+ * @brief 更新导航控制######################################################################################################################################
  * 在TIM2_Task_100Hz中周期性调用，根据当前位置和目标位置计算控制量
  */
-void updateNavigation(void)
+void updateNavigation_control(void)
 {
     // 如果不在导航状态，直接返回
     if (navyState != NAVY_STATE_MOVING)
