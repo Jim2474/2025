@@ -201,7 +201,7 @@ int main(void)
   car_init();
   Uart_Init();
   setNavigationParameters(0.5f, 20.0f, 45.0f); 
-  startNavigation(6,0);
+  startNavigation(8,0);
 
   
   /* USER CODE END 2 */
@@ -212,12 +212,12 @@ int main(void)
   {  
     
    //OLED_ShowFloatNum(1, 1,IMU_data.YawZ, 4, 1, OLED_8X16);
-    HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, GPIO_PIN_SET);
-      HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, GPIO_PIN_RESET);
- HAL_GPIO_WritePin(GPIOE, GPIO_PIN_9, GPIO_PIN_SET);
-       HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_RESET);
-          __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 80);
-             __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 50);
+//     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_13, GPIO_PIN_SET);
+//       HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, GPIO_PIN_RESET);
+//  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_9, GPIO_PIN_SET);
+//        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_RESET);
+//           __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 80);
+//              __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 50);
 
 
 

@@ -95,7 +95,7 @@ void updatePosition(void)
 {
     // 1. 计算左右轮的行驶距离增量（单位：dm）
     // 添加校准系数0.92来修正距离误差(60cm实际走了65cm，比例约为60/65=0.92)
-    float calibrationFactor = 0.92f;
+    float calibrationFactor = 1.0f;
     
     float leftWheelDist = (totalLeftDist + (left_wheel_speed * POSITION_UPDATE_INTERVAL * calibrationFactor)) / 10.0f;  // cm转换为dm
     float rightWheelDist = (totalRightDist + (right_wheel_speed * POSITION_UPDATE_INTERVAL * calibrationFactor)) / 10.0f;

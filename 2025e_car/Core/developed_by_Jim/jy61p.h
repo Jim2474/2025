@@ -5,6 +5,9 @@
 #include "main.h"                 // Device header
 #include <stdio.h>
 
+// 定义JY61P数据包大小
+#define JY61P_PACKET_SIZE 11
+
  //IMU数据 结构体
 typedef struct 
 {
@@ -24,6 +27,8 @@ extern IMU_data_Struct IMU_data;
 
 //函数声明
 void get_jy61p(uint8_t RxData);
+void jy61p_init_dma(void);
+void get_jy61p_dma(uint8_t *buffer, uint16_t size);
 
 #endif
 
