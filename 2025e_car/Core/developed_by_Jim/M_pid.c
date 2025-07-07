@@ -18,7 +18,7 @@ PID_TypeDef yaw_pid;
 #define RIGHT_WHEEL_KD 0.0f
 
 // 转向环PID参数宏定义
-#define YAW_KP 1.2f
+#define YAW_KP 0.5f
 #define YAW_KI 0.0f
 #define YAW_KD 0.0f
 #define YAW_OUT_MAX 400.0f // 转向输出限幅
@@ -161,8 +161,9 @@ float yaw_pid_control(float target_yaw)
 void wheels_pid_control(float left_target_speed, float right_target_speed)
 {
     float left_pwm = left_wheel_pid_control(left_target_speed);                                                                                                                 // 计算左轮PID输出
-    float right_pwm = right_wheel_pid_control(right_target_speed);                                                                                                              // 计算右轮PID输出
-    Motor_PWM_Output((int16_t)left_pwm, (int16_t)right_pwm);                                                                                                                    // 输出PWM到电机
+    float right_pwm = right_wheel_pid_control(right_target_speed);    
+                                                                                                          // 计算右轮PID输出
+    Motor_PWM_Output((int16_t)left_pwm, (int16_t)right_pwm);
     //printf("112actual:%f,%f,%d,%f,%f,%f\n", left_wheel_speed, right_wheel_speed, (int16_t)g_left_target_speed, IMU_data.YawZ, left_wheel_pid.kp,  currentPosition.x); // 打印实际速度
 }
 

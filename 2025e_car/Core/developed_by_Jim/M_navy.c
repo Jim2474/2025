@@ -249,6 +249,7 @@ void setNavigationParameters(float distThreshold, float velocity, float angVeloc
  */
 void updateNavigation_control(void)
 {
+    float toimprove = 0.0f;
     // 如果不在导航状态，直接返回
     if (navyState != NAVY_STATE_MOVING)
         return;
@@ -281,10 +282,15 @@ void updateNavigation_control(void)
     // 当角度差较大时，降低线速度以优先调整方向
     if (fabsf(angleDiff) > 0.5f) // 30度以上的角度差
     {
+        toimprove=0.5f;
         // 角度差越大，速度越低，最低为30%
         velocityControl *= (1.0f - 0.7f * fabsf(angleDiff) / PI);
         if (velocityControl < targetVelocity * 0.5f)
             velocityControl = targetVelocity * 0.5f;
+    }
+    else
+    {
+        toimprove=1.0f;
     }
     
     // 如果接近目标点，平滑减速
@@ -303,9 +309,9 @@ void updateNavigation_control(void)
     
     // 设置左右轮目标速度
     // 使用PID控制器的输出直接控制左右轮差速
-    float leftSpeed = velocityControl - angularControl;
-    float rightSpeed = velocityControl + angularControl;
-    //printf("velocityControl: %.2f, leftSpeed: %.2f, rightSpeed: %.2f\n", velocityControl, leftSpeed, rightSpeed);
+    float leftSpeed = velocityControl - angularControl*toimprove;
+    float rightSpeed = velocityControl + angularControl*toimprove;
+    printf("velocityControl: %.2f, leftSpeed: %.2f, rightSpeed: %.2f\n", velocityControl, leftSpeed, rightSpeed);
     // 设置电机速度
     set_target_speed(leftSpeed, rightSpeed);
 }

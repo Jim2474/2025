@@ -49,7 +49,7 @@ extern int32_t right_encoder_count;
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-//小车初始�???????????????
+//小车初始???????????????
 void car_init(void)
 {
   
@@ -57,17 +57,17 @@ void car_init(void)
   HAL_TIM_Base_Start_IT(&htim2);//1ms定时
   OLED_Init();
   OLED_Clear();
-  // 启动左轮编码�???????????????(TIM3)
+  // 启动左轮编码???????????????(TIM3)
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-  // 启动右轮编码�???????????????(TIM4)
+  // 启动右轮编码???????????????(TIM4)
   HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
   Uart_Init();
       
-  // 初始化PID控制�???????????????
+  // 初始化PID控制???????????????
   pid_init_all();
   // 设置初始目标速度0
-  //set_target_speed(30.0f, 30.0f);
-  // 初始化导航系�???????????????
+  set_target_speed(0.0f, 0.0f);
+  // 初始化导航系???????????????
   navy_init();
 	
 }
@@ -84,17 +84,17 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 void TIM2_Task_1000Hz(void)
 {
-  // 1000Hz任务，每1ms执行�???????????????�???????????????
+  // 1000Hz任务，每1ms执行??????????????????????????????
   //HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1);
-  // 1. 更新编码器计数和转�?�计�???????????????
+  // 1. 更新编码器计数和转?计???????????????
   encoder_count();
-  // 2. 计算线�?�度 
+  // 2. 计算线?度 
   Calculate_speed(left_wheel_rpm, right_wheel_rpm);
 }
 
 void TIM2_Task_100Hz(void)
 {
-  // 100Hz任务，每10ms执行�???????????????�???????????????
+  // 100Hz任务，每10ms执行??????????????????????????????
     HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1);
 
 //HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1);
@@ -103,55 +103,111 @@ void TIM2_Task_100Hz(void)
  	//HAL_UART_Transmit(&huart3, (uint8_t *)&jim, 1, HAL_MAX_DELAY);
 //printf("%f,%f\n",g_left_target_speed,g_right_target_speed);
   // 2. 更新导航控制
-  updateNavigation_control();
+ // updateNavigation_control();
   
-  // 3. 执行PID控制计算和电机输�???????????????
+  // 3. 执行PID控制计算和电机输???????????????
   // 包含速度环和转向环的控制
   //wheels_pid_control_auto_with_yaw();
 	wheels_pid_control_auto();
-  // 4. 可以添加其他低频任务，如LED状�?�更新�?�按键检测等
-  // 这里暂时不添加其他任�???????????????
+  // 4. 可以添加其他低频任务，如LED状?更新?按键检测等
+  // 这里暂时不添加其他任???????????????
+      printf("left_E:%f,right_E%f,speed%d\n",left_wheel_speed,right_wheel_speed,right_encoder_count) ;                                                                                                               // ??PWM???
+
 }
 
 /**
- * @brief 导航测试函数
- * @param x 目标X坐标
- * @param y 目标Y坐标
+ * @brief 导航测试函数 - 让小车走一个正方形
  */
-void navyTest(float x, float y)
+void navyTest(void)
 {
-  // 设置导航参数 - 可根据实际情况调�???????????????
-  setNavigationParameters(0.5f, 15.0f, 45.0f);  // 距离阈�??0.5dm，线速度15cm/s，最大角速度45°/s
+  // 设置导航参数 - 可根据实际情况调整
+  setNavigationParameters(0.5f, 15.0f, 45.0f);  // 距离阈值0.5dm，线速度15cm/s，最大角速度45°/s
   
-  // �???????????????始导航到目标�???????????????
-  if (startNavigation(x, y))
+  // 定义正方形的四个顶点坐标
+  float waypoints[4][2] = {
+    {0.0f, 0.0f},    // 起点/终点
+    {8.0f, 0.0f},   // 第一个顶点
+    {8.0f, 8.0f},  // 第二个顶点
+    {0.0f, 8.0f}    // 第三个顶点
+  };
+  
+  // 重置位置到原点
+  resetPosition();
+  
+  // 确保小车处于空闲状态
+  stopNavigation();
+  HAL_Delay(1000);
+  
+  // 依次导航到每个顶点
+  for (int i = 1; i < 5; i++) 
   {
-    printf("�???????????????始导航到目标�???????????????: (%.2f, %.2f)\r\n", x, y);
+    int point_idx = i % 4;  // 循环回到起点
+    float x = waypoints[point_idx][0];
+    float y = waypoints[point_idx][1];
     
-    // 等待导航完成
-    while (getNavigationState() == NAVY_STATE_MOVING)
-    {
-      // 每隔�???????????????秒输出当前位�???????????????
-      HAL_Delay(1000);
-      Position_t pos = getCurrentPosition();
-      printf("当前位置: (%.2f, %.2f), 航向�???????????????: %.2f°\r\n", 
-             pos.x, pos.y, rad2deg(pos.theta));
-    }
     
-    // 导航完成
-    if (getNavigationState() == NAVY_STATE_ARRIVED)
+    // 在开始新的导航前，确保小车完全停止
+    set_target_speed(0.0f, 0.0f);
+    HAL_Delay(2000);
+    
+    // 开始导航到目标点
+    if (startNavigation(x, y))
     {
-      printf("已到达目标点!\r\n");
+      
+      // 等待导航完成
+      uint32_t startTime = HAL_GetTick();
+      uint32_t lastPrintTime = 0;
+      
+      while (getNavigationState() == NAVY_STATE_MOVING)
+      {
+        uint32_t currentTime = HAL_GetTick();
+        
+        // 每隔1秒输出当前位置和目标信息
+        if (currentTime - lastPrintTime >= 1000)
+        {
+          Position_t pos = getCurrentPosition();
+          float targetAngle = calculateTargetAngle();
+          float angleDiff = normalizeAngle(targetAngle - pos.theta);
+          float distance = calculateDistance(pos, targetPosition);
+          
+ 
+          lastPrintTime = currentTime;
+        }
+        
+        // 超时保护，防止卡在某个点
+        if (currentTime - startTime > 60000)  // 60秒超时
+        {
+          stopNavigation();
+          break;
+        }
+        
+        // 给系统时间处理其他任务
+        HAL_Delay(10);
+      }
+      
+      // 导航完成
+      if (getNavigationState() == NAVY_STATE_ARRIVED)
+      {
+        Position_t pos = getCurrentPosition();
+        
+        // 在每个顶点停留更长时间
+        HAL_Delay(1000);
+      }
+      else
+      {
+        break;
+      }
     }
     else
     {
-      printf("导航停止!\r\n");
+      break;
     }
   }
-  else
-  {
-    printf("无法�???????????????始导航，请检查当前状态或目标点是否有效\r\n");
-  }
+  
+  
+  // 确保小车停止
+  stopNavigation();
+  set_target_speed(0.0f, 0.0f);
 }
 /* USER CODE END 0 */
 
@@ -200,9 +256,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
   car_init();
   Uart_Init();
-  setNavigationParameters(0.5f, 20.0f, 45.0f); 
-  startNavigation(8,4);
-
+  //setNavigationParameters(0.5f, 20.0f, 45.0f); 
+ //startNavigation(8,0);
+//navyTest();
   
   /* USER CODE END 2 */
 
