@@ -21,6 +21,7 @@
 #include "M_usart.h"
 #include "M_navy.h"
 #include "oled.h"
+#include "string.h"
 
 //资源分配表：
 /*

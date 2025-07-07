@@ -164,7 +164,6 @@ void wheels_pid_control(float left_target_speed, float right_target_speed)
     float right_pwm = right_wheel_pid_control(right_target_speed);                                                                                                              // 计算右轮PID输出
     Motor_PWM_Output((int16_t)left_pwm, (int16_t)right_pwm);                                                                                                                    // 输出PWM到电机
     //printf("112actual:%f,%f,%d,%f,%f,%f\n", left_wheel_speed, right_wheel_speed, (int16_t)g_left_target_speed, IMU_data.YawZ, left_wheel_pid.kp,  currentPosition.x); // 打印实际速度
-          send_firewater_data();                                                                                                                                                                      // printf("pwm:%f,%f\n",left_pwm,right_pwm);
 }
 
 // 带转向控制的PID速度控制

@@ -66,7 +66,7 @@ void car_init(void)
   // 初始化PID控制�???????????????
   pid_init_all();
   // 设置初始目标速度0
-  set_target_speed(30.0f, 30.0f);
+  //set_target_speed(30.0f, 30.0f);
   // 初始化导航系�???????????????
   navy_init();
 	
@@ -201,7 +201,7 @@ int main(void)
   car_init();
   Uart_Init();
   setNavigationParameters(0.5f, 20.0f, 45.0f); 
-  startNavigation(8,0);
+  startNavigation(8,4);
 
   
   /* USER CODE END 2 */

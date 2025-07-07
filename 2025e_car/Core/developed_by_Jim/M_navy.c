@@ -264,40 +264,48 @@ void updateNavigation_control(void)
         return;
     }
     
-    // 计算目标角度和当前角度的差值
+    // 计算目标角度
     float targetAngle = calculateTargetAngle();
+    // 将弧度转换为角度
+    float targetAngleDeg = rad2deg(targetAngle);
+    
+    // 使用PID控制器计算转向控制量（角度闭环控制）
+    float angularControl = yaw_pid_control(targetAngleDeg);
+   // printf("targetAngleDeg: %.2f, Angular Control: %.2f\n", targetAngleDeg, angularControl);
+    // 获取当前角度和目标角度的差值（用于调整线速度）
     float angleDiff = normalizeAngle(targetAngle - currentPosition.theta);
     
-    // 根据角度差计算转向控制量（角度制）
-    float angularControl = rad2deg(angleDiff);
-    
-    // 限制角速度
-    if (angularControl > maxAngularVelocity)
-        angularControl = maxAngularVelocity;
-    else if (angularControl < -maxAngularVelocity)
-        angularControl = -maxAngularVelocity;
-    
     // 计算线速度控制量 - 根据距离和角度差调整速度
-    float velocityControl = targetVelocity * (1.0f - fabsf(angleDiff) / PI);
+    float velocityControl = targetVelocity;
     
-    // 确保最小速度
-    if (velocityControl < targetVelocity * 0.3f)
-        velocityControl = targetVelocity * 0.3f;
-    
-    // 如果接近目标点，减速
-    if (distance < 1.0f)
+    // 当角度差较大时，降低线速度以优先调整方向
+    if (fabsf(angleDiff) > 0.5f) // 30度以上的角度差
     {
-        velocityControl *= (distance / 3.0f);
-        if (velocityControl < 5.0f) // 最小速度限制
-            velocityControl = 5.0f;
+        // 角度差越大，速度越低，最低为30%
+        velocityControl *= (1.0f - 0.7f * fabsf(angleDiff) / PI);
+        if (velocityControl < targetVelocity * 0.5f)
+            velocityControl = targetVelocity * 0.5f;
+    }
+    
+    // 如果接近目标点，平滑减速
+    if (distance < 1.0f) // 提前在3dm处开始减速
+    {
+        // 使用二次函数减速曲线，比线性减速更平滑
+        float slowDownFactor = (distance * distance) / 3.0f;
+        if (slowDownFactor < 0.5f) slowDownFactor = 0.5f; // 最低30%速度
+
+        velocityControl *= slowDownFactor;
+        
+        // 设置最低速度，避免过慢
+        if (velocityControl < 8.0f)
+            velocityControl = 8.0f;
     }
     
     // 设置左右轮目标速度
-    // 这里需要根据你的控制算法转换角速度和线速度为左右轮速度
-    // 简单实现：根据角度差调整左右轮速度差异
-    float leftSpeed = velocityControl - angularControl * 0.5f;
-    float rightSpeed = velocityControl + angularControl * 0.5f;
-    
+    // 使用PID控制器的输出直接控制左右轮差速
+    float leftSpeed = velocityControl - angularControl;
+    float rightSpeed = velocityControl + angularControl;
+    //printf("velocityControl: %.2f, leftSpeed: %.2f, rightSpeed: %.2f\n", velocityControl, leftSpeed, rightSpeed);
     // 设置电机速度
     set_target_speed(leftSpeed, rightSpeed);
 }
