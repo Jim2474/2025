@@ -103,7 +103,7 @@ void TIM2_Task_100Hz(void)
  	//HAL_UART_Transmit(&huart3, (uint8_t *)&jim, 1, HAL_MAX_DELAY);
 //printf("%f,%f\n",g_left_target_speed,g_right_target_speed);
   // 2. 更新导航控制
- // updateNavigation_control();
+  updateNavigation_control();
   
   // 3. 执行PID控制计算和电机输???????????????
   // 包含速度环和转向环的控制
@@ -111,7 +111,6 @@ void TIM2_Task_100Hz(void)
 	wheels_pid_control_auto();
   // 4. 可以添加其他低频任务，如LED状?更新?按键检测等
   // 这里暂时不添加其他任???????????????
-      printf("left_E:%f,right_E%f,speed%d\n",left_wheel_speed,right_wheel_speed,right_encoder_count) ;                                                                                                               // ??PWM???
 
 }
 
@@ -258,7 +257,7 @@ int main(void)
   Uart_Init();
   //setNavigationParameters(0.5f, 20.0f, 45.0f); 
  //startNavigation(8,0);
-//navyTest();
+navyTest();
   
   /* USER CODE END 2 */
 

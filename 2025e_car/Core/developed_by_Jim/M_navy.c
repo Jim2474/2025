@@ -311,7 +311,6 @@ void updateNavigation_control(void)
     // 使用PID控制器的输出直接控制左右轮差速
     float leftSpeed = velocityControl - angularControl*toimprove;
     float rightSpeed = velocityControl + angularControl*toimprove;
-    printf("velocityControl: %.2f, leftSpeed: %.2f, rightSpeed: %.2f\n", velocityControl, leftSpeed, rightSpeed);
     // 设置电机速度
     set_target_speed(leftSpeed, rightSpeed);
 }
