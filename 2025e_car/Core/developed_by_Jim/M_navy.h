@@ -22,7 +22,9 @@ typedef struct {
 typedef enum {
     NAVY_STATE_IDLE,       // 空闲状态
     NAVY_STATE_MOVING,     // 移动状态
-    NAVY_STATE_ARRIVED     // 已到达目标
+    NAVY_STATE_ARRIVED,    // 已到达目标
+    NAVY_STATE_FIRE,       // 执行灭火任务
+    NAVY_STATE_RETURN      // 返回起点
 } NavyState_t;
 
 // 全局位置变量

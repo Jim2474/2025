@@ -22,6 +22,7 @@
 #include "M_navy.h"
 #include "oled.h"
 #include "string.h"
+#include "Mission.h"
 
 //资源分配表：
 /*

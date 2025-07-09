@@ -49,25 +49,25 @@ extern int32_t right_encoder_count;
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-//小车初始???????????????
+//ĺ°č˝Śĺĺ§???????????????
 void car_init(void)
 {
   
   Motor_PWM_StartAll();//TIM1 pwm11
-  HAL_TIM_Base_Start_IT(&htim2);//1ms定时
+  HAL_TIM_Base_Start_IT(&htim2);//1msĺŽćś
   OLED_Init();
   OLED_Clear();
-  // 启动左轮编码???????????????(TIM3)
+  // ĺŻĺ¨ĺˇŚč˝Žçźç ???????????????(TIM3)
   HAL_TIM_Encoder_Start(&htim3, TIM_CHANNEL_ALL);
-  // 启动右轮编码???????????????(TIM4)
+  // ĺŻĺ¨ĺłč˝Žçźç ???????????????(TIM4)
   HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
   Uart_Init();
       
-  // 初始化PID控制???????????????
+  // ĺĺ§ĺPIDć§ĺś???????????????
   pid_init_all();
-  // 设置初始目标速度0
+  // čŽžç˝Žĺĺ§çŽć éĺşŚ0
   set_target_speed(0.0f, 0.0f);
-  // 初始化导航系???????????????
+  // ĺĺ§ĺĺŻźčŞçłť???????????????
   navy_init();
 	
 }
@@ -84,76 +84,76 @@ void SystemClock_Config(void);
 /* USER CODE BEGIN 0 */
 void TIM2_Task_1000Hz(void)
 {
-  // 1000Hz任务，每1ms执行??????????????????????????????
+  // 1000HzäťťĺĄďźćŻ1msć§čĄ??????????????????????????????
   //HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1);
-  // 1. 更新编码器计数和转?计???????????????
+  // 1. ć´ć°çźç ĺ¨čŽĄć°ĺč˝Ź?čŽĄ???????????????
   encoder_count();
-  // 2. 计算线?度 
+  // 2. čŽĄçŽçşż?ĺşŚ 
   Calculate_speed(left_wheel_rpm, right_wheel_rpm);
 }
 
 void TIM2_Task_100Hz(void)
 {
-  // 100Hz任务，每10ms执行??????????????????????????????
+  // 100HzäťťĺĄďźćŻ10msć§čĄ??????????????????????????????
     HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1);
 
 //HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1);
-  // 1. 更新当前位置坐标
+  // 1. ć´ć°ĺ˝ĺä˝ç˝Žĺć 
   updatePosition();
  	//HAL_UART_Transmit(&huart3, (uint8_t *)&jim, 1, HAL_MAX_DELAY);
 //printf("%f,%f\n",g_left_target_speed,g_right_target_speed);
-  // 2. 更新导航控制
+  // 2. ć´ć°ĺŻźčŞć§ĺś
   updateNavigation_control();
   
-  // 3. 执行PID控制计算和电机输???????????????
-  // 包含速度环和转向环的控制
+  // 3. ć§čĄPIDć§ĺśčŽĄçŽĺçľćşčž???????????????
+  // ĺĺŤéĺşŚçŻĺč˝ŹĺçŻçć§ĺś
   //wheels_pid_control_auto_with_yaw();
 	wheels_pid_control_auto();
-  // 4. 可以添加其他低频任务，如LED状?更新?按键检测等
-  // 这里暂时不添加其他任???????????????
+  // 4. ĺŻäťĽćˇťĺ ĺśäťä˝é˘äťťĺĄďźĺŚLEDçś?ć´ć°?ćéŽćŁćľç­
+  // čżéććśä¸ćˇťĺ ĺśäťäťť???????????????
 
 }
 
 /**
- * @brief 导航测试函数 - 让小车走一个正方形
+ * @brief ĺŻźčŞćľčŻĺ˝ć° - čŽŠĺ°č˝Śčľ°ä¸ä¸Şć­Łćšĺ˝˘
  */
 void navyTest(void)
 {
-  // 设置导航参数 - 可根据实际情况调整
-  setNavigationParameters(0.5f, 15.0f, 45.0f);  // 距离阈值0.5dm，线速度15cm/s，最大角速度45°/s
+  // čŽžç˝ŽĺŻźčŞĺć° - ĺŻć šćŽĺŽéćĺľč°ć´
+  setNavigationParameters(0.5f, 15.0f, 45.0f);  // čˇçŚťéĺź0.5dmďźçşżéĺşŚ15cm/sďźćĺ¤§č§éĺşŚ45Â°/s
   
-  // 定义正方形的四个顶点坐标
+  // ĺŽäšć­Łćšĺ˝˘çĺä¸ŞéĄśçšĺć 
   float waypoints[4][2] = {
-    {0.0f, 0.0f},    // 起点/终点
-    {8.0f, 0.0f},   // 第一个顶点
-    {8.0f, 8.0f},  // 第二个顶点
-    {0.0f, 8.0f}    // 第三个顶点
+    {0.0f, 0.0f},    // čľˇçš/çťçš
+    {8.0f, 0.0f},   // çŹŹä¸ä¸ŞéĄśçš
+    {8.0f, 8.0f},  // çŹŹäşä¸ŞéĄśçš
+    {0.0f, 8.0f}    // çŹŹä¸ä¸ŞéĄśçš
   };
   
-  // 重置位置到原点
+  // éç˝Žä˝ç˝Žĺ°ĺçš
   resetPosition();
   
-  // 确保小车处于空闲状态
+  // çĄŽäżĺ°č˝Śĺ¤äşçŠşé˛çść
   stopNavigation();
   HAL_Delay(1000);
   
-  // 依次导航到每个顶点
+  // äžćŹĄĺŻźčŞĺ°ćŻä¸ŞéĄśçš
   for (int i = 1; i < 5; i++) 
   {
-    int point_idx = i % 4;  // 循环回到起点
+    int point_idx = i % 4;  // ĺžŞçŻĺĺ°čľˇçš
     float x = waypoints[point_idx][0];
     float y = waypoints[point_idx][1];
     
     
-    // 在开始新的导航前，确保小车完全停止
+    // ĺ¨ĺźĺ§ć°çĺŻźčŞĺďźçĄŽäżĺ°č˝ŚĺŽĺ¨ĺć­˘
     set_target_speed(0.0f, 0.0f);
     HAL_Delay(2000);
     
-    // 开始导航到目标点
+    // ĺźĺ§ĺŻźčŞĺ°çŽć çš
     if (startNavigation(x, y))
     {
       
-      // 等待导航完成
+      // ç­ĺžĺŻźčŞĺŽć
       uint32_t startTime = HAL_GetTick();
       uint32_t lastPrintTime = 0;
       
@@ -161,7 +161,7 @@ void navyTest(void)
       {
         uint32_t currentTime = HAL_GetTick();
         
-        // 每隔1秒输出当前位置和目标信息
+        // ćŻé1ç§čžĺşĺ˝ĺä˝ç˝ŽĺçŽć äżĄćŻ
         if (currentTime - lastPrintTime >= 1000)
         {
           Position_t pos = getCurrentPosition();
@@ -173,23 +173,23 @@ void navyTest(void)
           lastPrintTime = currentTime;
         }
         
-        // 超时保护，防止卡在某个点
-        if (currentTime - startTime > 60000)  // 60秒超时
+        // čśćśäżć¤ďźé˛ć­˘ĺĄĺ¨ćä¸Şçš
+        if (currentTime - startTime > 60000)  // 60ç§čśćś
         {
           stopNavigation();
           break;
         }
         
-        // 给系统时间处理其他任务
+        // çťçłťçťćśé´ĺ¤çĺśäťäťťĺĄ
         HAL_Delay(10);
       }
       
-      // 导航完成
+      // ĺŻźčŞĺŽć
       if (getNavigationState() == NAVY_STATE_ARRIVED)
       {
         Position_t pos = getCurrentPosition();
         
-        // 在每个顶点停留更长时间
+        // ĺ¨ćŻä¸ŞéĄśçšĺçć´éżćśé´
         HAL_Delay(1000);
       }
       else
@@ -204,7 +204,7 @@ void navyTest(void)
   }
   
   
-  // 确保小车停止
+  // çĄŽäżĺ°č˝Śĺć­˘
   stopNavigation();
   set_target_speed(0.0f, 0.0f);
 }
@@ -280,11 +280,11 @@ navyTest();
     /*
     if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET)
     {
-      // 按下按键时，执行导航测试
-      HAL_Delay(200);  // 按键消抖
+      // ćä¸ćéŽćśďźć§čĄĺŻźčŞćľčŻ
+      HAL_Delay(200);  // ćéŽćść
       if (HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET)
       {
-        // 测试导航到坐标点(10.0, 10.0)
+        // ćľčŻĺŻźčŞĺ°ĺć çš(10.0, 10.0)
         navyTest(10.0f, 10.0f);
       }
     }
