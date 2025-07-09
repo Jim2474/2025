@@ -569,7 +569,8 @@ void Mission_Update(void)
             
         case MISSION_FIRE6_RETURN:
             // 从火源6返回
-            if (navyState == NAVY_STATE_ARRIVED) {
+            if (navyState == NAVY_STATE_ARRIVED)
+             {
                 // 到达当前路径点
                 currentPathIndex++;
                 
