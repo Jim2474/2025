@@ -34,6 +34,14 @@
 extern int32_t left_encoder_count;
 extern int32_t right_encoder_count;
 
+// 视觉数据结构体定义
+typedef struct {
+    float error_x;           // X方向误差
+    float error_y;           // Y方向误差
+    uint8_t target_detected; // 目标检测标志
+    uint8_t data_ready;      // 数据就绪标志
+} Vision_Data_t;
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -49,7 +57,7 @@ extern int32_t right_encoder_count;
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-//ĺ°č˝Śĺĺ§???????????????
+// 小车初始化函数
 void car_init(void)
 {
   
@@ -72,6 +80,11 @@ void car_init(void)
 	
 }
 int jim =0;
+
+// 视觉数据接收缓冲区
+uint8_t vision_rx_buffer[20]; // 视觉数据接收缓冲区
+Vision_Data_t vision_data = {0, 0, 0, 0}; // 视觉数据结构体实例
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -112,6 +125,60 @@ void TIM2_Task_100Hz(void)
   // 4. ĺŻäťĽćˇťĺ ĺśäťä˝é˘äťťĺĄďźĺŚLEDçś?ć´ć°?ćéŽćŁćľç­
   // čżéććśä¸ćˇťĺ ĺśäťäťť???????????????
 
+    // 处理视觉数据
+    if (vision_data.data_ready) {
+        // 将视觉数据传递给舵机控制模块
+        Mission_ProcessVisionData(vision_data.error_x, vision_data.error_y, vision_data.target_detected);
+        
+        // 清除数据就绪标志
+        vision_data.data_ready = 0;
+    }
+    
+    // 更新舵机控制
+    Servo_Update();
+}
+
+// 解析视觉数据 这部分还要另外写一个函数放在里面 放在这里不行
+void Parse_Vision_Data(uint8_t *data, uint8_t length)
+{
+    // 简单的解析示例，实际应根据视觉传感器的数据格式调整
+    // 假设数据格式为: 帧头(1字节) + error_x(4字节) + error_y(4字节) + target_detected(1字节) + 校验(1字节)
+    if (length >= 11 && data[0] == 0xAA) { // 0xAA为帧头
+        // 解析error_x（浮点数）
+        float *px = (float*)(data + 1);
+        vision_data.error_x = *px;
+        
+        // 解析error_y（浮点数）
+        float *py = (float*)(data + 5);
+        vision_data.error_y = *py;
+        
+        // 解析target_detected（布尔值）
+        vision_data.target_detected = data[9];
+        
+        // 校验（简单示例，实际应根据需求实现）
+        uint8_t checksum = 0;
+        for (int i = 0; i < 10; i++) {
+            checksum += data[i];
+        }
+        
+        if (checksum == data[10]) {
+            // 校验通过，设置数据就绪标志
+            vision_data.data_ready = 1;
+        }
+    }
+}
+
+// UART接收回调函数
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+    // 假设使用UART6接收视觉数据
+    if (huart->Instance == USART6) {
+        // 解析接收到的视觉数据
+        Parse_Vision_Data(vision_rx_buffer, sizeof(vision_rx_buffer));
+        
+        // 重新启动接收
+        HAL_UART_Receive_DMA(huart, vision_rx_buffer, sizeof(vision_rx_buffer));
+    }
 }
 
 /**
@@ -259,6 +326,15 @@ int main(void)
  //startNavigation(8,0);
 navyTest();
   
+  // 启动视觉数据接收 视觉解析串口还没设计！
+  //HAL_UART_Receive_DMA(&huart6, vision_rx_buffer, sizeof(vision_rx_buffer));
+  
+  // 初始化舵机控制模块
+  Servo_Init();
+  
+  // 初始化任务系统
+  Mission_Init();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

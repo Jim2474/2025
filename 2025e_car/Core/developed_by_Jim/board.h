@@ -23,6 +23,7 @@
 #include "oled.h"
 #include "string.h"
 #include "Mission.h"
+#include "M_servo.h"
 
 //资源分配表：
 /*

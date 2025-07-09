@@ -18,6 +18,15 @@ typedef enum {
     MISSION_COMPLETE        // 任务完成
 } MissionState_t;
 
+// 灭火过程状态枚举
+typedef enum {
+    FIRE_PROCESS_POSITIONING,  // 精确定位阶段
+    FIRE_PROCESS_AIMING,       // 瞄准火源阶段
+    FIRE_PROCESS_FIRING,       // 激光灭火阶段
+    FIRE_PROCESS_CONFIRMING,   // 确认灭火成功阶段
+    FIRE_PROCESS_COMPLETED     // 灭火完成阶段
+} FireProcessState_t;
+
 // 初始化任务
 void Mission_Init(void);
 
@@ -47,5 +56,11 @@ void Mission_Stop(void);
 
 // 重置任务
 void Mission_Reset(void);
+
+// 处理视觉反馈数据
+void Mission_ProcessVisionData(float error_x, float error_y, uint8_t target_detected);
+
+// 获取当前灭火处理状态
+FireProcessState_t Mission_GetFireProcessState(void);
 
 #endif /* __MISSION_H */ 
