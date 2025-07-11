@@ -477,172 +477,151 @@ void Mission_Update(void)
     }
 
     // 根据当前任务状态进行处理
-    switch (currentMissionState)
-    {
-    case MISSION_IDLE:
-        // 空闲状态，不做处理
-        break;
-
-    case MISSION_FIRE1_GOING:
-        // 前往火源1状态
-        if (navyState == NAVY_STATE_ARRIVED)
-        {
-            // 到达当前路径点
-            currentPathIndex++;
-
-            if (currentPathIndex < totalPathPoints)
-            {
-                // 继续前往下一个路径点
-                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+    switch (currentMissionState) {
+        case MISSION_IDLE:
+            // 空闲状态，不做处理
+            break;
+            
+        case MISSION_FIRE1_GOING:
+            // 前往火源1状态
+            if (navyState == NAVY_STATE_ARRIVED) {
+                // 到达当前路径点
+                currentPathIndex++;
+                
+                if (currentPathIndex < totalPathPoints) {
+                    // 继续前往下一个路径点
+                    setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                    startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                } else {
+                    // 到达火源1附近，切换到灭火状态
+                    currentMissionState = MISSION_FIRE1_FIGHTING;
+                    
+                    // 开始灭火处理
+                    Mission_StartFireProcessing(1);
+                }
             }
-            else
-            {
-                // 到达火源1附近，切换到灭火状态
-                currentMissionState = MISSION_FIRE1_FIGHTING;
-
-                // 开始灭火处理
-                Mission_StartFireProcessing(1);
+            break;
+            
+        case MISSION_FIRE1_FIGHTING:
+            // 灭火1状态
+            Mission_HandleFireFighting();
+            break;
+            
+        case MISSION_FIRE1_RETURN:
+            // 火源1返回状态
+            if (navyState == NAVY_STATE_ARRIVED) {
+                // 到达当前路径点
+                currentPathIndex++;
+                
+                if (currentPathIndex < totalPathPoints) {
+                    // 继续前往下一个路径点
+                    setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                    startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                } else {
+                    // 返回完成，任务结束
+                    currentMissionState = MISSION_COMPLETE;
+                }
             }
-        }
-        break;
-
-    case MISSION_FIRE1_FIGHTING:
-        // 灭火1状态
-        Mission_HandleFireFighting();
-        break;
-
-    case MISSION_FIRE1_RETURN:
-        // 火源1返回状态
-        if (navyState == NAVY_STATE_ARRIVED)
-        {
-            // 到达当前路径点
-            currentPathIndex++;
-
-            if (currentPathIndex < totalPathPoints)
-            {
-                // 继续前往下一个路径点
-                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+            break;
+            
+        case MISSION_FIRE2_GOING:
+            // 前往火源2状态
+            if (navyState == NAVY_STATE_ARRIVED) {
+                // 到达当前路径点
+                currentPathIndex++;
+                
+                if (currentPathIndex < totalPathPoints) {
+                    // 继续前往下一个路径点
+                    setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                    startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                } else {
+                    // 到达火源2附近，切换到灭火状态
+                    currentMissionState = MISSION_FIRE2_FIGHTING;
+                    
+                    // 开始灭火处理
+                    Mission_StartFireProcessing(2);
+                }
             }
-            else
-            {
-                // 返回完成，任务结束
-                currentMissionState = MISSION_COMPLETE;
+            break;
+            
+        case MISSION_FIRE2_FIGHTING:
+            // 灭火2状态
+            Mission_HandleFireFighting();
+            break;
+            
+        case MISSION_FIRE2_RETURN:
+            // 从火源2返回
+            if (navyState == NAVY_STATE_ARRIVED) {
+                // 到达当前路径点
+                currentPathIndex++;
+                
+                if (currentPathIndex < totalPathPoints) {
+                    // 前往下一个路径点
+                    setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                    startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                } else {
+                    // 返回完成，任务结束
+                    currentMissionState = MISSION_COMPLETE;
+                    stopNavigation();
+                }
             }
-        }
-        break;
-
-    case MISSION_FIRE2_GOING:
-        // 前往火源2状态
-        if (navyState == NAVY_STATE_ARRIVED)
-        {
-            // 到达当前路径点
-            currentPathIndex++;
-
-            if (currentPathIndex < totalPathPoints)
-            {
-                // 继续前往下一个路径点
-                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+            break;
+            
+        case MISSION_FIRE6_GOING:
+            // 前往火源6状态
+            if (navyState == NAVY_STATE_ARRIVED) {
+                // 到达当前路径点
+                currentPathIndex++;
+                
+                if (currentPathIndex < totalPathPoints) {
+                    // 继续前往下一个路径点
+                    setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                    startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                } 
+                else 
+                {
+                    // 到达火源6附近，切换到灭火状态
+                    currentMissionState = MISSION_FIRE6_FIGHTING;
+                    
+                    // 开始灭火处理
+                    Mission_StartFireProcessing(6);
+                }
             }
-            else
-            {
-                // 到达火源2附近，切换到灭火状态
-                currentMissionState = MISSION_FIRE2_FIGHTING;
-
-                // 开始灭火处理
-                Mission_StartFireProcessing(2);
+            break;
+            
+        case MISSION_FIRE6_FIGHTING:
+            // 灭火6状态
+            Mission_HandleFireFighting();
+            break;
+            
+        case MISSION_FIRE6_RETURN:
+            // 从火源6返回
+            if (navyState == NAVY_STATE_ARRIVED) {
+                // 到达当前路径点
+                currentPathIndex++;
+                
+                if (currentPathIndex < totalPathPoints) {
+                    // 前往下一个路径点
+                    setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                    startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                } 
+                else 
+                {
+                    // 返回完成，任务结束
+                    currentMissionState = MISSION_COMPLETE;
+                    stopNavigation();
+                }
             }
-        }
-        break;
-
-    case MISSION_FIRE2_FIGHTING:
-        // 灭火2状态
-        Mission_HandleFireFighting();
-        break;
-
-    case MISSION_FIRE2_RETURN:
-        // 从火源2返回
-        if (navyState == NAVY_STATE_ARRIVED)
-        {
-            // 到达当前路径点
-            currentPathIndex++;
-
-            if (currentPathIndex < totalPathPoints)
-            {
-                // 前往下一个路径点
-                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-            }
-            else
-            {
-                // 返回完成，任务结束
-                currentMissionState = MISSION_COMPLETE;
-                stopNavigation();
-            }
-        }
-        break;
-
-    case MISSION_FIRE6_GOING:
-        // 前往火源6状态
-        if (navyState == NAVY_STATE_ARRIVED)
-        {
-            // 到达当前路径点
-            currentPathIndex++;
-
-            if (currentPathIndex < totalPathPoints)
-            {
-                // 继续前往下一个路径点
-                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-            }
-            else
-            {
-                // 到达火源6附近，切换到灭火状态
-                currentMissionState = MISSION_FIRE6_FIGHTING;
-
-                // 开始灭火处理
-                Mission_StartFireProcessing(6);
-            }
-        }
-        break;
-
-    case MISSION_FIRE6_FIGHTING:
-        // 灭火6状态
-        Mission_HandleFireFighting();
-        break;
-
-    case MISSION_FIRE6_RETURN:
-        // 从火源6返回
-        if (navyState == NAVY_STATE_ARRIVED)
-        {
-            // 到达当前路径点
-            currentPathIndex++;
-
-            if (currentPathIndex < totalPathPoints)
-            {
-                // 前往下一个路径点
-                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-            }
-            else
-            {
-                // 返回完成，任务结束
-                currentMissionState = MISSION_COMPLETE;
-                stopNavigation();
-            }
-        }
-        break;
-
-    case MISSION_COMPLETE:
-        // 任务完成状态，不做处理
-        break;
-
-    default:
-        // 未知状态，重置为空闲
-        currentMissionState = MISSION_IDLE;
-        break;
+            break;
+            
+        case MISSION_COMPLETE:
+            // 任务完成状态，不做处理
+            break;
+            
+        default:
+            // 未知状态，重置为空闲
+            currentMissionState = MISSION_IDLE;
+            break;
     }
 }
 
