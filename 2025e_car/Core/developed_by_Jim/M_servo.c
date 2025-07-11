@@ -190,7 +190,7 @@ float Servo_GetYAngle(void)
  * @brief 处理视觉反馈数据
  * @param error_x X方向误差
  * @param error_y Y方向误差
- * @param target_detected 目标检测标志(1:检测到目标 0:未检测到目标)
+ * @param target_detected 1目标检测标志(1:检测到目标 0:未检测到目标)
  */
 void Servo_ProcessVisionData(float error_x, float error_y, uint8_t target_detected)
 {
