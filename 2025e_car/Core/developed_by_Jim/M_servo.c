@@ -23,11 +23,11 @@ void Servo_Init(void)
     /* 伪代码：定时器初始化部分，后续需要替换为实际的HAL库代码 */
     // 1. 初始化定时器为PWM模式
     // 配置TIMx为PWM模式，频率50Hz (周期20ms)
-    HAL_TIM_PWM_Init(&htim2);
+    HAL_TIM_PWM_Init(&htim1);
 
     // 3. 启动PWM输出
-    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_1);
-    HAL_TIM_PWM_Start(&htim2, TIM_CHANNEL_2);
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_3);
+    HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
 
     // 初始化X舵机PID控制器
    pid_init(&servo_x.pid, SERVO_PID_KP, SERVO_PID_KI, SERVO_PID_KD,
@@ -279,11 +279,11 @@ static void Servo_SetPWM(uint32_t channel, uint32_t pulse)
     // 使用HAL库设置PWM值
     switch (channel)
     {
-    case TIM_CHANNEL_1:
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_1, pulse);
+    case TIM_CHANNEL_3:
+        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_3, pulse);
         break;
-    case TIM_CHANNEL_2:
-        __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_2, pulse);
+    case TIM_CHANNEL_4:
+        __HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_4, pulse);
         break;
     default:
         break;

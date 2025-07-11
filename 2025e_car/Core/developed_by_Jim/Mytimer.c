@@ -7,7 +7,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
  
 
-    if(htim->Instance == TIM1)
+    if(htim->Instance == TIM2)
     {
 
         static uint8_t cnt_100Hz = 0;

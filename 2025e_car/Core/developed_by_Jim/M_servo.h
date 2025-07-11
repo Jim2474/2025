@@ -7,8 +7,8 @@
 #include "M_pid.h"  // 确保M_pid.h被正确包含
 
 /* 舵机通道定义 */
-#define SERVO_X_CHANNEL TIM_CHANNEL_1
-#define SERVO_Y_CHANNEL TIM_CHANNEL_2
+#define SERVO_X_CHANNEL TIM_CHANNEL_3
+#define SERVO_Y_CHANNEL TIM_CHANNEL_4
 
 /* 舵机角度限制 */
 #define SERVO_X_MIN_ANGLE 0.0f

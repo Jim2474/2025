@@ -61,10 +61,10 @@ void Error_Handler(void);
 #define LEFT_DIR_GPIO_Port GPIOE
 #define LEFT_DIRE11_Pin GPIO_PIN_11
 #define LEFT_DIRE11_GPIO_Port GPIOE
-#define RIGHT_DIR_Pin GPIO_PIN_13
+#define R_dir_Pin GPIO_PIN_12
+#define R_dir_GPIO_Port GPIOE
+#define RIGHT_DIR_Pin GPIO_PIN_15
 #define RIGHT_DIR_GPIO_Port GPIOE
-#define RIGHT_DIRE15_Pin GPIO_PIN_15
-#define RIGHT_DIRE15_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
 
