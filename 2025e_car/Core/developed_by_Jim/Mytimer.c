@@ -2,12 +2,12 @@
 #include "tim.h"
 
 
-// 定时器2中断调度
+// 定时器1中断调度
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
  
 
-    if(htim->Instance == TIM2)
+    if(htim->Instance == TIM1)
     {
 
         static uint8_t cnt_100Hz = 0;

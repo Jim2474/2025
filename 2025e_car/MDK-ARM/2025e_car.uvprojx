@@ -996,6 +996,16 @@
               <FileType>5</FileType>
               <FilePath>..\Core\developed_by_Jim\OLED_Data.h</FilePath>
             </File>
+            <File>
+              <FileName>M_servo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\developed_by_Jim\M_servo.c</FilePath>
+            </File>
+            <File>
+              <FileName>M_servo.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\developed_by_Jim\M_servo.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

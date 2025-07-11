@@ -34,11 +34,11 @@
 extern int32_t left_encoder_count;
 extern int32_t right_encoder_count;
 
-// 视觉数据结构体定义
+// 视觉数据结构体定�??
 typedef struct {
     float error_x;           // X方向误差
     float error_y;           // Y方向误差
-    uint8_t target_detected; // 目标检测标志
+    uint8_t target_detected; // 目标�??测标�??
     uint8_t data_ready;      // 数据就绪标志
 } Vision_Data_t;
 
@@ -57,12 +57,12 @@ typedef struct {
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-// 小车初始化函数
+// 小车初始化函�??
 void car_init(void)
 {
   
   Motor_PWM_StartAll();//TIM1 pwm11
-  HAL_TIM_Base_Start_IT(&htim2);//1msĺŽćś
+  HAL_TIM_Base_Start_IT(&htim1);//1msĺŽćś
   OLED_Init();
   OLED_Clear();
   // ĺŻĺ¨ĺˇŚč˝Žçźç ???????????????(TIM3)
@@ -77,13 +77,14 @@ void car_init(void)
   set_target_speed(0.0f, 0.0f);
   // ĺĺ§ĺĺŻźčŞçłť???????????????
   navy_init();
+  Servo_Init();
 	
 }
 int jim =0;
 
-// 视觉数据接收缓冲区
-uint8_t vision_rx_buffer[20]; // 视觉数据接收缓冲区
-Vision_Data_t vision_data = {0, 0, 0, 0}; // 视觉数据结构体实例
+// 视觉数据接收缓冲�??
+uint8_t vision_rx_buffer[20]; // 视觉数据接收缓冲�??
+Vision_Data_t vision_data = {0, 0, 0, 0}; // 视觉数据结构体实�??
 
 /* USER CODE END PV */
 
@@ -125,61 +126,61 @@ void TIM2_Task_100Hz(void)
   // 4. ĺŻäťĽćˇťĺ ĺśäťä˝é˘äťťĺĄďźĺŚLEDçś?ć´ć°?ćéŽćŁćľç­
   // čżéććśä¸ćˇťĺ ĺśäťäťť???????????????
 
-    // 处理视觉数据
-    if (vision_data.data_ready) {
-        // 将视觉数据传递给舵机控制模块
-        Mission_ProcessVisionData(vision_data.error_x, vision_data.error_y, vision_data.target_detected);
+    // // 处理视觉数据
+    // if (vision_data.data_ready) {
+    //     // 将视觉数据传递给舵机控制模块
+    //     Mission_ProcessVisionData(vision_data.error_x, vision_data.error_y, vision_data.target_detected);
         
-        // 清除数据就绪标志
-        vision_data.data_ready = 0;
-    }
+    //     // 清除数据就绪标志
+    //     vision_data.data_ready = 0;
+    // }
     
     // 更新舵机控制
     Servo_Update();
 }
 
-// 解析视觉数据 这部分还要另外写一个函数放在里面 放在这里不行
-void Parse_Vision_Data(uint8_t *data, uint8_t length)
-{
-    // 简单的解析示例，实际应根据视觉传感器的数据格式调整
-    // 假设数据格式为: 帧头(1字节) + error_x(4字节) + error_y(4字节) + target_detected(1字节) + 校验(1字节)
-    if (length >= 11 && data[0] == 0xAA) { // 0xAA为帧头
-        // 解析error_x（浮点数）
-        float *px = (float*)(data + 1);
-        vision_data.error_x = *px;
+// // 解析视觉数据 这部分还要另外写�??个函数放在里�?? 放在这里不行
+// void Parse_Vision_Data(uint8_t *data, uint8_t length)
+// {
+//     // �??单的解析示例，实际应根据视觉传感器的数据格式调整
+//     // 假设数据格式�??: 帧头(1字节) + error_x(4字节) + error_y(4字节) + target_detected(1字节) + 校验(1字节)
+//     if (length >= 11 && data[0] == 0xAA) { // 0xAA为帧�??
+//         // 解析error_x（浮点数�??
+//         float *px = (float*)(data + 1);
+//         vision_data.error_x = *px;
         
-        // 解析error_y（浮点数）
-        float *py = (float*)(data + 5);
-        vision_data.error_y = *py;
+//         // 解析error_y（浮点数�??
+//         float *py = (float*)(data + 5);
+//         vision_data.error_y = *py;
         
-        // 解析target_detected（布尔值）
-        vision_data.target_detected = data[9];
+//         // 解析target_detected（布尔�?�）
+//         vision_data.target_detected = data[9];
         
-        // 校验（简单示例，实际应根据需求实现）
-        uint8_t checksum = 0;
-        for (int i = 0; i < 10; i++) {
-            checksum += data[i];
-        }
+//         // 校验（简单示例，实际应根据需求实现）
+//         uint8_t checksum = 0;
+//         for (int i = 0; i < 10; i++) {
+//             checksum += data[i];
+//         }
         
-        if (checksum == data[10]) {
-            // 校验通过，设置数据就绪标志
-            vision_data.data_ready = 1;
-        }
-    }
-}
+//         if (checksum == data[10]) {
+//             // 校验通过，设置数据就绪标�??
+//             vision_data.data_ready = 1;
+//         }
+//     }
+// }
 
-// UART接收回调函数
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-    // 假设使用UART6接收视觉数据
-    if (huart->Instance == USART6) {
-        // 解析接收到的视觉数据
-        Parse_Vision_Data(vision_rx_buffer, sizeof(vision_rx_buffer));
+// // UART接收回调函数
+// void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+// {
+//     // 假设使用UART6接收视觉数据
+//     if (huart->Instance == USART6) {
+//         // 解析接收到的视觉数据
+//         Parse_Vision_Data(vision_rx_buffer, sizeof(vision_rx_buffer));
         
-        // 重新启动接收
-        HAL_UART_Receive_DMA(huart, vision_rx_buffer, sizeof(vision_rx_buffer));
-    }
-}
+//         // 重新启动接收
+//         HAL_UART_Receive_DMA(huart, vision_rx_buffer, sizeof(vision_rx_buffer));
+//     }
+// }
 
 /**
  * @brief ĺŻźčŞćľčŻĺ˝ć° - čŽŠĺ°č˝Śčľ°ä¸ä¸Şć­Łćšĺ˝˘
@@ -319,21 +320,22 @@ int main(void)
   MX_I2C2_Init();
   MX_USART2_UART_Init();
   MX_TIM5_Init();
+  MX_TIM1_Init();
   /* USER CODE BEGIN 2 */
   car_init();
   Uart_Init();
   //setNavigationParameters(0.5f, 20.0f, 45.0f); 
  //startNavigation(8,0);
-navyTest();
+  //navyTest();
   
-  // 启动视觉数据接收 视觉解析串口还没设计！
+  // 启动视觉数据接收 视觉解析串口还没设计�??
   //HAL_UART_Receive_DMA(&huart6, vision_rx_buffer, sizeof(vision_rx_buffer));
-  
-  // 初始化舵机控制模块
-  Servo_Init();
-  
-  // 初始化任务系统
-  Mission_Init();
+
+  // 初始化任务系�??
+  //Mission_Init();
+  HAL_Delay(5000);
+Servo_SetYAngle(180,10000);
+//Servo_SetXAngle(180,20);
 
   /* USER CODE END 2 */
 
@@ -349,7 +351,6 @@ navyTest();
 //        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_RESET);
 //           __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 80);
 //              __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 50);
-
 
 
 

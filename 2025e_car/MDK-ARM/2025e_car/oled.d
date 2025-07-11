@@ -41,4 +41,5 @@
   ..\Core\developed_by_Jim\M_navy.h \
   F:\1_keil5\ARM\ARMCLANG\include\math.h \
   F:\1_keil5\ARM\ARMCLANG\include\string.h \
+  ..\Core\developed_by_Jim\Mission.h ..\Core\developed_by_Jim\M_servo.h \
   F:\1_keil5\ARM\ARMCLANG\include\stdarg.h
