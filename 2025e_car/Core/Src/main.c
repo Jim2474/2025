@@ -34,11 +34,11 @@
 extern int32_t left_encoder_count;
 extern int32_t right_encoder_count;
 
-// 视觉数据结构体定�??
+// 视觉数据结构体定�???
 typedef struct {
     float error_x;           // X方向误差
     float error_y;           // Y方向误差
-    uint8_t target_detected; // 目标�??测标�??
+    uint8_t target_detected; // 目标�???测标�???
     uint8_t data_ready;      // 数据就绪标志
 } Vision_Data_t;
 
@@ -57,7 +57,7 @@ typedef struct {
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-// 小车初始化函�??
+// 小车初始化函�???
 void car_init(void)
 {
   
@@ -82,9 +82,9 @@ void car_init(void)
 }
 int jim =0;
 
-// 视觉数据接收缓冲�??
-uint8_t vision_rx_buffer[20]; // 视觉数据接收缓冲�??
-Vision_Data_t vision_data = {0, 0, 0, 0}; // 视觉数据结构体实�??
+// 视觉数据接收缓冲�???
+uint8_t vision_rx_buffer[20]; // 视觉数据接收缓冲�???
+Vision_Data_t vision_data = {0, 0, 0, 0}; // 视觉数据结构体实�???
 
 /* USER CODE END PV */
 
@@ -139,17 +139,17 @@ void TIM2_Task_100Hz(void)
     Servo_Update();
 }
 
-// // 解析视觉数据 这部分还要另外写�??个函数放在里�?? 放在这里不行
+// // 解析视觉数据 这部分还要另外写�???个函数放在里�??? 放在这里不行
 // void Parse_Vision_Data(uint8_t *data, uint8_t length)
 // {
-//     // �??单的解析示例，实际应根据视觉传感器的数据格式调整
-//     // 假设数据格式�??: 帧头(1字节) + error_x(4字节) + error_y(4字节) + target_detected(1字节) + 校验(1字节)
-//     if (length >= 11 && data[0] == 0xAA) { // 0xAA为帧�??
-//         // 解析error_x（浮点数�??
+//     // �???单的解析示例，实际应根据视觉传感器的数据格式调整
+//     // 假设数据格式�???: 帧头(1字节) + error_x(4字节) + error_y(4字节) + target_detected(1字节) + 校验(1字节)
+//     if (length >= 11 && data[0] == 0xAA) { // 0xAA为帧�???
+//         // 解析error_x（浮点数�???
 //         float *px = (float*)(data + 1);
 //         vision_data.error_x = *px;
         
-//         // 解析error_y（浮点数�??
+//         // 解析error_y（浮点数�???
 //         float *py = (float*)(data + 5);
 //         vision_data.error_y = *py;
         
@@ -163,7 +163,7 @@ void TIM2_Task_100Hz(void)
 //         }
         
 //         if (checksum == data[10]) {
-//             // 校验通过，设置数据就绪标�??
+//             // 校验通过，设置数据就绪标�???
 //             vision_data.data_ready = 1;
 //         }
 //     }
@@ -182,100 +182,8 @@ void TIM2_Task_100Hz(void)
 //     }
 // }
 
-/**
- * @brief ĺŻźčŞćľčŻĺ˝ć° - čŽŠĺ°č˝Śčľ°ä¸ä¸Şć­Łćšĺ˝˘
- */
-void navyTest(void)
-{
-  // čŽžç˝ŽĺŻźčŞĺć° - ĺŻć šćŽĺŽéćĺľč°ć´
-  setNavigationParameters(0.5f, 15.0f, 45.0f);  // čˇçŚťéĺź0.5dmďźçşżéĺşŚ15cm/sďźćĺ¤§č§éĺşŚ45Â°/s
-  
-  // ĺŽäšć­Łćšĺ˝˘çĺä¸ŞéĄśçšĺć 
-  float waypoints[4][2] = {
-    {0.0f, 0.0f},    // čľˇçš/çťçš
-    {8.0f, 0.0f},   // çŹŹä¸ä¸ŞéĄśçš
-    {8.0f, 8.0f},  // çŹŹäşä¸ŞéĄśçš
-    {0.0f, 8.0f}    // çŹŹä¸ä¸ŞéĄśçš
-  };
-  
-  // éç˝Žä˝ç˝Žĺ°ĺçš
-  resetPosition();
-  
-  // çĄŽäżĺ°č˝Śĺ¤äşçŠşé˛çść
-  stopNavigation();
-  HAL_Delay(1000);
-  
-  // äžćŹĄĺŻźčŞĺ°ćŻä¸ŞéĄśçš
-  for (int i = 1; i < 5; i++) 
-  {
-    int point_idx = i % 4;  // ĺžŞçŻĺĺ°čľˇçš
-    float x = waypoints[point_idx][0];
-    float y = waypoints[point_idx][1];
-    
-    
-    // ĺ¨ĺźĺ§ć°çĺŻźčŞĺďźçĄŽäżĺ°č˝ŚĺŽĺ¨ĺć­˘
-    set_target_speed(0.0f, 0.0f);
-    HAL_Delay(2000);
-    
-    // ĺźĺ§ĺŻźčŞĺ°çŽć çš
-    if (startNavigation(x, y))
-    {
-      
-      // ç­ĺžĺŻźčŞĺŽć
-      uint32_t startTime = HAL_GetTick();
-      uint32_t lastPrintTime = 0;
-      
-      while (getNavigationState() == NAVY_STATE_MOVING)
-      {
-        uint32_t currentTime = HAL_GetTick();
-        
-        // ćŻé1ç§čžĺşĺ˝ĺä˝ç˝ŽĺçŽć äżĄćŻ
-        if (currentTime - lastPrintTime >= 1000)
-        {
-          Position_t pos = getCurrentPosition();
-          float targetAngle = calculateTargetAngle();
-          float angleDiff = normalizeAngle(targetAngle - pos.theta);
-          float distance = calculateDistance(pos, targetPosition);
-          
- 
-          lastPrintTime = currentTime;
-        }
-        
-        // čśćśäżć¤ďźé˛ć­˘ĺĄĺ¨ćä¸Şçš
-        if (currentTime - startTime > 60000)  // 60ç§čśćś
-        {
-          stopNavigation();
-          break;
-        }
-        
-        // çťçłťçťćśé´ĺ¤çĺśäťäťťĺĄ
-        HAL_Delay(10);
-      }
-      
-      // ĺŻźčŞĺŽć
-      if (getNavigationState() == NAVY_STATE_ARRIVED)
-      {
-        Position_t pos = getCurrentPosition();
-        
-        // ĺ¨ćŻä¸ŞéĄśçšĺçć´éżćśé´
-        HAL_Delay(1000);
-      }
-      else
-      {
-        break;
-      }
-    }
-    else
-    {
-      break;
-    }
-  }
-  
-  
-  // çĄŽäżĺ°č˝Śĺć­˘
-  stopNavigation();
-  set_target_speed(0.0f, 0.0f);
-}
+
+
 /* USER CODE END 0 */
 
 /**
@@ -327,15 +235,18 @@ int main(void)
   //setNavigationParameters(0.5f, 20.0f, 45.0f); 
  //startNavigation(8,0);
   //navyTest();
-  
-  // 启动视觉数据接收 视觉解析串口还没设计�??
-  //HAL_UART_Receive_DMA(&huart6, vision_rx_buffer, sizeof(vision_rx_buffer));
 
-  // 初始化任务系�??
+  // 初始化任务系�???
   //Mission_Init();
-  HAL_Delay(5000);
-Servo_SetXAngle(180,10000);
+  //HAL_Delay(5000);
+//Servo_SetXAngle(180,10000);
 //Servo_SetXAngle(180,20);
+//SimpleMissionTest();
+//navyTest();
+//TestFireProcessing();
+//TestCompleteFire1Mission();
+//TestMissionStateMachine();
+//TestVisionFeedback();
 
   /* USER CODE END 2 */
 

@@ -1006,6 +1006,16 @@
               <FileType>5</FileType>
               <FilePath>..\Core\developed_by_Jim\M_servo.h</FilePath>
             </File>
+            <File>
+              <FileName>Mission.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\developed_by_Jim\Mission.h</FilePath>
+            </File>
+            <File>
+              <FileName>Mission.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\developed_by_Jim\Mission.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

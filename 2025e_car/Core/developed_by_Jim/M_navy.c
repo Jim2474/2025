@@ -11,7 +11,7 @@ static float lastRightWheelDist = 0.0f;  // 上次右轮累计行驶距离
 static float totalLeftDist = 0.0f;       // 左轮总行驶距离
 static float totalRightDist = 0.0f;      // 右轮总行驶距离
 
-static NavyState_t navyState = NAVY_STATE_IDLE;    // 当前导航状态
+ NavyState_t navyState = NAVY_STATE_IDLE;    // 当前导航状态
 static float targetDistanceThreshold = 0.5f;       // 到达目标的距离阈值(dm)
 static float targetVelocity = 10.0f;               // 导航时的目标速度(cm/s)
 static float maxAngularVelocity = 60.0f;           // 最大角速度(度/秒)
@@ -313,4 +313,98 @@ void updateNavigation_control(void)
     float rightSpeed = velocityControl + angularControl*toimprove;
     // 设置电机速度
     set_target_speed(leftSpeed, rightSpeed);
+}
+/**
+ * @brief ĺŻźčŞćľčŻĺ˝ć° - čŽŠĺ°č˝Śčľ°ä¸ä¸Şć­Łćšĺ˝˘
+ */
+void navyTest(void)
+{
+  // čŽžç˝ŽĺŻźčŞĺć° - ĺŻć šćŽĺŽéćĺľč°ć´
+  setNavigationParameters(0.5f, 15.0f, 45.0f);  // čˇçŚťéĺź0.5dmďźçşżéĺşŚ15cm/sďźćĺ¤§č§éĺşŚ45Â°/s
+  
+  // ĺŽäšć­Łćšĺ˝˘çĺä¸ŞéĄśçšĺć 
+  float waypoints[4][2] = {
+    {0.0f, 0.0f},    // čľˇçš/çťçš
+    {5.0f, 0.0f},   // çŹŹä¸ä¸ŞéĄśçš
+    {5.0f, 5.0f},  // çŹŹäşä¸ŞéĄśçš
+    {0.0f, 5.0f}    // çŹŹä¸ä¸ŞéĄśçš
+  };
+  
+  // éç˝Žä˝ç˝Žĺ°ĺçš
+  resetPosition();
+  
+  // çĄŽäżĺ°č˝Śĺ¤äşçŠşé˛çść
+  stopNavigation();
+  HAL_Delay(1000);
+  
+  // äžćŹĄĺŻźčŞĺ°ćŻä¸ŞéĄśçš
+  for (int i = 1; i < 5; i++) 
+  {
+    int point_idx = i % 4;  // ĺžŞçŻĺĺ°čľˇçš
+    float x = waypoints[point_idx][0];
+    float y = waypoints[point_idx][1];
+    
+    
+    // ĺ¨ĺźĺ§ć°çĺŻźčŞĺďźçĄŽäżĺ°č˝ŚĺŽĺ¨ĺć­˘
+    set_target_speed(0.0f, 0.0f);
+    HAL_Delay(2000);
+    
+    // ĺźĺ§ĺŻźčŞĺ°çŽć çš
+    if (startNavigation(x, y))
+    {
+      
+      // ç­ĺžĺŻźčŞĺŽć
+      uint32_t startTime = HAL_GetTick();
+      uint32_t lastPrintTime = 0;
+      
+      while (getNavigationState() == NAVY_STATE_MOVING)
+      {
+        uint32_t currentTime = HAL_GetTick();
+        
+        // ćŻé1ç§čžĺşĺ˝ĺä˝ç˝ŽĺçŽć äżĄćŻ
+        if (currentTime - lastPrintTime >= 1000)
+        {
+          Position_t pos = getCurrentPosition();
+          float targetAngle = calculateTargetAngle();
+          float angleDiff = normalizeAngle(targetAngle - pos.theta);
+          float distance = calculateDistance(pos, targetPosition);
+          
+ 
+          lastPrintTime = currentTime;
+        }
+        
+        // čśćśäżć¤ďźé˛ć­˘ĺĄĺ¨ćä¸Şçš
+        if (currentTime - startTime > 60000)  // 60ç§čśćś
+        {
+          stopNavigation();
+          break;
+        }
+        
+        // çťçłťçťćśé´ĺ¤çĺśäťäťťĺĄ
+        HAL_Delay(10);
+      }
+      
+      // ĺŻźčŞĺŽć
+      if (getNavigationState() == NAVY_STATE_ARRIVED)
+      {
+        Position_t pos = getCurrentPosition();
+        
+        // ĺ¨ćŻä¸ŞéĄśçšĺçć´éżćśé´
+        HAL_Delay(1000);
+      }
+      else
+      {
+        break;
+      }
+    }
+    else
+    {
+      break;
+    }
+  }
+  
+  
+  // çĄŽäżĺ°č˝Śĺć­˘
+  stopNavigation();
+  set_target_speed(0.0f, 0.0f);
 }

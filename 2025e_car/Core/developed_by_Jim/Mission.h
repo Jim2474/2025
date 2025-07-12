@@ -62,5 +62,14 @@ void Mission_ProcessVisionData(float error_x, float error_y, uint8_t target_dete
 
 // 获取当前灭火处理状态
 FireProcessState_t Mission_GetFireProcessState(void);
+void SimpleMissionTest();
+            //测试函数 
+            // void TestMissionStateMachine(void);
+            // void TestMultipleFireMissions(void);
+            // void TestVisionFeedbackProcessing(void);
+            // void TestMissionInterruptAndRecovery(void);
+            // void TestFireProcessing(void);
+            // void TestCompleteFire1Mission(void);
+            // void TestVisionFeedback(void);
 
 #endif /* __MISSION_H */ 

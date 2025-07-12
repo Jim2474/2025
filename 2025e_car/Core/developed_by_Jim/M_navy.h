@@ -30,7 +30,7 @@ typedef enum {
 // 全局位置变量
 extern Position_t currentPosition;  // 当前位置
 extern Position_t targetPosition;   // 目标位置
-
+extern NavyState_t navyState;      // 当前导航状态
 // 初始化导航系统
 void navy_init(void);
 
@@ -81,5 +81,6 @@ void setNavigationParameters(float distThreshold, float velocity, float angVeloc
 
 // 更新导航控制
 void updateNavigation_control(void);
+void navyTest(void);
 
 #endif
