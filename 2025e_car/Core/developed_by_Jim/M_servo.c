@@ -8,7 +8,7 @@
 /* 私有变量 */
 static ServoControl_t servo_x;   // X舵机控制
 static ServoControl_t servo_y;   // Y舵机控制
-static VisionData_t vision_data; // 视觉反馈数据
+ VisionData_t vision_data; // 视觉反馈数据
 
 /* 私有函数声明 */
 static void Servo_SetPWM(uint32_t channel, uint32_t pulse);

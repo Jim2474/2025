@@ -1,4 +1,5 @@
-2025e_car/oled.o: ..\Core\developed_by_Jim\OLED.c ..\Core\Inc\main.h \
+2025e_car/oled.o: ..\Core\developed_by_Jim\oled.c \
+  ..\Core\developed_by_Jim\oled.h ..\Core\Inc\main.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h \
   ..\Core\Inc\stm32f4xx_hal_conf.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rcc.h \
@@ -31,15 +32,4 @@
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_uart.h \
-  ..\Core\developed_by_Jim\OLED.h ..\Core\developed_by_Jim\OLED_Data.h \
-  ..\Core\developed_by_Jim\board.h \
-  F:\1_keil5\ARM\ARMCLANG\include\stdio.h ..\Core\Inc\tim.h \
-  ..\Core\Inc\gpio.h ..\Core\developed_by_Jim\M_pid.h \
-  ..\Core\developed_by_Jim\motor_pwm.h \
-  ..\Core\developed_by_Jim\Mytimer.h ..\Core\developed_by_Jim\Encoder.h \
-  ..\Core\developed_by_Jim\jy61p.h ..\Core\developed_by_Jim\M_usart.h \
-  ..\Core\developed_by_Jim\M_navy.h \
-  F:\1_keil5\ARM\ARMCLANG\include\math.h \
-  F:\1_keil5\ARM\ARMCLANG\include\string.h \
-  ..\Core\developed_by_Jim\Mission.h ..\Core\developed_by_Jim\M_servo.h \
-  F:\1_keil5\ARM\ARMCLANG\include\stdarg.h
+  ..\Core\developed_by_Jim\oledfont.h

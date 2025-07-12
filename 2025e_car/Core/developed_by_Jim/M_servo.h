@@ -64,6 +64,7 @@ typedef struct {
     uint8_t target_detected; // 目标检测标志
     uint32_t last_update;    // 最后更新时间
 } VisionData_t;
+ extern VisionData_t vision_data; // 视觉反馈数据
 
 /* 函数声明 */
 void Servo_Init(void);
