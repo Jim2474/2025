@@ -15,6 +15,8 @@ static void Servo_SetPWM(uint32_t channel, uint32_t pulse);
 static float Servo_LimitAngle(float angle, float min_angle, float max_angle);
 static uint32_t Servo_AngleToPulse(float angle, int offset);
 
+static uint32_t Servo_AngleToPulse180(float angle, int offset);
+
 /**
  * @brief 舵机控制初始化
  */
@@ -123,29 +125,28 @@ void Servo_SetXAngle(float angle, uint32_t duration)
 
 /**
  * @brief 设置Y舵机角度
- * @param angle 目标角度(0-360度)
+ * @param angle 目标角度(0-180度)
  * @param duration 运动时间(ms)，0表示立即执行
  */
 void Servo_SetYAngle(float angle, uint32_t duration)
 {
-    // 确保角度在0-360范围内
-    angle = fmodf(angle, 360.0f);
-    if (angle < 0) angle = angle + 360.0f;
+    // 确保角度在0-180范围内（而不是0-360）
+    if (angle < 0) angle = 0;
+    if (angle > 180) angle = 180;
     
     // 直接计算最短路径
     float current = servo_y.current_angle;
     float diff = angle - current;
     
-    // 标准化到-180到+180范围
-    if (diff > 180.0f) {
-        diff -= 360.0f;
-    } else if (diff < -180.0f) {
-        diff += 360.0f;
+    // 标准化到-90到+90范围（对于180度舵机）
+    if (diff > 90.0f) {
+        diff -= 180.0f;
+    } else if (diff < -90.0f) {
+        diff += 180.0f;
     }
     
     // 计算目标角度
     float target = current + diff;
-    
     
     // 限制角度范围
     target = Servo_LimitAngle(target, SERVO_Y_MIN_ANGLE, SERVO_Y_MAX_ANGLE);
@@ -158,7 +159,7 @@ void Servo_SetYAngle(float angle, uint32_t duration)
     {
         // 立即执行，不使用平滑过渡
         servo_y.current_angle = target;
-        uint32_t pulse = Servo_AngleToPulse(target, servo_y.offset);
+        uint32_t pulse = Servo_AngleToPulse180(target, servo_y.offset);  // 使用180度专用函数
         Servo_SetPWM(SERVO_Y_CHANNEL, pulse);
         servo_y.is_running = 0;
     }
@@ -193,7 +194,7 @@ void Servo_SetYOffset(int offset)
     servo_y.offset = offset < -100 ? -100 : (offset > 100 ? 100 : offset);
 
     // 更新当前位置的PWM
-    uint32_t pulse = Servo_AngleToPulse(servo_y.current_angle, servo_y.offset);
+    uint32_t pulse = Servo_AngleToPulse180(servo_y.current_angle, servo_y.offset);
     Servo_SetPWM(SERVO_Y_CHANNEL, pulse);
 }
 
@@ -263,26 +264,28 @@ void Servo_Update(void)
             servo_y.is_running = 0;
         }
 
-        uint32_t pulse = Servo_AngleToPulse(servo_y.current_angle, servo_y.offset);
+        // 使用180度专用函数
+        uint32_t pulse = Servo_AngleToPulse180(servo_y.current_angle, servo_y.offset);
         Servo_SetPWM(SERVO_Y_CHANNEL, pulse);
     }
 
     //只在检测到目标且舵机不在运动状态时进行PID控制
-   //if (vision_data.target_detected && !servo_x.is_running && !servo_y.is_running)
-    if (!servo_y.is_running)
+  //if (vision_data.target_detected && !servo_x.is_running && !servo_y.is_running)
+    //if (!servo_y.is_running&&!servo_y.is_running)
+    if ( !servo_x.is_running && !servo_y.is_running)
    {
        float x_correction = 0.0f, y_correction = 0.0f;
        
        // 添加死区控制，忽略微小误差
        float deadzone = 2.0f; // 调整死区大小
        
-       if (fabsf(vision_data.error_y) > deadzone)
-           x_correction = pid_calc(&servo_x.pid, 0, -vision_data.error_y);
+       if (fabsf(vision_data.error_x) > deadzone)
+           x_correction = pid_calc(&servo_x.pid, 0, -vision_data.error_x);
        else
            pid_reset(&servo_x.pid); // 在死区内重置积分项
            
-       if (fabsf(vision_data.error_x) > deadzone)
-           y_correction = pid_calc(&servo_y.pid, 0, -vision_data.error_x);
+       if (fabsf(vision_data.error_y) > deadzone)
+           y_correction = pid_calc(&servo_y.pid, 0, -vision_data.error_y);
        else
            pid_reset(&servo_y.pid); // 在死区内重置积分项
        
@@ -290,12 +293,14 @@ void Servo_Update(void)
        x_correction *= 0.05f;  // 缩小20倍
        y_correction *= 0.05f;  // 缩小20倍
        
-       // 计算新角度，考虑360度环绕
+       // 计算新角度，考虑角度范围
        float new_x_angle = fmodf(servo_x.current_angle + x_correction, 360.0f);
        if (new_x_angle < 0) new_x_angle += 360.0f;
        
-       float new_y_angle = fmodf(servo_y.current_angle + y_correction, 360.0f);
-       if (new_y_angle < 0) new_y_angle += 360.0f;
+       // Y舵机使用0-180度范围
+       float new_y_angle = servo_y.current_angle + y_correction;
+       if (new_y_angle < 0) new_y_angle = 0;
+       if (new_y_angle > 180) new_y_angle = 180;
        
        // 更新舵机角度 - 使用较长的过渡时间增加平滑性
        if (fabsf(x_correction) > 0.1f)
@@ -317,7 +322,7 @@ void Servo_Reset(void)
 
     // 舵机回到中心位置
     Servo_SetXAngle(SERVO_X_CENTER_ANGLE, SERVO_DEFAULT_DURATION);
-    Servo_SetYAngle(SERVO_Y_CENTER_ANGLE, SERVO_DEFAULT_DURATION);
+    Servo_SetYAngle(SERVO_Y_CENTER_ANGLE, SERVO_DEFAULT_DURATION); // Y舵机中心点为90度
 }
 
 /**
@@ -357,6 +362,35 @@ static uint32_t Servo_AngleToPulse(float angle, int offset)
     
     // 角度到脉宽的转换 (0-360度 映射到 500-2500μs)
     pulse = (uint32_t)(SERVO_MIN_PULSE + (angle / 360.0f) * (SERVO_MAX_PULSE - SERVO_MIN_PULSE));
+    
+    // 添加偏移量
+    pulse += offset;
+    
+    // 限制脉宽范围
+    if (pulse < SERVO_MIN_PULSE)
+        pulse = SERVO_MIN_PULSE;
+    if (pulse > SERVO_MAX_PULSE)
+        pulse = SERVO_MAX_PULSE;
+    
+    return pulse;
+}
+
+/**
+ * @brief 角度转换为脉宽（180度舵机专用）
+ * @param angle 角度(0-180度)
+ * @param offset 偏移量(-100到100)
+ * @return 脉宽值(μs)
+ */
+static uint32_t Servo_AngleToPulse180(float angle, int offset)
+{
+    uint32_t pulse;
+    
+    // 确保角度在0-180范围内
+    if (angle < 0) angle = 0;
+    if (angle > 180) angle = 180;
+    
+    // 角度到脉宽的转换 (0-180度 映射到 500-2500μs)
+    pulse = (uint32_t)(SERVO_MIN_PULSE + (angle / 180.0f) * (SERVO_MAX_PULSE - SERVO_MIN_PULSE));
     
     // 添加偏移量
     pulse += offset;
@@ -435,6 +469,60 @@ void Servo_Test360Degrees(void)
     
     // 测试Y舵机
     printf("测试Y舵机 - 0度\n");
+    Servo_SetYAngle(30, 1000);
+    HAL_Delay(1500);
+    
+    printf("测试Y舵机 - 90度\n");
+    Servo_SetYAngle(90, 1000);
+    HAL_Delay(1500);
+    
+    printf("测试Y舵机 - 180度\n");
+    Servo_SetYAngle(130, 1000);
+    HAL_Delay(1500);
+    
+    // printf("测试Y舵机 - 270度\n");
+    // Servo_SetYAngle(270, 1000);
+    // HAL_Delay(1500);
+    
+    // printf("测试Y舵机 - 359度\n");
+    // Servo_SetYAngle(359, 1000);
+    // HAL_Delay(1500);
+    
+    // printf("测试Y舵机 - 1度 (测试最短路径)\n");
+    // Servo_SetYAngle(1, 1000);
+    // HAL_Delay(1500);
+    
+    // printf("测试Y舵机 - 返回中心\n");
+    // Servo_SetYAngle(180, 1000);
+    // HAL_Delay(1500);
+    
+    // 对Y舵机进行类似测试...
+    
+    printf("360度舵机测试完成\n");
+}
+
+/**
+ * @brief 舵机基本功能测试
+ */
+void Servo_TestBasic(void)
+{
+    printf("开始舵机基本功能测试\n");
+    
+    // 测试X舵机（0-360度）
+    printf("测试X舵机 - 0度\n");
+    Servo_SetXAngle(0, 1000);
+    HAL_Delay(1500);
+    
+    printf("测试X舵机 - 180度\n");
+    Servo_SetXAngle(180, 1000);
+    HAL_Delay(1500);
+    
+    printf("测试X舵机 - 359度\n");
+    Servo_SetXAngle(359, 1000);
+    HAL_Delay(1500);
+    
+    // 测试Y舵机（0-180度）
+    printf("测试Y舵机 - 0度\n");
     Servo_SetYAngle(0, 1000);
     HAL_Delay(1500);
     
@@ -443,26 +531,8 @@ void Servo_Test360Degrees(void)
     HAL_Delay(1500);
     
     printf("测试Y舵机 - 180度\n");
-    Servo_SetYAngle(180, 1000);
+    Servo_SetYAngle(130, 1000);
     HAL_Delay(1500);
     
-    printf("测试Y舵机 - 270度\n");
-    Servo_SetYAngle(270, 1000);
-    HAL_Delay(1500);
-    
-    printf("测试Y舵机 - 359度\n");
-    Servo_SetYAngle(359, 1000);
-    HAL_Delay(1500);
-    
-    printf("测试Y舵机 - 1度 (测试最短路径)\n");
-    Servo_SetYAngle(1, 1000);
-    HAL_Delay(1500);
-    
-    printf("测试Y舵机 - 返回中心\n");
-    Servo_SetYAngle(180, 1000);
-    HAL_Delay(1500);
-    
-    // 对Y舵机进行类似测试...
-    
-    printf("360度舵机测试完成\n");
+    printf("舵机基本功能测试完成\n");
 }

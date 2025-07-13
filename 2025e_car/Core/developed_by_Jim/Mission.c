@@ -331,7 +331,8 @@ static void Mission_HandleFireFighting(void)
     case FIRE_PROCESS_AIMING:
         // 瞄准火源阶段，等待视觉反馈确认目标锁定
         //if (Servo_GetXAngle() != 0 && Servo_GetYAngle() != 0)//      1 记得改回来
-        if (Servo_GetXAngle() != 0 || Servo_GetYAngle() != 0)
+        //if (Servo_GetXAngle() != 0 || Servo_GetYAngle() != 0)
+        if(1)
         {
             // 舵机已移动，进入激光灭火阶段
             fireProcessState = FIRE_PROCESS_FIRING;
