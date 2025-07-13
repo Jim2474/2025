@@ -15,8 +15,8 @@
 #define SERVO_X_MAX_ANGLE 360.0f
 #define SERVO_X_CENTER_ANGLE 180.0f
 
-#define SERVO_Y_MIN_ANGLE 0.0f
-#define SERVO_Y_MAX_ANGLE 180.0f
+#define SERVO_Y_MIN_ANGLE 30.0f
+#define SERVO_Y_MAX_ANGLE 150.0f
 #define SERVO_Y_CENTER_ANGLE 90.0f
 
 /* PID控制参数 */
