@@ -62,6 +62,10 @@ void Mission_ProcessVisionData(float error_x, float error_y, uint8_t target_dete
 
 // 获取当前灭火处理状态
 FireProcessState_t Mission_GetFireProcessState(void);
+
+// 为测试目的设置视觉数据
+void Mission_SetVisionDataForTest(float error_x, float error_y, uint8_t target_detected);
+
 void Display_DebugStatus(void);
 void SimpleMissionTest();
 // 测试函数
@@ -72,5 +76,5 @@ void SimpleMissionTest();
 //  void TestFireProcessing(void);
 //  void TestCompleteFire1Mission(void);
 //  void TestVisionFeedback(void);
-
+extern uint8_t flag_jim; // 测试用标志
 #endif /* __MISSION_H */ 

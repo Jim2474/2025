@@ -79,7 +79,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 	{
 		//OLED_ShowNum(10,6,11,2,16,0);
 
-        sscanf((char*)USART5_RxData,"!,%f,%f,%f,%d,#", &vision_data.error_x, &vision_data.error_y, &vision_data.target_detected,&vision_data.last_update);
+        sscanf((char*)USART5_RxData,"!,%f,%f,%f,%d,#", &vision_data.error_x, &vision_data.error_y, &vision_data.last_update,&vision_data.last_update);
 		// 处理maixcam数据
 		HAL_UARTEx_ReceiveToIdle_DMA(&huart5, USART5_RxData, sizeof(USART5_RxData));
 		__HAL_DMA_DISABLE_IT(&hdma_uart5_rx, DMA_IT_HT);

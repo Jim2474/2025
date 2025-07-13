@@ -13,7 +13,8 @@
         "usart.h": "c",
         "m_usart.h": "c",
         "m_navy.h": "c",
-        "dma.h": "c"
+        "dma.h": "c",
+        "mission.h": "c"
     },
     "cmake.sourceDirectory": "G:/2025E/2025e_car/Drivers/CMSIS/DSP/Source/DistanceFunctions",
     "C_Cpp.intelliSenseEngine": "default",

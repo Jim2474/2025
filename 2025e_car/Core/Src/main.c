@@ -246,7 +246,7 @@ int main(void)
 //TestMissionStateMachine();
 //TestVisionFeedback();
 //Servo_Test360Degrees();
-//Mission_StartFire1();
+Mission_StartFire1();
 //Servo_Test360Degrees();
 vision_data.target_detected = 0;//测试用
   /* USER CODE END 2 */
@@ -255,11 +255,11 @@ vision_data.target_detected = 0;//测试用
   /* USER CODE BEGIN WHILE */
   while (1)
   {  
-
-    OLED_ShowNum(10,1,vision_data.error_x,2,16,0);
-	      OLED_ShowNum(10,4,vision_data.error_y,2,16,0);
- //Mission_Update();
-//Display_DebugStatus();
+//vision_data.target_detected=0;
+   // OLED_ShowNum(10,1,vision_data.error_x,2,16,0);
+	   //   OLED_ShowNum(10,4,vision_data.error_y,2,16,0);
+  Mission_Update();
+  Display_DebugStatus();
 
        //HAL_Delay(100);  // 添加延时，降低刷新频�?
 //     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_12, GPIO_PIN_SET);

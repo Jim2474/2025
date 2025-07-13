@@ -124,15 +124,13 @@ static PathPoint_t pathFromFire6[] = {
 static void Mission_HandleFireFighting(void);
 static void Mission_StartFireProcessing(uint8_t fire_id);
 static uint8_t Mission_IsFireExtinguished(void);
-
+uint8_t flag_jim =0;
 // 初始化任务
 void Mission_Init(void)
 {
     // 初始化导航系统
-    navy_init();
+    //navy_init();
 
-    // 初始化舵机控制系统
-    Servo_Init();
 
     // 重置位置到起点
     setCurrentPosition(START_X, START_Y, 0.0f); // 假设初始朝向为0度（正东）
@@ -147,6 +145,8 @@ void Mission_Init(void)
     // 初始化灭火相关状态
     fireProcessState = FIRE_PROCESS_POSITIONING;
     fireSuccessCounter = 0;
+
+    vision_data.target_detected=0;
 }
 
 // 开始执行灭火任务1（左上角火源）
@@ -265,7 +265,8 @@ static void Mission_HandleFireFighting(void)
 
     // 检查灭火超时
     if (current_time - fireProcessStartTime > FIRE_FIGHTING_TIMEOUT)
-    {
+    {       
+        flag_jim=666;
         // 灭火超时，放弃当前灭火任务，进入返回状态
         switch (currentFireId)
         {
@@ -309,14 +310,16 @@ static void Mission_HandleFireFighting(void)
             {
                 position_stable_time = current_time;
                 is_position_stable = 1;
+                printf("    位置稳定，开始定位\n");flag_jim=1;
             }
 
             // 检查位置是否已经稳定一段时间
-            if (current_time - position_stable_time > FIRE_POSITION_STABLE_TIME)
+           if (current_time - position_stable_time > FIRE_POSITION_STABLE_TIME)
+           //if(flag_jim==1)//4 记得改回来 测试用
             {
                 // 位置已稳定，进入瞄准阶段
                 fireProcessState = FIRE_PROCESS_AIMING;
-
+                printf("    位置稳定，进入瞄准阶段\n");flag_jim=2;
                 // 重置稳定标志
                 is_position_stable = 0;
             }
@@ -324,7 +327,8 @@ static void Mission_HandleFireFighting(void)
         else
         {
             // 还未到达目标位置，重置稳定标志
-            is_position_stable = 0;
+            is_position_stable = 0;flag_jim=3;
+            printf("    还未到达目标位置，等待导航完成\n");
         }
         break;
 
@@ -332,11 +336,17 @@ static void Mission_HandleFireFighting(void)
         // 瞄准火源阶段，等待视觉反馈确认目标锁定
         //if (Servo_GetXAngle() != 0 && Servo_GetYAngle() != 0)//      1 记得改回来
         //if (Servo_GetXAngle() != 0 || Servo_GetYAngle() != 0)
-        if(1)
-        {
-            // 舵机已移动，进入激光灭火阶段
-            fireProcessState = FIRE_PROCESS_FIRING;
-        }
+        //if(1)
+        //{
+            // 检查舵机角度是否已经改变（不等于中心位置）
+            if (Servo_GetXAngle() != SERVO_X_CENTER_ANGLE || Servo_GetYAngle() != SERVO_Y_CENTER_ANGLE)
+            {
+                flag_jim=4;
+                // 舵机已移动，进入激光灭火阶段
+                fireProcessState = FIRE_PROCESS_FIRING;
+                printf("舵机已移动，进入激光灭火阶段\n");
+            }
+        //}
         break;
 
     case FIRE_PROCESS_FIRING:
@@ -344,6 +354,7 @@ static void Mission_HandleFireFighting(void)
         // 通过视觉反馈确认是否已灭火
         if (Mission_IsFireExtinguished())
         {
+            flag_jim=5;
             // 灭火成功，进入确认阶段
             fireProcessState = FIRE_PROCESS_CONFIRMING;
         }
@@ -415,7 +426,7 @@ static uint8_t Mission_IsFireExtinguished(void)
     // 简化实现：如果舵机已经对准目标一段时间，认为灭火成功
     static uint32_t last_check_time = 0;
     uint32_t current_time = HAL_GetTick();
-
+    flag_jim=51;
     // 每100ms检查一次
     if (current_time - last_check_time > 200)
     {
@@ -424,13 +435,15 @@ static uint8_t Mission_IsFireExtinguished(void)
         // 检查舵机角度是否稳定
        // if (fabs(Servo_GetXAngle() - SERVO_X_CENTER_ANGLE) < 20.0f &&
            // fabs(Servo_GetYAngle() - SERVO_Y_CENTER_ANGLE) < 20.0f)
-        if(vision_data.target_detected == 0)
+        if(vision_data.target_detected == 0)//5记得改回来
         {
             fireSuccessCounter++;
+            flag_jim=52; // 显示进入计数状态
 
             // 如果连续多次检测到舵机稳定，则认为灭火成功
             if (fireSuccessCounter >= FIRE_SUCCESS_THRESHOLD)
             {
+                flag_jim=53; // 显示灭火成功状态
                 return 1;
             }
         }
@@ -451,7 +464,7 @@ void Mission_Update(void)
     Position_t currentPos = getCurrentPosition();
 
     // 更新舵机控制
-    Servo_Update();
+    //Servo_Update();
 
     // 检查任务超时
     if (currentMissionState != MISSION_IDLE && currentMissionState != MISSION_COMPLETE)
@@ -1071,25 +1084,25 @@ void Display_DebugStatus(void)
     // 显示火源状态数值
     OLED_ShowNum(60, 2, fireState, 1, 12, 0);
     
-    // 第3行：显示视觉数据和目标检测状态
-    OLED_ShowString(0, 4, "X:", 12, 0);
-    if (vision_data.error_x >= 0)
-        OLED_ShowNum(16, 4, vision_data.error_x, 3, 12, 0);
-    else {
-        OLED_ShowString(16, 4, "-", 12, 0);
-        OLED_ShowNum(24, 4, -vision_data.error_x, 2, 12, 0);
-    }
+    // 第3行：显示X舵机角度
+    OLED_ShowString(0, 4, "SSX:", 12, 0);
+    OLED_ShowNum(16, 4, (uint16_t)Servo_GetXAngle(), 3, 12, 0);
     
-    OLED_ShowString(64, 4, "Det:", 12, 0);
+    // 显示X舵机运行状态
+    OLED_ShowString(64, 4, "flag:", 12, 0);
+    //if (servo_x.is_running)
+        OLED_ShowNum(96, 4, flag_jim, 1, 12, 0);
+    //else
+        //OLED_ShowString(96, 4, "N", 12, 0);
+    
+    // 第4行：显示Y舵机角度
+    OLED_ShowString(0, 6, "SSY:", 12, 0);
+    OLED_ShowNum(16, 6, (uint16_t)Servo_GetYAngle(), 3, 12, 0);
+    
+    // 显示目标检测状态
+    OLED_ShowString(64, 6, "Det:", 12, 0);
     if (vision_data.target_detected)
-        OLED_ShowString(96, 4, "Y", 12, 0);
+        OLED_ShowString(96, 6, "Y", 12, 0);
     else
-        OLED_ShowString(96, 4, "N", 12, 0);
-    
-    // 第4行：显示舵机角度和计数器
-    OLED_ShowString(0, 6, "SX:", 12, 0);
-    OLED_ShowNum(24, 6, (uint16_t)Servo_GetXAngle(), 3, 12, 0);
-    
-    OLED_ShowString(64, 6, "C:", 12, 0);
-    OLED_ShowNum(80, 6, fireSuccessCounter, 2, 12, 0);
+        OLED_ShowString(96, 6, "N", 12, 0);
 }
