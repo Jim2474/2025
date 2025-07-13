@@ -77,7 +77,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 	}
 	else if (huart == &huart5)
 	{
-		OLED_ShowNum(10,6,11,2,16,0);
+		//OLED_ShowNum(10,6,11,2,16,0);
 
         sscanf((char*)USART5_RxData,"!,%f,%f,%f,%d,#", &vision_data.error_x, &vision_data.error_y, &vision_data.target_detected,&vision_data.last_update);
 		// 处理maixcam数据

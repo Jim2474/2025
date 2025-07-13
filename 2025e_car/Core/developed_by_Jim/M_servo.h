@@ -12,12 +12,12 @@
 
 /* 舵机角度限制 */
 #define SERVO_X_MIN_ANGLE 0.0f
-#define SERVO_X_MAX_ANGLE 180.0f
-#define SERVO_X_CENTER_ANGLE 90.0f
+#define SERVO_X_MAX_ANGLE 360.0f
+#define SERVO_X_CENTER_ANGLE 180.0f
 
 #define SERVO_Y_MIN_ANGLE 0.0f
-#define SERVO_Y_MAX_ANGLE 180.0f
-#define SERVO_Y_CENTER_ANGLE 90.0f
+#define SERVO_Y_MAX_ANGLE 360.0f
+#define SERVO_Y_CENTER_ANGLE 180.0f
 
 /* PID控制参数 */
 #define SERVO_PID_KP 0.5f
@@ -77,5 +77,7 @@ float Servo_GetYAngle(void);
 void Servo_ProcessVisionData(float error_x, float error_y, uint8_t target_detected);
 void Servo_Update(void);
 void Servo_Reset(void);
+void Servo_Test360Degrees(void);
+static float Servo_ShortestPath(float current_angle, float target_angle);
 
 #endif /* M_SERVO_H */

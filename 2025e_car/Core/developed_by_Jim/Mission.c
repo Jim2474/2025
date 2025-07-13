@@ -330,7 +330,8 @@ static void Mission_HandleFireFighting(void)
 
     case FIRE_PROCESS_AIMING:
         // 瞄准火源阶段，等待视觉反馈确认目标锁定
-        if (Servo_GetXAngle() != 0 && Servo_GetYAngle() != 0)
+        //if (Servo_GetXAngle() != 0 && Servo_GetYAngle() != 0)//      1 记得改回来
+        if (Servo_GetXAngle() != 0 || Servo_GetYAngle() != 0)
         {
             // 舵机已移动，进入激光灭火阶段
             fireProcessState = FIRE_PROCESS_FIRING;
@@ -391,14 +392,14 @@ static void Mission_HandleFireFighting(void)
 
     case FIRE_PROCESS_COMPLETED:
         // 如果状态是COMPLETED但任务状态还没有转换，执行转换
-        if (currentMissionState == MISSION_FIRE1_FIGHTING && currentFireId == 1) {
-            currentMissionState = MISSION_FIRE1_RETURN;
-            currentPath = pathFromFire1;
-            totalPathPoints = sizeof(pathFromFire1) / sizeof(PathPoint_t);
-            currentPathIndex = 0;
-            setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-            startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-        }
+        // if (currentMissionState == MISSION_FIRE1_FIGHTING && currentFireId == 1) {
+        //     currentMissionState = MISSION_FIRE1_RETURN;
+        //     currentPath = pathFromFire1;
+        //     totalPathPoints = sizeof(pathFromFire1) / sizeof(PathPoint_t);
+        //     currentPathIndex = 0;
+        //     setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+        //     startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+        // }
         // 类似地处理其他火源
         break;
     }
@@ -415,13 +416,14 @@ static uint8_t Mission_IsFireExtinguished(void)
     uint32_t current_time = HAL_GetTick();
 
     // 每100ms检查一次
-    if (current_time - last_check_time > 100)
+    if (current_time - last_check_time > 200)
     {
         last_check_time = current_time;
 
         // 检查舵机角度是否稳定
-        if (fabs(Servo_GetXAngle() - SERVO_X_CENTER_ANGLE) < 20.0f &&
-            fabs(Servo_GetYAngle() - SERVO_Y_CENTER_ANGLE) < 20.0f)
+       // if (fabs(Servo_GetXAngle() - SERVO_X_CENTER_ANGLE) < 20.0f &&
+           // fabs(Servo_GetYAngle() - SERVO_Y_CENTER_ANGLE) < 20.0f)
+        if(vision_data.target_detected == 0)
         {
             fireSuccessCounter++;
 
@@ -456,7 +458,7 @@ void Mission_Update(void)
         if (HAL_GetTick() - missionStartTime > MISSION_TIMEOUT)
         {
             // 任务超时，中止任务
-            Mission_Stop();
+           // Mission_Stop(); 2 记得改回来 
             return;
         }
     }
@@ -1003,3 +1005,90 @@ FireProcessState_t Mission_GetFireProcessState(void)
     
 //     printf("test vision feedback processing completed\r\n");
 // }
+
+/**
+ * @brief 优化的OLED状态显示函数，包含更多调试信息
+ */
+void Display_DebugStatus(void)
+{
+    OLED_Clear();
+    
+    // 第1行：显示任务状态和数值
+    MissionState_t state = Mission_GetState();
+    OLED_ShowString(0, 0, "S:", 12, 0);
+    
+    // 显示状态名称和数值
+    switch (state)
+    {
+        case MISSION_IDLE:
+            OLED_ShowString(16, 0, "IDLE", 12, 0);
+            break;
+        case MISSION_FIRE1_GOING:
+            OLED_ShowString(16, 0, "GOING1", 12, 0);
+            break;
+        case MISSION_FIRE1_FIGHTING:
+            OLED_ShowString(16, 0, "FIGHT1", 12, 0);
+            break;
+        case MISSION_FIRE1_RETURN:
+            OLED_ShowString(16, 0, "RETN1", 12, 0);
+            break;
+        case MISSION_COMPLETE:
+            OLED_ShowString(16, 0, "DONE", 12, 0);
+            break;
+        default:
+            OLED_ShowString(16, 0, "UNK", 12, 0);
+            break;
+    }
+    // 显示状态数值
+    OLED_ShowNum(60, 0, state, 1, 12, 0);
+    
+    // 第2行：显示火源处理状态和数值
+    FireProcessState_t fireState = Mission_GetFireProcessState();
+    OLED_ShowString(0, 2, "F:", 12, 0);
+    
+    switch (fireState)
+    {
+        case FIRE_PROCESS_POSITIONING:
+            OLED_ShowString(16, 2, "POS", 12, 0);
+            break;
+        case FIRE_PROCESS_AIMING:
+            OLED_ShowString(16, 2, "AIM", 12, 0);
+            break;
+        case FIRE_PROCESS_FIRING:
+            OLED_ShowString(16, 2, "FIRE", 12, 0);
+            break;
+        case FIRE_PROCESS_CONFIRMING:
+            OLED_ShowString(16, 2, "CONF", 12, 0);
+            break;
+        case FIRE_PROCESS_COMPLETED:
+            OLED_ShowString(16, 2, "DONE", 12, 0);
+            break;
+        default:
+            OLED_ShowString(16, 2, "UNK", 12, 0);
+            break;
+    }
+    // 显示火源状态数值
+    OLED_ShowNum(60, 2, fireState, 1, 12, 0);
+    
+    // 第3行：显示视觉数据和目标检测状态
+    OLED_ShowString(0, 4, "X:", 12, 0);
+    if (vision_data.error_x >= 0)
+        OLED_ShowNum(16, 4, vision_data.error_x, 3, 12, 0);
+    else {
+        OLED_ShowString(16, 4, "-", 12, 0);
+        OLED_ShowNum(24, 4, -vision_data.error_x, 2, 12, 0);
+    }
+    
+    OLED_ShowString(64, 4, "Det:", 12, 0);
+    if (vision_data.target_detected)
+        OLED_ShowString(96, 4, "Y", 12, 0);
+    else
+        OLED_ShowString(96, 4, "N", 12, 0);
+    
+    // 第4行：显示舵机角度和计数器
+    OLED_ShowString(0, 6, "SX:", 12, 0);
+    OLED_ShowNum(24, 6, (uint16_t)Servo_GetXAngle(), 3, 12, 0);
+    
+    OLED_ShowString(64, 6, "C:", 12, 0);
+    OLED_ShowNum(80, 6, fireSuccessCounter, 2, 12, 0);
+}
