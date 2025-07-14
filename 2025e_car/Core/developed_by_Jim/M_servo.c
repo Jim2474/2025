@@ -442,7 +442,7 @@ static float Servo_ShortestPath(float current_angle, float target_angle)
     target_angle = fmodf(target_angle, 360.0f);
     if (target_angle < 0) target_angle += 360.0f;
     
-    printf("计算最短路径: 当前=%.1f, 目标=%.1f\n", current_angle, target_angle);
+    //printf("计算最短路径: 当前=%.1f, 目标=%.1f\n", current_angle, target_angle);
     
     // 计算两个方向的距离
     float diff = target_angle - current_angle;
@@ -455,7 +455,7 @@ static float Servo_ShortestPath(float current_angle, float target_angle)
     }
     
     float result = current_angle + diff;
-    printf("最短路径结果: %.1f (差值=%.1f)\n", result, diff);
+    //printf("最短路径结果: %.1f (差值=%.1f)\n", result, diff);
     
     return result;
 }

@@ -29,10 +29,10 @@
 
 // 定义超时参数
 #define MISSION_TIMEOUT 20000       // 任务超时时间，单位：ms
-#define FIRE_FIGHTING_TIMEOUT 10000 // 灭火超时时间，单位：ms
+#define FIRE_FIGHTING_TIMEOUT 15000 // 灭火超时时间，单位：ms
 
 // 定义灭火相关参数
-#define FIRE_SUCCESS_THRESHOLD 10      // 灭火成功所需稳定目标锁定次数
+#define FIRE_SUCCESS_THRESHOLD 5      // 灭火成功所需稳定目标锁定次数
 #define FIRE_POSITION_STABLE_TIME 3000 // 灭火位置稳定所需时间，单位：ms
 
 // 路径点结构体
@@ -56,23 +56,33 @@ static FireProcessState_t fireProcessState = FIRE_PROCESS_POSITIONING; // 灭火
 static uint8_t fireSuccessCounter = 0;                                 // 灭火成功计数器
 static uint8_t currentFireId = 0;                                      // 当前火源ID
 
+
+//测试用 
+        // 添加导航错误处理
+        static uint32_t last_nav_check_time = 0;
+        static uint32_t nav_stuck_time = 0;
 // 火源1路径点（前往）- 从起点到左上角火源，沿左边界走
 static PathPoint_t pathToFire1[] = {
     {START_X, START_Y, NORMAL_SPEED},                  // 起点
-    {5.0f, 5.0f, NORMAL_SPEED},                        // 避开左下角建筑物
-    {7.0f, 10.0f, TURNING_SPEED},                      // 左转准备沿左边界
-    {7.0f, 20.0f, NORMAL_SPEED},                       // 沿左边界向上
-    {7.0f, 26.0f, NORMAL_SPEED},                       // 继续向上到火源1高度
-    {FIRE1_X - FIRE_DISTANCE, FIRE1_Y, APPROACH_SPEED} // 接近火源1位置，保持5dm距离
+    // {5.0f, 5.0f, NORMAL_SPEED},                        // 避开左下角建筑物
+    // {7.0f, 10.0f, TURNING_SPEED},                      // 左转准备沿左边界
+    // {7.0f, 20.0f, NORMAL_SPEED},                       // 沿左边界向上
+    // {7.0f, 26.0f, NORMAL_SPEED},                       // 继续向上到火源1高度
+        {START_X + 5.0f, START_Y, NORMAL_SPEED},           // 向右移动5dm
+    {START_X + 10.0f, START_Y, NORMAL_SPEED},          // 继续向右移动5dm
+
+   // {FIRE1_X - FIRE_DISTANCE, FIRE1_Y, APPROACH_SPEED} // 接近火源1位置，保持5dm距离
 };
 
 // 火源1路径点（返回）- 原路返回
 static PathPoint_t pathFromFire1[] = {
-    {FIRE1_X - FIRE_DISTANCE, FIRE1_Y, NORMAL_SPEED}, // 火源1位置
-    {7.0f, 26.0f, NORMAL_SPEED},                      // 回到左边界
-    {7.0f, 20.0f, NORMAL_SPEED},                      // 沿左边界向下
-    {7.0f, 10.0f, NORMAL_SPEED},                      // 继续向下
-    {5.0f, 5.0f, TURNING_SPEED},                      // 避开左下角建筑物
+   // {FIRE1_X - FIRE_DISTANCE, FIRE1_Y, NORMAL_SPEED}, // 火源1位置
+    // {7.0f, 26.0f, NORMAL_SPEED},                      // 回到左边界
+    // {7.0f, 20.0f, NORMAL_SPEED},                      // 沿左边界向下
+    // {7.0f, 10.0f, NORMAL_SPEED},                      // 继续向下
+    // {5.0f, 5.0f, TURNING_SPEED},                      // 避开左下角建筑物
+        {START_X + 10.0f, START_Y, NORMAL_SPEED},          // 返回中间点
+    {START_X + 5.0f, START_Y, NORMAL_SPEED},           // 继续返回
     {START_X, START_Y, APPROACH_SPEED}                // 返回起点
 };
 
@@ -267,6 +277,7 @@ static void Mission_HandleFireFighting(void)
     if (current_time - fireProcessStartTime > FIRE_FIGHTING_TIMEOUT)
     {       
         flag_jim=666;
+        //printf("timeouttttttttttttttt\n");
         // 灭火超时，放弃当前灭火任务，进入返回状态
         switch (currentFireId)
         {
@@ -310,7 +321,7 @@ static void Mission_HandleFireFighting(void)
             {
                 position_stable_time = current_time;
                 is_position_stable = 1;
-                printf("    位置稳定，开始定位\n");flag_jim=1;
+                //printf("    位置稳定，开始定位\n");flag_jim=1;
             }
 
             // 检查位置是否已经稳定一段时间
@@ -319,7 +330,7 @@ static void Mission_HandleFireFighting(void)
             {
                 // 位置已稳定，进入瞄准阶段
                 fireProcessState = FIRE_PROCESS_AIMING;
-                printf("    位置稳定，进入瞄准阶段\n");flag_jim=2;
+                //printf("    位置稳定，进入瞄准阶段\n");flag_jim=2;
                 // 重置稳定标志
                 is_position_stable = 0;
             }
@@ -328,7 +339,7 @@ static void Mission_HandleFireFighting(void)
         {
             // 还未到达目标位置，重置稳定标志
             is_position_stable = 0;flag_jim=3;
-            printf("    还未到达目标位置，等待导航完成\n");
+            //printf("    还未到达目标位置，等待导航完成\n");
         }
         break;
 
@@ -344,7 +355,7 @@ static void Mission_HandleFireFighting(void)
                 flag_jim=4;
                 // 舵机已移动，进入激光灭火阶段
                 fireProcessState = FIRE_PROCESS_FIRING;
-                printf("舵机已移动，进入激光灭火阶段\n");
+                //printf("舵机已移动，进入激光灭火阶段\n");
             }
         //}
         break;
@@ -366,6 +377,7 @@ static void Mission_HandleFireFighting(void)
         {
             // 再次确认灭火成功，完成灭火任务
             fireProcessState = FIRE_PROCESS_COMPLETED;
+           // printf("灭火确认成功，准备返回\n");
 
             // 停止舵机
             Servo_Reset();
@@ -377,6 +389,7 @@ static void Mission_HandleFireFighting(void)
                 currentMissionState = MISSION_FIRE1_RETURN;
                 currentPath = pathFromFire1;
                 totalPathPoints = sizeof(pathFromFire1) / sizeof(PathPoint_t);
+                //printf("设置返回状态：MISSION_FIRE1_RETURN，路径点数=%d\n", totalPathPoints);
                 break;
             case 2:
                 currentMissionState = MISSION_FIRE2_RETURN;
@@ -392,8 +405,10 @@ static void Mission_HandleFireFighting(void)
 
             // 重置路径索引，开始返回
             currentPathIndex = 0;
-            setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-            startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+            //printf("开始返回，设置第一个返回点：(%.1f, %.1f)\n", 
+//                   currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+//            setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+//            startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
         }
         else
         {
@@ -403,6 +418,8 @@ static void Mission_HandleFireFighting(void)
         break;
 
     case FIRE_PROCESS_COMPLETED:
+    //printf( "灭火任务已完成\n");
+        // 任务完成，切换到空闲状态
         // 如果状态是COMPLETED但任务状态还没有转换，执行转换
         // if (currentMissionState == MISSION_FIRE1_FIGHTING && currentFireId == 1) {
         //     currentMissionState = MISSION_FIRE1_RETURN;
@@ -438,6 +455,7 @@ static uint8_t Mission_IsFireExtinguished(void)
         if(vision_data.target_detected == 0)//5记得改回来
         {
             fireSuccessCounter++;
+          //  printf("检测到舵机稳定，计数器：%d\n", fireSuccessCounter);
             flag_jim=52; // 显示进入计数状态
 
             // 如果连续多次检测到舵机稳定，则认为灭火成功
@@ -466,16 +484,16 @@ void Mission_Update(void)
     // 更新舵机控制
     //Servo_Update();
 
-    // 检查任务超时
-    if (currentMissionState != MISSION_IDLE && currentMissionState != MISSION_COMPLETE)
-    {
-        if (HAL_GetTick() - missionStartTime > MISSION_TIMEOUT)
-        {
-            // 任务超时，中止任务
-           // Mission_Stop(); 2 记得改回来 
-            return;
-        }
-    }
+    // // 检查任务超时
+    // if (currentMissionState != MISSION_IDLE && currentMissionState != MISSION_COMPLETE)
+    // {
+    //     if (HAL_GetTick() - missionStartTime > MISSION_TIMEOUT)
+    //     {
+    //         // 任务超时，中止任务
+    //         Mission_Stop(); 
+    //         return;
+    //     }
+    // }
 
     // 根据当前任务状态进行处理
     switch (currentMissionState)
@@ -515,20 +533,62 @@ void Mission_Update(void)
 
     case MISSION_FIRE1_RETURN:
         // 火源1返回状态
+        //printf("当前返回状态：路径点=%d, 总点数=%d, 导航状态=%d\n", 
+//               currentPathIndex, totalPathPoints, navyState);
+        
+        // 添加更多调试信息
+        //printf("当前位置：(%.1f, %.1f), 目标位置：(%.1f, %.1f), 距离：%.2f\n",
+//               currentPos.x, currentPos.y, 
+//               targetPosition.x, targetPosition.y,
+//               calculateDistance(currentPos, targetPosition));
+        
+      //  uint32_t current_time = HAL_GetTick();
+       // flag_jim++;
+        //printf("nav_stuck_time=%d,\n",nav_stuck_time);
+        // 每秒检查一次导航状态
+//        if (current_time - last_nav_check_time > 1000)
+//        {
+//            last_nav_check_time = current_time;
+//            
+//            if (navyState != NAVY_STATE_ARRIVED)
+//            {
+//                nav_stuck_time += 1000;
+//                printf("here");
+//                // 如果5秒内导航状态没有变为ARRIVED，尝试重新启动导航
+//                if (nav_stuck_time > 2000)
+//                {
+//                    printf("导航似乎卡住了，尝试重新启动导航\n");
+//                    stopNavigation();
+//                    HAL_Delay(100);
+//                    startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+//                    nav_stuck_time = 0;
+//                }
+//            }
+//            else
+//            {
+//                // 重置卡住计时器
+//                nav_stuck_time = 0;
+//            }
+//        }
+        
         if (navyState == NAVY_STATE_ARRIVED)
         {
             // 到达当前路径点
             currentPathIndex++;
+           // printf("到达返回路径点，前进到下一点：%d/%d\n", currentPathIndex, totalPathPoints);
 
             if (currentPathIndex < totalPathPoints)
             {
                 // 继续前往下一个路径点
-                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                //printf("设置下一个返回路径点：(%.1f, %.1f)\n", 
+//                       currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+//                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+//                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
             }
             else
             {
                 // 返回完成，任务结束
+               // printf("返回完成，任务结束\n");
                 currentMissionState = MISSION_COMPLETE;
             }
         }
@@ -579,6 +639,8 @@ void Mission_Update(void)
             else
             {
                 // 返回完成，任务结束
+               // printf("任务完成\n");
+                flag_jim=100;
                 currentMissionState = MISSION_COMPLETE;
                 stopNavigation();
             }

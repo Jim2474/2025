@@ -132,7 +132,7 @@ class System:
 
     def init_yolo_mode(self):   #yolo模型识别初始化
 
-        self.detector = nn.YOLO11(model="/root/models/yolo11fire.mud", dual_buff = True)
+        self.detector = nn.YOLO11(model="/root/models/yolo11n.mud", dual_buff = True)
         #self.detector=nn.YOLOv5(model="/root/models/best.mud", dual_buff = True)
         #self.detector=nn.YOLO11(model="/root/models/sehuan.mud", dual_buff = True)
         #self.cam = camera.Camera(self.detector.input_width(), self.detector.input_height(), self.detector.input_format())
