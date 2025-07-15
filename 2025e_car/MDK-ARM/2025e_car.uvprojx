@@ -1016,6 +1016,16 @@
               <FileType>5</FileType>
               <FilePath>..\Core\developed_by_Jim\oledfont.h</FilePath>
             </File>
+            <File>
+              <FileName>Waypoint.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\developed_by_Jim\Waypoint.c</FilePath>
+            </File>
+            <File>
+              <FileName>Waypoint.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\developed_by_Jim\Waypoint.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

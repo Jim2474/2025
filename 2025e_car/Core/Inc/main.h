@@ -57,14 +57,34 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define ENCODER_Pin GPIO_PIN_0
+#define ENCODER_GPIO_Port GPIOA
+#define ENCODERA1_Pin GPIO_PIN_1
+#define ENCODERA1_GPIO_Port GPIOA
+#define ENCODERA6_Pin GPIO_PIN_6
+#define ENCODERA6_GPIO_Port GPIOA
+#define ENCODERA7_Pin GPIO_PIN_7
+#define ENCODERA7_GPIO_Port GPIOA
 #define LEFT_DIR_Pin GPIO_PIN_9
 #define LEFT_DIR_GPIO_Port GPIOE
 #define LEFT_DIRE11_Pin GPIO_PIN_11
 #define LEFT_DIRE11_GPIO_Port GPIOE
 #define R_dir_Pin GPIO_PIN_12
 #define R_dir_GPIO_Port GPIOE
+#define SERVO_X_Pin GPIO_PIN_13
+#define SERVO_X_GPIO_Port GPIOE
+#define SERVO_Y_Pin GPIO_PIN_14
+#define SERVO_Y_GPIO_Port GPIOE
 #define RIGHT_DIR_Pin GPIO_PIN_15
 #define RIGHT_DIR_GPIO_Port GPIOE
+#define PWMA_Pin GPIO_PIN_14
+#define PWMA_GPIO_Port GPIOD
+#define PWMB_Pin GPIO_PIN_15
+#define PWMB_GPIO_Port GPIOD
+#define OLED_SCL_Pin GPIO_PIN_8
+#define OLED_SCL_GPIO_Port GPIOB
+#define OLED_SDA_Pin GPIO_PIN_9
+#define OLED_SDA_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

@@ -34,11 +34,11 @@
 extern int32_t left_encoder_count;
 extern int32_t right_encoder_count;
 
-// 视觉数据结构体定�???????
+// 视觉数据结构体定�????????
 typedef struct {
     float error_x;           // X方向误差
     float error_y;           // Y方向误差
-    uint8_t target_detected; // 目标�???????测标�???????
+    uint8_t target_detected; // 目标�????????测标�????????
     uint8_t data_ready;      // 数据就绪标志
 } Vision_Data_t;
 
@@ -57,7 +57,7 @@ typedef struct {
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-// 小车初始化函�???????
+// 小车初始化函�????????
 void car_init(void)
 {
   
@@ -132,21 +132,21 @@ void TIM2_Task_100Hz(void)
     // }
     
     // 更新舵机控制
-    Servo_Update(); //已在Mission_Update();调用 3 记得改回�?
+    Servo_Update(); //已在Mission_Update();调用 3 记得改回�??
     
 }
 
-// // 解析视觉数据 这部分还要另外写�???????个函数放在里�??????? 放在这里不行
+// // 解析视觉数据 这部分还要另外写�????????个函数放在里�???????? 放在这里不行
 // void Parse_Vision_Data(uint8_t *data, uint8_t length)
 // {
-//     // �???????单的解析示例，实际应根据视觉传感器的数据格式调整
-//     // 假设数据格式�???????: 帧头(1字节) + error_x(4字节) + error_y(4字节) + target_detected(1字节) + 校验(1字节)
-//     if (length >= 11 && data[0] == 0xAA) { // 0xAA为帧�???????
-//         // 解析error_x（浮点数�???????
+//     // �????????单的解析示例，实际应根据视觉传感器的数据格式调整
+//     // 假设数据格式�????????: 帧头(1字节) + error_x(4字节) + error_y(4字节) + target_detected(1字节) + 校验(1字节)
+//     if (length >= 11 && data[0] == 0xAA) { // 0xAA为帧�????????
+//         // 解析error_x（浮点数�????????
 //         float *px = (float*)(data + 1);
 //         vision_data.error_x = *px;
         
-//         // 解析error_y（浮点数�???????
+//         // 解析error_y（浮点数�????????
 //         float *py = (float*)(data + 5);
 //         vision_data.error_y = *py;
         
@@ -160,7 +160,7 @@ void TIM2_Task_100Hz(void)
 //         }
         
 //         if (checksum == data[10]) {
-//             // 校验通过，设置数据就绪标�???????
+//             // 校验通过，设置数据就绪标�????????
 //             vision_data.data_ready = 1;
 //         }
 //     }
@@ -236,7 +236,7 @@ int main(void)
  //startNavigation(8,0);
   //navyTest();
 
-  // 初始化任务系�??????
+  // 初始化任务系�???????
   //Mission_Init();
   //HAL_Delay(5000);
 //Servo_SetXAngle(180,10000);
@@ -248,9 +248,10 @@ int main(void)
 //TestMissionStateMachine();
 //TestVisionFeedback();
 //Servo_Test360Degrees();
-Mission_StartFire1();
+//Mission_StartFire1();
 //Servo_Test360Degrees();
-vision_data.target_detected = 0;//测试�?
+vision_data.target_detected = 0;//测试�??
+init_example();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -260,10 +261,10 @@ vision_data.target_detected = 0;//测试�?
 //vision_data.target_detected=0;
    // OLED_ShowNum(10,1,vision_data.error_x,2,16,0);
 	   //   OLED_ShowNum(10,4,vision_data.error_y,2,16,0);
-  Mission_Update();
-  Display_DebugStatus();
-
-       //HAL_Delay(100);  // 添加延时，降低刷新频�??
+  //Mission_Update();
+ // Display_DebugStatus();
+Waypoint_Update();
+       //HAL_Delay(100);  // 添加延时，降低刷新频�???
 //     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_12, GPIO_PIN_SET);
 //       HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, GPIO_PIN_RESET);
 //  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_9, GPIO_PIN_SET);
