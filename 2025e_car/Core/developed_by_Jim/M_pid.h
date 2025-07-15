@@ -23,6 +23,7 @@ typedef struct
     float out;
     float out_max;
     float out_min;
+    float err_last_last;
 } PID_TypeDef;
 
 

@@ -34,49 +34,58 @@ void pid_init(PID_TypeDef *pid, float kp, float ki, float kd, float out_max, flo
     pid->actual = 0;
     pid->err = 0;
     pid->err_last = 0;
+    pid->err_last_last = 0; // 初始化上上次误差
     pid->err_sum = 0;
     pid->out = 0;
     pid->out_max = out_max;
     pid->out_min = out_min;
 }
 
-// 计算PID输出
+/**
+ * @brief 增量式PID计算
+ * @param pid PID结构体指针
+ * @param set 设定值
+ * @param actual 实际值
+ * @return 增量式PID输出
+ */
 float pid_calc(PID_TypeDef *pid, float set, float actual)
 {
+    float increment; // PID增量
+    
+    // 保存上上次误差
+    float err_last_last = pid->err_last;
+    
+    // 更新设定值和实际值
     pid->set = set;
     pid->actual = actual;
+    
+    // 计算当前误差
     pid->err = pid->set - pid->actual;
-
-    // // 添加死区控制：当实际速度达到目标速度的90%时，输出为0
-    // // 对于速度控制，只在目标速度不为0时应用死区
-    // if (pid->set != 0.0f && fabsf(pid->actual) >= fabsf(pid->set) * 0.95f &&
-    //     ((pid->set > 0 && pid->actual > 0) || (pid->set < 0 && pid->actual < 0)))
-    // {
-    //     return 0.0f;
-    // }
-
-    // 积分项考虑采样时间
-    pid->err_sum += pid->err * DT_100HZ;
-
-    // 积分限幅，防止积分饱和
-    if (pid->err_sum > 1000.0f)
-        pid->err_sum = 1000.0f;
-    if (pid->err_sum < -1000.0f)
-        pid->err_sum = -1000.0f;
-
-    // 微分项考虑采样时间
-    float d_err = (pid->err - pid->err_last) / DT_100HZ;
-
-    // PID输出计算
-    pid->out = pid->kp * pid->err + pid->ki * pid->err_sum + pid->kd * d_err;
-
-    // 输出限幅下降，PID系统需要时间恢复
+    
+    // 特殊处理停车情况 - 如果目标速度为0且实际速度很小，直接返回0
+    if (fabsf(pid->set) < 0.1f && fabsf(pid->actual) < 2.0f) {
+        pid->out = 0.0f;
+        pid->err_last = 0.0f;
+        return 0.0f;
+    }
+    
+    // 计算增量：△u(k) = Kp[e(k)-e(k-1)] + Ki*e(k) + Kd[e(k)-2e(k-1)+e(k-2)]
+    increment = pid->kp * (pid->err - pid->err_last) +           // 比例项
+                pid->ki * pid->err * DT_100HZ +                  // 积分项
+                pid->kd * (pid->err - 2*pid->err_last + err_last_last) / DT_100HZ; // 微分项
+    
+    // 更新误差历史
+    pid->err_last = pid->err;
+    
+    // 更新输出 = 上次输出 + 增量
+    pid->out += increment;
+    
+    // 输出限幅
     if (pid->out > pid->out_max)
         pid->out = pid->out_max;
     if (pid->out < pid->out_min)
         pid->out = pid->out_min;
-
-    pid->err_last = pid->err;
+    
     return pid->out;
 }
 
@@ -204,6 +213,7 @@ void pid_reset(PID_TypeDef *pid)
 {
     pid->err = 0;
     pid->err_last = 0;
+    pid->err_last_last = 0; // 重置上上次误差
     pid->err_sum = 0;
     pid->out = 0;
 }

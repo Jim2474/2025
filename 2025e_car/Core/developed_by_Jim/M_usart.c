@@ -70,7 +70,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 		//HAL_UART_Transmit_DMA(&huart4, USART4_RxData, Size);
 		//在这里写火源坐标解析 调用 Mission_StartByFireId 解析任务 
         // 解析数据
-        sscanf((char*)USART4_RxData,"!,%f,%f,%f,%f,%f#", &left_wheel_pid.kp, &left_wheel_pid.ki, &left_wheel_pid.kd,&g_left_target_speed,&g_right_target_speed);
+        sscanf((char*)USART4_RxData,"!,%f,%f,%f,%f,%f,#", &right_wheel_pid.kp, &right_wheel_pid.ki, &right_wheel_pid.kd,&g_left_target_speed,&g_right_target_speed);
 
 		HAL_UARTEx_ReceiveToIdle_DMA(&huart4, USART4_RxData, sizeof(USART4_RxData));
 		__HAL_DMA_DISABLE_IT(&hdma_uart4_rx, DMA_IT_HT);
