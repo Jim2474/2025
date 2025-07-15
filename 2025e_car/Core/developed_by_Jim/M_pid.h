@@ -43,7 +43,8 @@ void set_target_speed(float left, float right);// 设置目标速度
 void set_target_yaw(float yaw);// 设置目标航向角
 void pid_reset(PID_TypeDef *pid);// 重置PID控制器
 void wheels_pid_reset(void);// 重置所有PID控制器
-
+int turn_in_place(float target_angle, float turn_speed);// 小车原地转向指定角度
+int turn_in_place_improved(float target_angle, float max_turn_speed);// 改进的原地转向函数
 
 // 导出PID结构体实例，便于外部访问
 extern PID_TypeDef left_wheel_pid;

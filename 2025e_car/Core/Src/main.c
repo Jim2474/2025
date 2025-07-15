@@ -73,7 +73,7 @@ void car_init(void)
   // ĺĺ§ĺPIDć§ĺś???????????????
   pid_init_all();
   // čŽžç˝Žĺĺ§çŽć éĺşŚ0
-  set_target_speed(20.0f, 0.0f);
+  set_target_speed(0.0f, 0.0f);
   // ĺĺ§ĺĺŻźčŞçłť???????????????
   navy_init();
   Servo_Init();
@@ -112,7 +112,7 @@ void TIM2_Task_100Hz(void)
   updatePosition();
  	//HAL_UART_Transmit(&huart3, (uint8_t *)&jim, 1, HAL_MAX_DELAY);
   // 2. ć´ć°ĺŻźčŞć§ĺś
-  //updateNavigation_control();
+  updateNavigation_control();
   
   // 3. ć§čĄPIDć§ĺśčŽĄçŽĺçľćşčž???????????????
   // ĺĺŤéĺşŚçŻĺč˝ŹĺçŻçć§ĺś
@@ -132,8 +132,8 @@ void TIM2_Task_100Hz(void)
     
     // 更新舵机控制
     Servo_Update(); //已在Mission_Update();调用 3 记得改回�??
-    	printf("%f,%f\n",right_wheel_speed,g_right_target_speed);
-
+    	//printf("%f,%f\n",left_wheel_speed,g_left_target_speed);
+  //update_rotation_task();
 }
 
 // // 解析视觉数据 这部分还要另外写�????????个函数放在里�???????? 放在这里不行
@@ -178,7 +178,6 @@ void TIM2_Task_100Hz(void)
 //         HAL_UART_Receive_DMA(huart, vision_rx_buffer, sizeof(vision_rx_buffer));
 //     }
 // }
-
 
 
 /* USER CODE END 0 */
@@ -251,9 +250,16 @@ int main(void)
 //Mission_StartFire1();
 //Servo_Test360Degrees();
 vision_data.target_detected = 0;//测试�??
-//init_example();
+init_example();
   /* USER CODE END 2 */
-
+// 执行转向测试
+//test_turn_angles();
+// 等待转向完成
+//while(!turn_in_place(90, 10))
+// {
+//    HAL_Delay(10); // 小延时，避免CPU占用过高
+//}
+//printf("转向完成，进入主循环\n");
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -263,7 +269,7 @@ vision_data.target_detected = 0;//测试�??
 	   //   OLED_ShowNum(10,4,vision_data.error_y,2,16,0);
   //Mission_Update();
  // Display_DebugStatus();
-//Waypoint_Update();
+Waypoint_Update();
        //HAL_Delay(100);  // 添加延时，降低刷新频�???
 //     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_12, GPIO_PIN_SET);
 //       HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, GPIO_PIN_RESET);

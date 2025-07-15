@@ -1,4 +1,4 @@
-#include "M_pid.h"
+#include "M_pid.h"    // 确保math.h被正确包含
 
 // 定义左右轮PID结构体实例
 PID_TypeDef left_wheel_pid;
@@ -13,15 +13,20 @@ PID_TypeDef yaw_pid;
 #define LEFT_WHEEL_KP 65.0f
 #define LEFT_WHEEL_KI 30.0f
 #define LEFT_WHEEL_KD 0.0f
-#define RIGHT_WHEEL_KP 65.0f
-#define RIGHT_WHEEL_KI 30.0f
+#define RIGHT_WHEEL_KP 55.0f
+#define RIGHT_WHEEL_KI 100.0f
 #define RIGHT_WHEEL_KD 0.0f
 
 // 转向环PID参数宏定义
-#define YAW_KP 0.5f
-#define YAW_KI 0.0f
-#define YAW_KD 0.0f
-#define YAW_OUT_MAX 400.0f // 转向输出限幅
+// 调节建议：
+// 1. 如果震荡严重，降低YAW_KP到0.05-0.1
+// 2. 如果响应太慢，适当增加YAW_KP
+// 3. 如果有稳态误差，增加YAW_KI到0.005-0.02
+// 4. 如果超调明显，增加YAW_KD到0.2-0.3
+#define YAW_KP 0.7f     // 比例系数：降低以减少震荡
+#define YAW_KI 0.0f    // 积分系数：添加小积分项消除稳态误差
+#define YAW_KD 0.0f     // 微分系数：增加以抑制超调
+#define YAW_OUT_MAX 400.0f // 转向输出限幅：降低最大输出
 #define YAW_OUT_MIN -400.0f
 
 // 初始化PID结构体
@@ -155,14 +160,22 @@ float yaw_pid_control(float target_yaw)
 
     // 计算航向角误差，并进行规范化处理
     float yaw_error = normalize_angle(target_yaw - current_yaw);
+    //float output = 0;
 
+    // 增大死区，避免在目标附近震荡
+    if (fabsf(yaw_error) < 2.0f)
+    {
+        // 在死区内直接返回0，不进行PID计算
+        return 0.0f;
+    }
+    
     // 使用规范化后的误差进行PID计算
     yaw_pid.set = 0;             // 设置目标误差为0
     yaw_pid.actual = -yaw_error; // 当前误差作为反馈值，取负是为了保持控制方向一致
-
+    
     // 计算PID输出
     float output = pid_calc(&yaw_pid, yaw_pid.set, yaw_pid.actual);
-
+    
     return output;
 }
 
@@ -224,3 +237,50 @@ void wheels_pid_control_auto(void)
      wheels_pid_control(g_left_target_speed, g_right_target_speed);
 
 }
+
+/**
+ * @brief 小车原地转向指定角度（使用PID控制）
+ * @param target_angle 目标角度(-180到180度)
+ * @param max_turn_speed 最大转向速度(cm/s)
+ * @return 1表示已到达目标角度，0表示正在转向
+ */
+int turn_in_place(float target_angle, float max_turn_speed)
+{
+    // 获取当前角度
+    float current_angle = IMU_data.YawZ;
+
+    // 计算角度差值
+    float angle_error = normalize_angle(target_angle - current_angle);
+
+    // 增大死区，避免在目标附近震荡
+    if (fabsf(angle_error) < 2.0f) {
+        // 停止电机
+        set_target_speed(0.0f, 0.0f);
+        printf("已到达目标角度: %.1f, 当前角度: %.1f\n", target_angle, current_angle);
+        return 1; // 返回1表示已到达目标角度
+    }
+
+    // 使用PID控制器计算转向输出
+    float yaw_output = yaw_pid_control(target_angle);
+
+    // 限制最大转向速度
+    if (yaw_output > max_turn_speed) {
+        yaw_output = max_turn_speed;
+    } else if (yaw_output < -max_turn_speed) {
+        yaw_output = -max_turn_speed;
+    }
+
+    // 根据PID输出设置左右轮速度（原地转向）
+    float left_speed = -yaw_output;   // 左轮速度
+    float right_speed = yaw_output;   // 右轮速度
+
+    // 设置电机速度
+    set_target_speed(left_speed, right_speed);
+
+    // 打印调试信息
+    printf("当前角度:%.1f, 目标角度:%.1f, 误差:%.1f, PID输出:%.1f\n",
+           current_angle, target_angle, angle_error, yaw_output);
+
+    return 0; // 返回0表示正在转向
+}
+

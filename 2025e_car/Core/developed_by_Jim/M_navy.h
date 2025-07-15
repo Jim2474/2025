@@ -81,6 +81,8 @@ void setNavigationParameters(float distThreshold, float velocity, float angVeloc
 
 // 更新导航控制
 void updateNavigation_control(void);
+void start_rotation(float angle);
+void update_rotation_task(void);
 void navyTest(void);
 
 #endif

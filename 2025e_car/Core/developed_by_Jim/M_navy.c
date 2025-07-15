@@ -16,6 +16,12 @@ static float targetDistanceThreshold = 0.5f;       // 到达目标的距离阈�
 static float targetVelocity = 10.0f;               // 导航时的目标速度(cm/s)
 static float maxAngularVelocity = 60.0f;           // 最大角速度(度/秒)
 
+static float rotation_accum = 0.0f;
+static float last_yaw = 0.0f;
+static int rotating = 0; // 0:无旋转任务 1:正在旋转
+static float rotation_target = 0.0f; // 目标旋转角度（正负表示方向，单位：度）
+static int rotation_lock = 0; // 0:可触发旋转 1:旋转完成后需微调
+
 /**
  * @brief 初始化导航系统
  */
@@ -244,76 +250,154 @@ void setNavigationParameters(float distThreshold, float velocity, float angVeloc
 }
 
 /**
- * @brief 更新导航控制######################################################################################################################################
- * 在TIM2_Task_100Hz中周期性调用，根据当前位置和目标位置计算控制量
+ * @brief 更新导航控制，支持原地旋转任务
+ * 在TIM2_Task_100Hz中周期性调用
  */
 void updateNavigation_control(void)
 {
-    float toimprove = 0.0f;
+    // 优先处理原地旋转任务
+    if (rotating) {
+        update_rotation_task();
+        return;
+    }
+
     // 如果不在导航状态，直接返回
     if (navyState != NAVY_STATE_MOVING)
         return;
-    
+
     // 计算到目标点的距离
     float distance = calculateDistance(currentPosition, targetPosition);
-    
+
     // 检查是否已到达目标
     if (distance < targetDistanceThreshold)
     {
         navyState = NAVY_STATE_ARRIVED;
         set_target_speed(0.0f, 0.0f); // 停止小车
+        rotation_lock = 0; // 允许下次旋转
+
         return;
     }
-    
+
     // 计算目标角度
     float targetAngle = calculateTargetAngle();
-    // 将弧度转换为角度
     float targetAngleDeg = rad2deg(targetAngle);
-    
-    // 使用PID控制器计算转向控制量（角度闭环控制）
-    float angularControl = yaw_pid_control(targetAngleDeg);
-   // printf("targetAngleDeg: %.2f, Angular Control: %.2f\n", targetAngleDeg, angularControl);
-    // 获取当前角度和目标角度的差值（用于调整线速度）
-    float angleDiff = normalizeAngle(targetAngle - currentPosition.theta);
-    
-    // 计算线速度控制量 - 根据距离和角度差调整速度
-    float velocityControl = targetVelocity;
-    
-    // 当角度差较大时，降低线速度以优先调整方向
-    if (fabsf(angleDiff) > 0.5f) // 30度以上的角度差
+    float currentYaw = IMU_data.YawZ;
+
+    // 用规范化到[-180,180]的角度差，保证走最短路径
+    float angleDiff = normalize_angle(targetAngleDeg - currentYaw);
+    float absAngleDiff = fabsf(angleDiff);
+    // 旋转完成后，只有当角度差回到小于10度才解锁
+    if (absAngleDiff < 10.0f)
     {
-        toimprove=0.5f;
-        // 角度差越大，速度越低，最低为30%
-        velocityControl *= (1.0f - 0.7f * fabsf(angleDiff) / PI);
-        if (velocityControl < targetVelocity * 0.5f)
-            velocityControl = targetVelocity * 0.5f;
+        rotation_lock = 0;
     }
+    // 当角度差大于30度时，先原地旋转调整方向
+    if (absAngleDiff > 30.0f && !rotation_lock)
+    {
+        // 这里可以选择直接调用start_rotation(absAngleDiff)实现大角度原地旋转
+        // 例如：如果你想让导航自动切换到原地旋转模式
+        start_rotation(angleDiff); // angleDiff带符号，正负决定方向
+        rotation_lock = 1; // 禁止下次旋转
+        // 本周期不再做其他事，等待旋转任务完成
+        return;
+    
+    }
+    
     else
     {
-        toimprove=1.0f;
-    }
-    
-    // 如果接近目标点，平滑减速
-    if (distance < 1.0f) // 提前在3dm处开始减速
-    {
-        // 使用二次函数减速曲线，比线性减速更平滑
-        float slowDownFactor = (distance * distance) / 3.0f;
-        if (slowDownFactor < 0.5f) slowDownFactor = 0.5f; // 最低30%速度
+        // 角度差较小，可以边前进边微调方向
+        float velocityControl = targetVelocity;
 
-        velocityControl *= slowDownFactor;
-        
-        // 设置最低速度，避免过慢
-        if (velocityControl < 8.0f)
-            velocityControl = 8.0f;
+        // 根据角度差调整速度
+        if (absAngleDiff > 10.0f) {
+            velocityControl *= (1.0f - 0.5f * absAngleDiff / 30.0f);
+            if (velocityControl < targetVelocity * 0.5f)
+                velocityControl = targetVelocity * 0.5f;
+        }
+
+        // 如果接近目标点，平滑减速
+        if (distance < 1.0f)
+        {
+            float slowDownFactor = (distance * distance) / 1.0f;
+            if (slowDownFactor < 0.5f) slowDownFactor = 0.5f;
+            velocityControl *= slowDownFactor;
+            if (velocityControl < 8.0f)
+                velocityControl = 8.0f;
+        }
+
+        // 继续用你的PID函数
+        float angularControl = yaw_pid_control(targetAngleDeg);
+
+        // 限制转向控制输出，防止过大导致后退
+        float maxAngularControl = velocityControl * 0.8f;
+        if (angularControl > maxAngularControl) angularControl = maxAngularControl;
+        if (angularControl < -maxAngularControl) angularControl = -maxAngularControl;
+
+        // 设置左右轮目标速度
+        float leftSpeed = velocityControl - angularControl;
+        float rightSpeed = velocityControl + angularControl;
+
+        // 确保两个轮子都是正向的（不后退）
+        if (leftSpeed < 0) leftSpeed = 0;
+        if (rightSpeed < 0) rightSpeed = 0;
+
+        set_target_speed(leftSpeed, rightSpeed);
     }
-    
-    // 设置左右轮目标速度
-    // 使用PID控制器的输出直接控制左右轮差速
-    float leftSpeed = velocityControl - angularControl*toimprove;
-    float rightSpeed = velocityControl + angularControl*toimprove;
-    // 设置电机速度
-    set_target_speed(leftSpeed, rightSpeed);
 }
+
+/**
+ * @brief 启动原地旋转任务
+ * @param angle 目标旋转角度（正负表示方向，单位：度）
+ */
+void start_rotation(float angle) // angle: 360, 720, -360等
+{
+    rotation_accum = 0.0f;
+    last_yaw = IMU_data.YawZ;
+    rotation_target = angle;
+    rotating = 1;
+}
+
+/**
+ * @brief 更新原地旋转任务
+ * @return 1表示旋转完成，0表示仍在进行
+ */
+void update_rotation_task(void)
+{
+    if (!rotating) return;
+
+    float current_yaw = IMU_data.YawZ;
+    float delta = current_yaw - last_yaw;
+
+    // 处理跨0/360度跳变
+    if (delta > 180.0f) delta -= 360.0f;
+    if (delta < -180.0f) delta += 360.0f;
+
+    rotation_accum += delta;
+    last_yaw = current_yaw;
+
+    float remain = rotation_target - rotation_accum;
+
+    // 判断是否完成，增加±3度的误差容忍
+    if ((rotation_target > 0 && rotation_accum >= rotation_target - 3.0f) ||
+        (rotation_target < 0 && rotation_accum <= rotation_target + 3.0f))
+    {
+        set_target_speed(0, 0);
+        rotating = 0;
+        rotation_lock = 0;
+        printf("旋转完成，累计角度=%.1f\n", rotation_accum);
+        return;
+    }
+
+    // 旋转控制
+    float speed = 10.0f;
+    if (fabsf(remain) < 30.0f) speed = 5.0f; // 接近目标时减速
+
+    if (remain > 0)
+        set_target_speed(speed, -speed); // 顺时针
+    else
+        set_target_speed(-speed, speed); // 逆时针
+}
+
 /**
  * @brief ĺŻźčŞćľčŻĺ˝ć° - čŽŠĺ°č˝Śčľ°ä¸ä¸Şć­Łćšĺ˝˘
  */
