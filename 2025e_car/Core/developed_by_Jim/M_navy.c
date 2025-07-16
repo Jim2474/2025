@@ -255,11 +255,11 @@ void setNavigationParameters(float distThreshold, float velocity, float angVeloc
  */
 void updateNavigation_control(void)
 {
-    // 优先处理原地旋转任务
-    if (rotating) {
-        update_rotation_task();
-        return;
-    }
+    // // 优先处理原地旋转任务
+    // if (rotating) {
+    //     update_rotation_task();
+    //     return;
+    // }
 
     // 如果不在导航状态，直接返回
     if (navyState != NAVY_STATE_MOVING)
@@ -294,13 +294,28 @@ void updateNavigation_control(void)
     // 当角度差大于30度时，先原地旋转调整方向
     if (absAngleDiff > 30.0f && !rotation_lock)
     {
-        // 这里可以选择直接调用start_rotation(absAngleDiff)实现大角度原地旋转
-        // 例如：如果你想让导航自动切换到原地旋转模式
-        start_rotation(angleDiff); // angleDiff带符号，正负决定方向
-        rotation_lock = 1; // 禁止下次旋转
+        // 设置旋转锁，防止重复进入旋转逻辑
+        rotation_lock = 1;
+
+        // 调用turn_in_place进行原地转向（非阻塞方式）
+        // 传入目标角度差值和最大转向速度
+        turn_in_place(targetAngleDeg, 15.0f);
+
         // 本周期不再做其他事，等待旋转任务完成
         return;
-    
+    }
+
+    // 如果正在旋转锁定状态，继续执行转向直到完成
+    if (rotation_lock)
+    {
+        // 继续调用turn_in_place检查是否完成
+        if (turn_in_place(targetAngleDeg, 15.0f))
+        {
+            // 旋转完成，解除锁定
+            rotation_lock = 0;
+        }
+        // 旋转未完成，本周期不执行前进逻辑
+        return;
     }
     
     else

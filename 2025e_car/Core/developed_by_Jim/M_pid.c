@@ -256,7 +256,7 @@ int turn_in_place(float target_angle, float max_turn_speed)
     if (fabsf(angle_error) < 2.0f) {
         // 停止电机
         set_target_speed(0.0f, 0.0f);
-        printf("已到达目标角度: %.1f, 当前角度: %.1f\n", target_angle, current_angle);
+       // printf("已到达目标角度: %.1f, 当前角度: %.1f\n", target_angle, current_angle);
         return 1; // 返回1表示已到达目标角度
     }
 
@@ -278,8 +278,8 @@ int turn_in_place(float target_angle, float max_turn_speed)
     set_target_speed(left_speed, right_speed);
 
     // 打印调试信息
-    printf("当前角度:%.1f, 目标角度:%.1f, 误差:%.1f, PID输出:%.1f\n",
-           current_angle, target_angle, angle_error, yaw_output);
+   // printf("当前角度:%.1f, 目标角度:%.1f, 误差:%.1f, PID输出:%.1f\n",
+         //  current_angle, target_angle, angle_error, yaw_output);
 
     return 0; // 返回0表示正在转向
 }
