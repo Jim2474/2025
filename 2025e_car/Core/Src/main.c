@@ -247,10 +247,10 @@ int main(void)
 //TestMissionStateMachine();
 //TestVisionFeedback();
 //Servo_Test360Degrees();
-//Mission_StartFire1();
+Mission_StartFire1();
 //Servo_Test360Degrees();
 vision_data.target_detected = 0;//测试�??
-init_example();
+//init_example();
   /* USER CODE END 2 */
 // 执行转向测试
 //test_turn_angles();
@@ -267,9 +267,9 @@ init_example();
 //vision_data.target_detected=0;
    // OLED_ShowNum(10,1,vision_data.error_x,2,16,0);
 	   //   OLED_ShowNum(10,4,vision_data.error_y,2,16,0);
-  //Mission_Update();
+  Mission_Update();
  // Display_DebugStatus();
-Waypoint_Update();
+//Waypoint_Update();
        //HAL_Delay(100);  // 添加延时，降低刷新频�???
 //     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_12, GPIO_PIN_SET);
 //       HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, GPIO_PIN_RESET);

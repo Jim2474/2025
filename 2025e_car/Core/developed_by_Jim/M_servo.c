@@ -32,7 +32,7 @@ void Servo_Init(void)
     HAL_TIM_PWM_Start(&htim1, TIM_CHANNEL_4);
 
     // 初始化X舵机PID控制器
-   pid_init(&servo_x.pid, SERVO_PID_KP, SERVO_PID_KI, SERVO_PID_KD,
+   pid_init_servo(&servo_x.pid, SERVO_PID_KP, SERVO_PID_KI, SERVO_PID_KD,
             SERVO_PID_MAX_OUT, SERVO_PID_MIN_OUT);
     servo_x.current_angle = SERVO_X_CENTER_ANGLE;
     servo_x.target_angle = SERVO_X_CENTER_ANGLE;
@@ -41,7 +41,7 @@ void Servo_Init(void)
     servo_x.duration = SERVO_DEFAULT_DURATION;
 
 //    // 初始化Y舵机PID控制器
-   pid_init(&servo_y.pid, SERVO_PID_KP, SERVO_PID_KI, SERVO_PID_KD,
+   pid_init_servo(&servo_y.pid, SERVO_PID_KP, SERVO_PID_KI, SERVO_PID_KD,
             SERVO_PID_MAX_OUT, SERVO_PID_MIN_OUT);
     servo_y.current_angle = SERVO_Y_CENTER_ANGLE;
     servo_y.target_angle = SERVO_Y_CENTER_ANGLE;
@@ -280,14 +280,14 @@ void Servo_Update(void)
        float deadzone = 2.0f; // 调整死区大小
        
        if (fabsf(vision_data.error_x) > deadzone)
-           x_correction = pid_calc(&servo_x.pid, 0, -vision_data.error_x);
+           x_correction = pid_calc_servo(&servo_x.pid, 0, -vision_data.error_x);
        else
-           pid_reset(&servo_x.pid); // 在死区内重置积分项
+           pid_reset_servo(&servo_x.pid); // 在死区内重置积分项
            
        if (fabsf(vision_data.error_y) > deadzone)
-           y_correction = pid_calc(&servo_y.pid, 0, -vision_data.error_y);
+           y_correction = pid_calc_servo(&servo_y.pid, 0, -vision_data.error_y);
        else
-           pid_reset(&servo_y.pid); // 在死区内重置积分项
+           pid_reset_servo(&servo_y.pid); // 在死区内重置积分项
        
        // 关键修改：大幅缩小PID输出到舵机角度的映射比例
        x_correction *= 0.05f;  // 缩小20倍
@@ -317,8 +317,8 @@ void Servo_Update(void)
 void Servo_Reset(void)
 {
     // 重置PID控制器
-    pid_reset(&servo_x.pid);
-    pid_reset(&servo_y.pid);
+    pid_reset_servo(&servo_x.pid);
+    pid_reset_servo(&servo_y.pid);
 
     // 舵机回到中心位置
     Servo_SetXAngle(SERVO_X_CENTER_ANGLE, SERVO_DEFAULT_DURATION);

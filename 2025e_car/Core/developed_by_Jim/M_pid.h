@@ -28,7 +28,11 @@ typedef struct
 
 
 void pid_init(PID_TypeDef *pid, float kp, float ki, float kd, float out_max, float out_min);// 初始化PID结构体
-float pid_calc(PID_TypeDef *pid, float set, float actual);// 计算PID输出
+float pid_calc(PID_TypeDef *pid, float set, float actual);
+void pid_init_servo(PID_TypeDef *pid, float kp, float ki, float kd, float out_max, float out_min);// 初始化PID结构体
+
+float pid_calc_servo(PID_TypeDef *pid, float set, float actual);
+// 计算PID输出
 void pid_init_all(void);// 初始化所有PID控制器
 void wheels_pid_init(void);// 初始化左右轮PID控制器
 float left_wheel_pid_control(float target_speed);// 左轮PID速度控制
@@ -41,7 +45,9 @@ void wheels_pid_control_with_yaw(float base_speed, float target_yaw);// 带转�
 void wheels_pid_control_auto_with_yaw(void);// 使用全局目标速度和航向角的PID控制
 void set_target_speed(float left, float right);// 设置目标速度
 void set_target_yaw(float yaw);// 设置目标航向角
-void pid_reset(PID_TypeDef *pid);// 重置PID控制器
+void pid_reset(PID_TypeDef *pid);
+void pid_reset_servo(PID_TypeDef *pid);
+// 重置PID控制器
 void wheels_pid_reset(void);// 重置所有PID控制器
 int turn_in_place(float target_angle, float turn_speed);// 小车原地转向指定角度
 int turn_in_place_improved(float target_angle, float max_turn_speed);// 改进的原地转向函数

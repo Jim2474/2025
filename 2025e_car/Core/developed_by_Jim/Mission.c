@@ -1,3 +1,5 @@
+
+
 #include "Mission.h"
 
 // 定义地图尺寸
@@ -64,25 +66,25 @@ static uint8_t currentFireId = 0;                                      // 当前
 // 火源1路径点（前往）- 从起点到左上角火源，沿左边界走
 static PathPoint_t pathToFire1[] = {
     {START_X, START_Y, NORMAL_SPEED},                  // 起点
-    // {5.0f, 5.0f, NORMAL_SPEED},                        // 避开左下角建筑物
-    // {7.0f, 10.0f, TURNING_SPEED},                      // 左转准备沿左边界
-    // {7.0f, 20.0f, NORMAL_SPEED},                       // 沿左边界向上
-    // {7.0f, 26.0f, NORMAL_SPEED},                       // 继续向上到火源1高度
-        {START_X + 5.0f, START_Y, NORMAL_SPEED},           // 向右移动5dm
-    {START_X + 10.0f, START_Y, NORMAL_SPEED},          // 继续向右移动5dm
+    {5.0f, 5.0f, NORMAL_SPEED},                        // 避开左下角建筑物
+    {7.0f, 10.0f, TURNING_SPEED},                      // 左转准备沿左边界
+    {7.0f, 20.0f, NORMAL_SPEED},                       // 沿左边界向上
+    {7.0f, 26.0f, NORMAL_SPEED},                       // 继续向上到火源1高度
+    //     {START_X + 5.0f, START_Y, NORMAL_SPEED},           // 向右移动5dm
+    // {START_X + 10.0f, START_Y, NORMAL_SPEED},          // 继续向右移动5dm
 
-   // {FIRE1_X - FIRE_DISTANCE, FIRE1_Y, APPROACH_SPEED} // 接近火源1位置，保持5dm距离
+    {FIRE1_X - FIRE_DISTANCE, FIRE1_Y, APPROACH_SPEED} // 接近火源1位置，保持5dm距离
 };
 
 // 火源1路径点（返回）- 原路返回
 static PathPoint_t pathFromFire1[] = {
-   // {FIRE1_X - FIRE_DISTANCE, FIRE1_Y, NORMAL_SPEED}, // 火源1位置
-    // {7.0f, 26.0f, NORMAL_SPEED},                      // 回到左边界
-    // {7.0f, 20.0f, NORMAL_SPEED},                      // 沿左边界向下
-    // {7.0f, 10.0f, NORMAL_SPEED},                      // 继续向下
-    // {5.0f, 5.0f, TURNING_SPEED},                      // 避开左下角建筑物
-        {START_X + 10.0f, START_Y, NORMAL_SPEED},          // 返回中间点
-    {START_X + 5.0f, START_Y, NORMAL_SPEED},           // 继续返回
+   {FIRE1_X - FIRE_DISTANCE, FIRE1_Y, NORMAL_SPEED}, // 火源1位置
+    {7.0f, 26.0f, NORMAL_SPEED},                      // 回到左边界
+    {7.0f, 20.0f, NORMAL_SPEED},                      // 沿左边界向下
+    {7.0f, 10.0f, NORMAL_SPEED},                      // 继续向下
+    {5.0f, 5.0f, TURNING_SPEED},                      // 避开左下角建筑物
+    //     {START_X + 10.0f, START_Y, NORMAL_SPEED},          // 返回中间点
+    // {START_X + 5.0f, START_Y, NORMAL_SPEED},           // 继续返回
     {START_X, START_Y, APPROACH_SPEED}                // 返回起点
 };
 
@@ -582,8 +584,8 @@ void Mission_Update(void)
                 // 继续前往下一个路径点
                 //printf("设置下一个返回路径点：(%.1f, %.1f)\n", 
 //                       currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-//                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
-//                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+               setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+               startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
             }
             else
             {
@@ -624,7 +626,7 @@ void Mission_Update(void)
         break;
 
     case MISSION_FIRE2_RETURN:
-        // 从火源2返回
+        // 火源2返回状态
         if (navyState == NAVY_STATE_ARRIVED)
         {
             // 到达当前路径点
@@ -632,21 +634,17 @@ void Mission_Update(void)
 
             if (currentPathIndex < totalPathPoints)
             {
-                // 前往下一个路径点
+                // 继续前往下一个路径点
                 setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
                 startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
             }
             else
             {
                 // 返回完成，任务结束
-               // printf("任务完成\n");
-                flag_jim=100;
                 currentMissionState = MISSION_COMPLETE;
-                stopNavigation();
             }
         }
         break;
-
     case MISSION_FIRE6_GOING:
         // 前往火源6状态
         if (navyState == NAVY_STATE_ARRIVED)
@@ -677,7 +675,7 @@ void Mission_Update(void)
         break;
 
     case MISSION_FIRE6_RETURN:
-        // 从火源6返回
+        // 火源6返回状态
         if (navyState == NAVY_STATE_ARRIVED)
         {
             // 到达当前路径点
@@ -685,7 +683,7 @@ void Mission_Update(void)
 
             if (currentPathIndex < totalPathPoints)
             {
-                // 前往下一个路径点
+                // 继续前往下一个路径点
                 setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
                 startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
             }
@@ -693,7 +691,6 @@ void Mission_Update(void)
             {
                 // 返回完成，任务结束
                 currentMissionState = MISSION_COMPLETE;
-                stopNavigation();
             }
         }
         break;
@@ -1108,6 +1105,24 @@ void Display_DebugStatus(void)
         case MISSION_FIRE1_RETURN:
             OLED_ShowString(16, 0, "RETN1", 12, 0);
             break;
+        case MISSION_FIRE2_GOING:
+            OLED_ShowString(16, 0, "GOING2", 12, 0);
+            break;
+        case MISSION_FIRE2_FIGHTING:
+            OLED_ShowString(16, 0, "FIGHT2", 12, 0);
+            break;
+        case MISSION_FIRE2_RETURN:
+            OLED_ShowString(16, 0, "RETN2", 12, 0);
+            break;
+        case MISSION_FIRE6_GOING:
+            OLED_ShowString(16, 0, "GOING6", 12, 0);
+            break;
+        case MISSION_FIRE6_FIGHTING:
+            OLED_ShowString(16, 0, "FIGHT6", 12, 0);
+            break;
+        case MISSION_FIRE6_RETURN:
+            OLED_ShowString(16, 0, "RETN6", 12, 0);
+            break;
         case MISSION_COMPLETE:
             OLED_ShowString(16, 0, "DONE", 12, 0);
             break;
@@ -1168,3 +1183,4 @@ void Display_DebugStatus(void)
     else
         OLED_ShowString(96, 6, "N", 12, 0);
 }
+

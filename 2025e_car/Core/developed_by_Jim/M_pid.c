@@ -45,6 +45,20 @@ void pid_init(PID_TypeDef *pid, float kp, float ki, float kd, float out_max, flo
     pid->out_max = out_max;
     pid->out_min = out_min;
 }
+void pid_init_servo(PID_TypeDef *pid, float kp, float ki, float kd, float out_max, float out_min)
+{
+    pid->kp = kp;
+    pid->ki = ki;
+    pid->kd = kd;
+    pid->set = 0;
+    pid->actual = 0;
+    pid->err = 0;
+    pid->err_last = 0;
+    pid->err_sum = 0;
+    pid->out = 0;
+    pid->out_max = out_max;
+    pid->out_min = out_min;
+}
 
 /**
  * @brief 增量式PID计算
@@ -93,6 +107,46 @@ float pid_calc(PID_TypeDef *pid, float set, float actual)
     
     return pid->out;
 }
+
+float pid_calc_servo(PID_TypeDef *pid, float set, float actual)
+{
+    pid->set = set;
+    pid->actual = actual;
+    pid->err = pid->set - pid->actual;
+
+    // // 添加死区控制：当实际速度达到目标速度的90%时，输出为0
+    // // 对于速度控制，只在目标速度不为0时应用死区
+    // if (pid->set != 0.0f && fabsf(pid->actual) >= fabsf(pid->set) * 0.95f &&
+    //     ((pid->set > 0 && pid->actual > 0) || (pid->set < 0 && pid->actual < 0)))
+    // {
+    //     return 0.0f;
+    // }
+
+    // 积分项考虑采样时间
+    pid->err_sum += pid->err * DT_100HZ;
+
+    // 积分限幅，防止积分饱和
+    if (pid->err_sum > 1000.0f)
+        pid->err_sum = 1000.0f;
+    if (pid->err_sum < -1000.0f)
+        pid->err_sum = -1000.0f;
+
+    // 微分项考虑采样时间
+    float d_err = (pid->err - pid->err_last) / DT_100HZ;
+
+    // PID输出计算
+    pid->out = pid->kp * pid->err + pid->ki * pid->err_sum + pid->kd * d_err;
+
+    // 输出限幅下降，PID系统需要时间恢复
+    if (pid->out > pid->out_max)
+        pid->out = pid->out_max;
+    if (pid->out < pid->out_min)
+        pid->out = pid->out_min;
+
+    pid->err_last = pid->err;
+    return pid->out;
+}
+
 
 // 初始化所有PID控制器
 void pid_init_all(void)
@@ -227,6 +281,14 @@ void pid_reset(PID_TypeDef *pid)
     pid->err = 0;
     pid->err_last = 0;
     pid->err_last_last = 0; // 重置上上次误差
+    pid->err_sum = 0;
+    pid->out = 0;
+}
+
+void pid_reset_servo(PID_TypeDef *pid)
+{
+    pid->err = 0;
+    pid->err_last = 0;
     pid->err_sum = 0;
     pid->out = 0;
 }
