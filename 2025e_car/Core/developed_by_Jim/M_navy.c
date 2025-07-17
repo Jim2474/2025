@@ -292,7 +292,7 @@ void updateNavigation_control(void)
         rotation_lock = 0;
     }
     // 当角度差大于30度时，先原地旋转调整方向
-    if (absAngleDiff > 30.0f && !rotation_lock)
+    if (absAngleDiff > 60.0f && !rotation_lock)
     {
         // 设置旋转锁，防止重复进入旋转逻辑
         rotation_lock = 1;

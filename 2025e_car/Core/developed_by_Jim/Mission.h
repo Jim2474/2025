@@ -40,7 +40,8 @@ void Mission_StartFire2(void);
 void Mission_StartFire6(void);
 
 // 根据火源ID启动对应任务
-void Mission_StartByFireId(uint8_t fireId);
+// 返回值：0=失败，1=成功启动，2=任务已在执行中
+uint8_t Mission_StartByFireId(uint8_t fireId);
 
 // 接收无人机发送的火源信息
 void Mission_ReceiveFireInfo(float fire_x, float fire_y, uint8_t fire_id);

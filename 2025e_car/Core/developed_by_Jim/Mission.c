@@ -7,8 +7,8 @@
 #define MAP_HEIGHT 40.0f // 地图高度，单位：dm
 
 // 定义起点区域（红色区域）
-#define START_X 2.5f // 起点X坐标中心点，单位：dm
-#define START_Y 3.5f // 起点Y坐标中心点，单位：dm
+#define START_X 0.0f // 起点X坐标中心点，单位：dm
+#define START_Y 0.0f // 起点Y坐标中心点，单位：dm
 
 // 定义建筑物1（左上角）火源位置
 #define FIRE1_X 12.0f // 火源1 X坐标，单位：dm
@@ -24,7 +24,7 @@
 
 // 定义导航参数
 #define ARRIVE_THRESHOLD 0.3f // 到达目标点的阈值，单位：dm
-#define FIRE_DISTANCE 5.0f    // 灭火距离，单位：dm
+#define FIRE_DISTANCE 7.0f    // 灭火距离，单位：dm
 #define NORMAL_SPEED 20.0f    // 正常行驶速度
 #define TURNING_SPEED 10.0f   // 转弯速度
 #define APPROACH_SPEED 15.0f  // 接近目标点速度
@@ -65,71 +65,73 @@ static uint8_t currentFireId = 0;                                      // 当前
         static uint32_t nav_stuck_time = 0;
 // 火源1路径点（前往）- 从起点到左上角火源，沿左边界走
 static PathPoint_t pathToFire1[] = {
-    {START_X, START_Y, NORMAL_SPEED},                  // 起点
-    {5.0f, 5.0f, NORMAL_SPEED},                        // 避开左下角建筑物
-    {7.0f, 10.0f, TURNING_SPEED},                      // 左转准备沿左边界
-    {7.0f, 20.0f, NORMAL_SPEED},                       // 沿左边界向上
-    {7.0f, 26.0f, NORMAL_SPEED},                       // 继续向上到火源1高度
+   // {START_X, START_Y, NORMAL_SPEED},                  // 起点
+
+    {3.5f, 0.0f, NORMAL_SPEED},                        // 避开左下角建筑物
+    {3.5f, 19.0f, TURNING_SPEED},                      // 左转准备沿左边界
+    {0.0f, 19.0f, NORMAL_SPEED},                       // 沿左边界向上
+    {0.0f, 20.0f, NORMAL_SPEED},                       // 沿左边界向上
+    //{6.0f, 26.0f, NORMAL_SPEED},                       // 继续向上到火源1高度
     //     {START_X + 5.0f, START_Y, NORMAL_SPEED},           // 向右移动5dm
     // {START_X + 10.0f, START_Y, NORMAL_SPEED},          // 继续向右移动5dm
 
-    {FIRE1_X - FIRE_DISTANCE, FIRE1_Y, APPROACH_SPEED} // 接近火源1位置，保持5dm距离
+    //{FIRE1_X - FIRE_DISTANCE, FIRE1_Y, APPROACH_SPEED} // 接近火源1位置，保持5dm距离
 };
 
 // 火源1路径点（返回）- 原路返回
 static PathPoint_t pathFromFire1[] = {
-   {FIRE1_X - FIRE_DISTANCE, FIRE1_Y, NORMAL_SPEED}, // 火源1位置
-    {7.0f, 26.0f, NORMAL_SPEED},                      // 回到左边界
-    {7.0f, 20.0f, NORMAL_SPEED},                      // 沿左边界向下
-    {7.0f, 10.0f, NORMAL_SPEED},                      // 继续向下
-    {5.0f, 5.0f, TURNING_SPEED},                      // 避开左下角建筑物
-    //     {START_X + 10.0f, START_Y, NORMAL_SPEED},          // 返回中间点
-    // {START_X + 5.0f, START_Y, NORMAL_SPEED},           // 继续返回
-    {START_X, START_Y, APPROACH_SPEED}                // 返回起点
+//   {FIRE1_X - FIRE_DISTANCE, FIRE1_Y, NORMAL_SPEED}, // 火源1位置
+//    {7.0f, 26.0f, NORMAL_SPEED},                      // 回到左边界
+//    {7.0f, 20.0f, NORMAL_SPEED},                      // 沿左边界向下
+//    {7.0f, 10.0f, NORMAL_SPEED},                      // 继续向下
+//    {5.0f, 5.0f, TURNING_SPEED},                      // 避开左下角建筑物
+//    //     {START_X + 10.0f, START_Y, NORMAL_SPEED},          // 返回中间点
+//    // {START_X + 5.0f, START_Y, NORMAL_SPEED},           // 继续返回
+//    {START_X, START_Y, APPROACH_SPEED}                // 返回起点
+    {0.0f, 20.0f, NORMAL_SPEED},                       // 沿左边界向上
+    {0.0f, 19.0f, NORMAL_SPEED},                       // 沿左边界向上
+    {3.5f, 19.0f, TURNING_SPEED},                      // 左转准备沿左边界
+    {3.5f, 0.0f, NORMAL_SPEED},                        // 避开左下角建筑物
+    {START_X, START_Y, APPROACH_SPEED}                 // 返回起点
+
+
+
 };
 
 // 火源2路径点（前往）- 从起点到中上部火源，走中间通道
 static PathPoint_t pathToFire2[] = {
-    {START_X, START_Y, NORMAL_SPEED},                  // 起点
-    {10.0f, 5.0f, NORMAL_SPEED},                       // 向右移动
-    {15.0f, 5.0f, NORMAL_SPEED},                       // 继续向右移动
-    {20.0f, 5.0f, NORMAL_SPEED},                       // 到达中间通道入口
-    {20.0f, 15.0f, NORMAL_SPEED},                      // 沿中间通道向上
-    {20.0f, 26.0f, NORMAL_SPEED},                      // 继续向上到火源2高度
-    {FIRE2_X - FIRE_DISTANCE, FIRE2_Y, APPROACH_SPEED} // 接近火源2位置，保持5dm距离
+    {3.5f, 0.0f, NORMAL_SPEED},                        // 避开左下角建筑物
+    {3.5f, 19.0f, TURNING_SPEED},              // 继续向右移动
+    {13.0f, 19.0f, NORMAL_SPEED},                       // 到达中间通道入口
+    {13.0f, 20.0f, NORMAL_SPEED},                      // 沿中间通道向上
 };
 
 // 火源2路径点（返回）- 原路返回
 static PathPoint_t pathFromFire2[] = {
-    {FIRE2_X - FIRE_DISTANCE, FIRE2_Y, NORMAL_SPEED}, // 火源2位置
-    {20.0f, 26.0f, NORMAL_SPEED},                     // 回到中间通道
-    {20.0f, 15.0f, NORMAL_SPEED},                     // 沿中间通道向下
-    {20.0f, 5.0f, NORMAL_SPEED},                      // 到达中间通道出口
-    {15.0f, 5.0f, NORMAL_SPEED},                      // 向左移动
-    {10.0f, 5.0f, NORMAL_SPEED},                      // 继续向左移动
-    {START_X, START_Y, APPROACH_SPEED}                // 返回起点
+        {13.0f, 20.0f, NORMAL_SPEED},                      
+        {13.0f, 19.0f, NORMAL_SPEED},                        
+    {3.5f, 19.0f, TURNING_SPEED},              
+    {3.5f, 0.0f, NORMAL_SPEED},                      
+    {START_X, START_Y, APPROACH_SPEED}            
 };
 
 // 火源6路径点（前往）- 从起点到右下部火源，走右侧通道
 static PathPoint_t pathToFire6[] = {
-    {START_X, START_Y, NORMAL_SPEED},                  // 起点
-    {10.0f, 5.0f, NORMAL_SPEED},                       // 向右移动
-    {20.0f, 5.0f, NORMAL_SPEED},                       // 继续向右移动
-    {30.0f, 5.0f, NORMAL_SPEED},                       // 继续向右移动
-    {36.0f, 5.0f, NORMAL_SPEED},                       // 到达右侧通道入口
-    {36.0f, 10.0f, NORMAL_SPEED},                      // 沿右侧通道向上
-    {FIRE6_X, FIRE6_Y - FIRE_DISTANCE, APPROACH_SPEED} // 接近火源6位置，保持5dm距离
+    {3.5f, 0.0f, NORMAL_SPEED},                        // 避开左下角建筑物
+    {3.5f, 3.0f, TURNING_SPEED},              // 继续向右移动
+    {21.5f, 3.0f, NORMAL_SPEED},                       // 到达中间通道入口
+    {21.0f, 6.0f, NORMAL_SPEED},    
+        {22.0f, 6.0f, NORMAL_SPEED},    
+
 };
 
 // 火源6路径点（返回）- 原路返回
 static PathPoint_t pathFromFire6[] = {
-    {FIRE6_X, FIRE6_Y - FIRE_DISTANCE, NORMAL_SPEED}, // 火源6位置
-    {36.0f, 10.0f, NORMAL_SPEED},                     // 回到右侧通道
-    {36.0f, 5.0f, NORMAL_SPEED},                      // 到达右侧通道出口
-    {30.0f, 5.0f, NORMAL_SPEED},                      // 向左移动
-    {20.0f, 5.0f, NORMAL_SPEED},                      // 继续向左移动
-    {10.0f, 5.0f, NORMAL_SPEED},                      // 继续向左移动
-    {START_X, START_Y, APPROACH_SPEED}                // 返回起点
+        {22.0f, 6.0f, NORMAL_SPEED},    
+    {21.0f, 6.0f, NORMAL_SPEED},    
+    {3.5f, 3.0f, TURNING_SPEED},              // 继续向右移动
+    {3.5f, 0.0f, NORMAL_SPEED},                        // 避开左下角建筑物
+    {START_X, START_Y, APPROACH_SPEED}         
 };
 
 // 声明私有函数
@@ -222,21 +224,40 @@ void Mission_StartFire6(void)
 }
 
 // 根据火源ID启动对应任务
-void Mission_StartByFireId(uint8_t fireId)
+// 返回值：0=失败，1=成功启动，2=任务已在执行中
+uint8_t Mission_StartByFireId(uint8_t fireId)
 {
+
+    // 验证火源ID的有效性并启动对应任务
     switch (fireId)
     {
     case 1:
         Mission_StartFire1();
+        return 1;
         break;
     case 2:
         Mission_StartFire2();
+        return 1;
+        break;
+    case 3:
+        // 任务3未定义，返回失败
+        return 0;
+        break;
+    case 4:
+        // 任务4未定义，返回失败
+        return 0;
+        break;
+    case 5:
+        // 任务5未定义，返回失败
+        return 0;
         break;
     case 6:
         Mission_StartFire6();
+        return 1;
         break;
     default:
         // 无效的火源ID
+        return 0;
         break;
     }
 }
@@ -244,8 +265,37 @@ void Mission_StartByFireId(uint8_t fireId)
 // 接收无人机发送的火源信息
 void Mission_ReceiveFireInfo(float fire_x, float fire_y, uint8_t fire_id)
 {
+    // 验证接收到的数据是否有效
+    if (fire_id == 0 || fire_id > 6)
+    {
+        // 无效的火源ID，忽略
+        return;
+    }
+
+    // 更新无人机数据结构（如果需要保存坐标信息）
+    drone_data.drone_x = fire_x;
+    drone_data.drone_y = fire_y;
+    drone_data.fire_id = fire_id;
+
     // 根据接收到的火源信息启动相应任务
-    Mission_StartByFireId(fire_id);
+    uint8_t result = Mission_StartByFireId(fire_id);
+
+    // 可以根据返回值进行相应处理
+    switch (result)
+    {
+    case 0:
+        // 任务启动失败（无效ID或系统忙）
+        // 可以在这里添加错误处理逻辑，比如发送反馈给飞机
+        break;
+    case 1:
+        // 任务成功启动
+        // 可以在这里添加成功反馈逻辑
+        break;
+    case 2:
+        // 相同任务已在执行中
+        // 可以在这里添加状态反馈逻辑
+        break;
+    }
 }
 
 // 开始灭火处理过程
@@ -281,6 +331,7 @@ static void Mission_HandleFireFighting(void)
         flag_jim=666;
         //printf("timeouttttttttttttttt\n");
         // 灭火超时，放弃当前灭火任务，进入返回状态
+        OLED_ShowString(0, 0, "Fire Fighting Timeout",12,0);
         switch (currentFireId)
         {
         case 1:
@@ -351,6 +402,8 @@ static void Mission_HandleFireFighting(void)
         //if (Servo_GetXAngle() != 0 || Servo_GetYAngle() != 0)
         //if(1)
         //{
+               OLED_ShowString(0, 1, "Aiming",12,0);
+
             // 检查舵机角度是否已经改变（不等于中心位置）
             if (Servo_GetXAngle() != SERVO_X_CENTER_ANGLE || Servo_GetYAngle() != SERVO_Y_CENTER_ANGLE)
             {
@@ -365,9 +418,12 @@ static void Mission_HandleFireFighting(void)
     case FIRE_PROCESS_FIRING:
         // 激光灭火阶段，保持激光照射火源
         // 通过视觉反馈确认是否已灭火
+        OLED_ShowString(0, 2, "Firing",12,0);
         if (Mission_IsFireExtinguished())
         {
             flag_jim=5;
+            //printf("灭火成功，进入确认阶段\n");
+            OLED_ShowString(0, 3, "Fire Extinguished",12,0);
             // 灭火成功，进入确认阶段
             fireProcessState = FIRE_PROCESS_CONFIRMING;
         }
@@ -375,8 +431,13 @@ static void Mission_HandleFireFighting(void)
 
     case FIRE_PROCESS_CONFIRMING:
         // 确认灭火成功阶段，再次检查火源是否已熄灭
+        OLED_ShowString(0, 4, "FIRE_PROCESS_CONFIRMING",12,0);
+
         if (Mission_IsFireExtinguished())
         {
+
+                           OLED_ShowString(0, 5, "CCconfirming",12,0);
+
             // 再次确认灭火成功，完成灭火任务
             fireProcessState = FIRE_PROCESS_COMPLETED;
            // printf("灭火确认成功，准备返回\n");
@@ -464,6 +525,7 @@ static uint8_t Mission_IsFireExtinguished(void)
             if (fireSuccessCounter >= FIRE_SUCCESS_THRESHOLD)
             {
                 flag_jim=53; // 显示灭火成功状态
+                fireSuccessCounter = 0;
                 return 1;
             }
         }

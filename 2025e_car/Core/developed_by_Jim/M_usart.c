@@ -2,8 +2,10 @@
 #include "usart.h"
 #include "jy61p.h"
 
-uint8_t USART3_RxData;
+
 uint8_t USART3_DMA_Buffer[JY61P_PACKET_SIZE*3]; // JY61P DMA接收缓冲区
+uint8_t USART1_RxData[200];
+uint8_t USART3_RxData;
 uint8_t USART4_RxData[200];
 uint8_t USART5_RxData[200];
 
@@ -15,7 +17,10 @@ extern DMA_HandleTypeDef hdma_uart4_rx;
 extern DMA_HandleTypeDef hdma_uart4_tx;
 extern DMA_HandleTypeDef hdma_uart5_rx;
 extern DMA_HandleTypeDef hdma_uart5_tx;
+extern DMA_HandleTypeDef hdma_usart1_rx;
 extern DMA_HandleTypeDef hdma_usart3_rx;
+
+drone_data_t drone_data ; // 初始化无人机数据
 
 void Uart_Init(void)
 {
@@ -32,8 +37,14 @@ void Uart_Init(void)
 	HAL_UARTEx_ReceiveToIdle_DMA(&huart3, USART3_DMA_Buffer, sizeof(USART3_DMA_Buffer));
 	__HAL_DMA_DISABLE_IT(&hdma_usart3_rx, DMA_IT_HT);
 	
-
-
+	// 初始化USART3 DMA接收陀螺仪数据
+	HAL_UARTEx_ReceiveToIdle_DMA(&huart1, USART1_RxData, sizeof(USART1_DMA_Buffer));
+	__HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
+     
+	drone_data.drone_x = 0.0f;
+	drone_data.drone_y = 0.0f;	
+	drone_data.fire_id = 0; // 初始化无人机数据
+	
 	// 保留中断方式接收作为备用
 	// HAL_UART_Receive_IT(&huart3, &USART3_RxData, 1);
 	
@@ -55,6 +66,16 @@ void Uart_Init(void)
 
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
+	if (huart == &huart1)//飞机和单片机
+	{
+		
+        sscanf((char*)USART1_RxData,"!,%f,%f,%d,#", &drone_data.drone_x, &drone_data.drone_y, &drone_data.fire_id);
+		// 重新启动DMA接收
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart1, USART1_RxData, sizeof(USART1_RxData));
+		__HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
+	}
+
+
 	if (huart == &huart3)
 	{
 		// 处理陀螺仪DMA数据

@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "board.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -34,11 +35,11 @@
 extern int32_t left_encoder_count;
 extern int32_t right_encoder_count;
 
-// 视觉数据结构体定�????????
+// 视觉数据结构体定�?????????
 typedef struct {
     float error_x;           // X方向误差
     float error_y;           // Y方向误差
-    uint8_t target_detected; // 目标�????????测标�????????
+    uint8_t target_detected; // 目标�?????????测标�?????????
     uint8_t data_ready;      // 数据就绪标志
 } Vision_Data_t;
 
@@ -57,10 +58,14 @@ typedef struct {
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-// 小车初始化函�????????
+// 任务状态标志
+static uint8_t mission_started = 0;  // 任务是否已启动标志
+static uint8_t last_fire_id = 0;     // 上次接收到的火源ID
+
+// 小车初始化函�?????????
 void car_init(void)
 {
-  
+
   Motor_PWM_StartAll();//TIM1 pwm11
   HAL_TIM_Base_Start_IT(&htim2);//1msĺŽćś
   OLED_Init();
@@ -69,7 +74,7 @@ void car_init(void)
   // ĺŻĺ¨ĺłč˝Žçźç ???????????????(TIM4)
   HAL_TIM_Encoder_Start(&htim5, TIM_CHANNEL_ALL);
   Uart_Init();
-      
+
   // ĺĺ§ĺPIDć§ĺś???????????????
   pid_init_all();
   // čŽžç˝Žĺĺ§çŽć éĺşŚ0
@@ -79,6 +84,46 @@ void car_init(void)
   Servo_Init();
 	Mission_Init();
 }
+
+// 检查并处理飞机发送的火源ID
+void Check_And_Start_Mission(void)
+{
+    // 检查是否接收到有效的火源ID
+    if (drone_data.fire_id != 0 && drone_data.fire_id != last_fire_id)
+    {
+        // 接收到新的火源ID
+        last_fire_id = drone_data.fire_id;
+
+        // 验证火源ID是否在有效范围内
+        if (drone_data.fire_id >= 1 && drone_data.fire_id <= 6)
+        {
+            // 尝试启动对应的灭火任务
+            uint8_t result = Mission_StartByFireId(drone_data.fire_id);
+
+            switch (result)
+            {
+            case 0:
+                // 任务启动失败（无效ID或未定义任务）
+                // 可以在这里添加错误指示，比如LED闪烁
+               // HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_RESET); // 错误指示
+                break;
+            case 1:
+                // 任务成功启动
+                mission_started = 1;
+                // 可以在这里添加成功指示，比如LED常亮
+                //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET); // 成功指示
+                break;
+            case 2:
+                // 相同任务已在执行中
+                mission_started = 1; // 确保标志位正确
+                break;
+            }
+        }
+    }
+}
+
+
+
 int jim =0;
 
 
@@ -131,22 +176,23 @@ void TIM2_Task_100Hz(void)
     // }
     
     // 更新舵机控制
-    Servo_Update(); //已在Mission_Update();调用 3 记得改回�??
+    Servo_Update(); //已在Mission_Update();调用 3 记得改回�???
     	//printf("%f,%f\n",left_wheel_speed,g_left_target_speed);
+
   //update_rotation_task();
 }
 
-// // 解析视觉数据 这部分还要另外写�????????个函数放在里�???????? 放在这里不行
+// // 解析视觉数据 这部分还要另外写�?????????个函数放在里�????????? 放在这里不行
 // void Parse_Vision_Data(uint8_t *data, uint8_t length)
 // {
-//     // �????????单的解析示例，实际应根据视觉传感器的数据格式调整
-//     // 假设数据格式�????????: 帧头(1字节) + error_x(4字节) + error_y(4字节) + target_detected(1字节) + 校验(1字节)
-//     if (length >= 11 && data[0] == 0xAA) { // 0xAA为帧�????????
-//         // 解析error_x（浮点数�????????
+//     // �?????????单的解析示例，实际应根据视觉传感器的数据格式调整
+//     // 假设数据格式�?????????: 帧头(1字节) + error_x(4字节) + error_y(4字节) + target_detected(1字节) + 校验(1字节)
+//     if (length >= 11 && data[0] == 0xAA) { // 0xAA为帧�?????????
+//         // 解析error_x（浮点数�?????????
 //         float *px = (float*)(data + 1);
 //         vision_data.error_x = *px;
         
-//         // 解析error_y（浮点数�????????
+//         // 解析error_y（浮点数�?????????
 //         float *py = (float*)(data + 5);
 //         vision_data.error_y = *py;
         
@@ -160,7 +206,7 @@ void TIM2_Task_100Hz(void)
 //         }
         
 //         if (checksum == data[10]) {
-//             // 校验通过，设置数据就绪标�????????
+//             // 校验通过，设置数据就绪标�?????????
 //             vision_data.data_ready = 1;
 //         }
 //     }
@@ -231,46 +277,34 @@ int main(void)
   car_init();
   Uart_Init();
   HAL_Delay(1000);
-  //setNavigationParameters(0.5f, 20.0f, 45.0f); 
- //startNavigation(8,0);
-  //navyTest();
 
-  // 初始化任务系�???????
-  //Mission_Init();
-  //HAL_Delay(5000);
-//Servo_SetXAngle(180,10000);
-//Servo_SetXAngle(180,20);
-//SimpleMissionTest();
-//navyTest();
-//TestFireProcessing();
-//TestCompleteFire1Mission();
-//TestMissionStateMachine();
-//TestVisionFeedback();
-//Servo_Test360Degrees();
-Mission_StartFire1();
-//Servo_Test360Degrees();
-vision_data.target_detected = 0;//测试�??
-//init_example();
+  vision_data.target_detected = 0;//测试用
+
+  // 可选：测试用，模拟接收火源ID（调试时使用）
+  // Test_Fire_ID_Reception(1);  // 取消注释来测试火源1
   /* USER CODE END 2 */
-// 执行转向测试
-//test_turn_angles();
-// 等待转向完成
-//while(!turn_in_place(90, 10))
-// {
-//    HAL_Delay(10); // 小延时，避免CPU占用过高
-//}
-//printf("转向完成，进入主循环\n");
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
-  {  
-//vision_data.target_detected=0;
-   // OLED_ShowNum(10,1,vision_data.error_x,2,16,0);
-	   //   OLED_ShowNum(10,4,vision_data.error_y,2,16,0);
-  Mission_Update();
- // Display_DebugStatus();
-//Waypoint_Update();
-       //HAL_Delay(100);  // 添加延时，降低刷新频�???
+  {
+    // 检查并处理飞机发送的火源ID（只在任务未启动时检查）
+    if (!mission_started)
+    {
+        Check_And_Start_Mission();
+    }
+
+    // 更新任务状态机
+    Mission_Update();
+
+    // 可选：显示调试信息
+    // OLED_ShowNum(10,1,vision_data.error_x,2,16,0);
+    // OLED_ShowNum(10,4,vision_data.error_y,2,16,0);
+    // OLED_ShowNum(10,6,drone_data.fire_id,1,16,0);  // 显示接收到的火源ID
+
+    // Display_DebugStatus();
+    // Waypoint_Update();
+       //HAL_Delay(100);  // 添加延时，降低刷新频�????
 //     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_12, GPIO_PIN_SET);
 //       HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, GPIO_PIN_RESET);
 //  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_9, GPIO_PIN_SET);
