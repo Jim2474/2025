@@ -12,7 +12,7 @@ static float totalLeftDist = 0.0f;       // 左轮总行驶距离
 static float totalRightDist = 0.0f;      // 右轮总行驶距离
 
  NavyState_t navyState = NAVY_STATE_IDLE;    // 当前导航状态
-static float targetDistanceThreshold = 0.5f;       // 到达目标的距离阈值(dm) 记得改回来
+static float targetDistanceThreshold = 0.3f;       // 到达目标的距离阈值(dm) 记得改回来
 static float targetVelocity = 10.0f;               // 导航时的目标速度(cm/s)
 static float maxAngularVelocity = 60.0f;           // 最大角速度(度/秒)
 

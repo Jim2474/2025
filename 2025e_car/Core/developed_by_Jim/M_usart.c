@@ -44,7 +44,7 @@ void Uart_Init(void)
 	drone_data.drone_x = 0.0f;
 	drone_data.drone_y = 0.0f;	
 	drone_data.fire_id = 0; // 初始化无人机数据
-	
+
 	// 保留中断方式接收作为备用
 	// HAL_UART_Receive_IT(&huart3, &USART3_RxData, 1);
 	
@@ -76,7 +76,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 	}
 
 
-	if (huart == &huart3)
+	if (huart == &huart3)//陀螺仪
 	{
 		// 处理陀螺仪DMA数据
 		HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1); // 指示灯切换状态
@@ -86,7 +86,7 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 		HAL_UARTEx_ReceiveToIdle_DMA(&huart3, USART3_DMA_Buffer, sizeof(USART3_DMA_Buffer));
 		__HAL_DMA_DISABLE_IT(&hdma_usart3_rx, DMA_IT_HT);
 	}
-	else if (huart == &huart4)
+	else if (huart == &huart4)//蓝牙通信
 	{
 		//HAL_UART_Transmit_DMA(&huart4, USART4_RxData, Size);
 		//在这里写火源坐标解析 调用 Mission_StartByFireId 解析任务 
@@ -96,11 +96,11 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 		HAL_UARTEx_ReceiveToIdle_DMA(&huart4, USART4_RxData, sizeof(USART4_RxData));
 		__HAL_DMA_DISABLE_IT(&hdma_uart4_rx, DMA_IT_HT);
 	}
-	else if (huart == &huart5)
+	else if (huart == &huart5)//视觉通信
 	{
 		//OLED_ShowNum(10,6,11,2,16,0);
 
-        sscanf((char*)USART5_RxData,"!,%f,%f,%f,%d,#", &vision_data.error_x, &vision_data.error_y, &vision_data.last_update,&vision_data.last_update);
+        sscanf((char*)USART5_RxData,"!,%f,%f,%d,#", &vision_data.error_x, &vision_data.error_y, &vision_data.target_detected);
 		// 处理maixcam数据
 		HAL_UARTEx_ReceiveToIdle_DMA(&huart5, USART5_RxData, sizeof(USART5_RxData));
 		__HAL_DMA_DISABLE_IT(&hdma_uart5_rx, DMA_IT_HT);

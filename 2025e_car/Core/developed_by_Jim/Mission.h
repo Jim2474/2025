@@ -12,6 +12,15 @@ typedef enum {
     MISSION_FIRE2_GOING,    // 前往火源2
     MISSION_FIRE2_FIGHTING, // 灭火2
     MISSION_FIRE2_RETURN,   // 火源2返回
+    MISSION_FIRE3_GOING,    // 前往火源3
+    MISSION_FIRE3_FIGHTING, // 灭火3
+    MISSION_FIRE3_RETURN,   // 火源3返回
+    MISSION_FIRE4_GOING,    // 前往火源4
+    MISSION_FIRE4_FIGHTING, // 灭火4
+    MISSION_FIRE4_RETURN,   // 火源4返回
+    MISSION_FIRE5_GOING,    // 前往火源5
+    MISSION_FIRE5_FIGHTING, // 灭火5
+    MISSION_FIRE5_RETURN,   // 火源5返回
     MISSION_FIRE6_GOING,    // 前往火源6
     MISSION_FIRE6_FIGHTING, // 灭火6
     MISSION_FIRE6_RETURN,   // 火源6返回
@@ -35,6 +44,15 @@ void Mission_StartFire1(void);
 
 // 开始执行灭火任务2（中上部火源）
 void Mission_StartFire2(void);
+
+// 开始执行灭火任务3
+void Mission_StartFire3(void);
+
+// 开始执行灭火任务4
+void Mission_StartFire4(void);
+
+// 开始执行灭火任务5
+void Mission_StartFire5(void);
 
 // 开始执行灭火任务6（右下部火源）
 void Mission_StartFire6(void);

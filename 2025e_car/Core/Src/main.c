@@ -182,49 +182,6 @@ void TIM2_Task_100Hz(void)
   //update_rotation_task();
 }
 
-// // 解析视觉数据 这部分还要另外写�?????????个函数放在里�????????? 放在这里不行
-// void Parse_Vision_Data(uint8_t *data, uint8_t length)
-// {
-//     // �?????????单的解析示例，实际应根据视觉传感器的数据格式调整
-//     // 假设数据格式�?????????: 帧头(1字节) + error_x(4字节) + error_y(4字节) + target_detected(1字节) + 校验(1字节)
-//     if (length >= 11 && data[0] == 0xAA) { // 0xAA为帧�?????????
-//         // 解析error_x（浮点数�?????????
-//         float *px = (float*)(data + 1);
-//         vision_data.error_x = *px;
-        
-//         // 解析error_y（浮点数�?????????
-//         float *py = (float*)(data + 5);
-//         vision_data.error_y = *py;
-        
-//         // 解析target_detected（布尔�?�）
-//         vision_data.target_detected = data[9];
-        
-//         // 校验（简单示例，实际应根据需求实现）
-//         uint8_t checksum = 0;
-//         for (int i = 0; i < 10; i++) {
-//             checksum += data[i];
-//         }
-        
-//         if (checksum == data[10]) {
-//             // 校验通过，设置数据就绪标�?????????
-//             vision_data.data_ready = 1;
-//         }
-//     }
-// }
-
-// // UART接收回调函数
-// void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-// {
-//     // 假设使用UART6接收视觉数据
-//     if (huart->Instance == USART6) {
-//         // 解析接收到的视觉数据
-//         Parse_Vision_Data(vision_rx_buffer, sizeof(vision_rx_buffer));
-        
-//         // 重新启动接收
-//         HAL_UART_Receive_DMA(huart, vision_rx_buffer, sizeof(vision_rx_buffer));
-//     }
-// }
-
 
 /* USER CODE END 0 */
 
@@ -278,7 +235,7 @@ int main(void)
   Uart_Init();
   HAL_Delay(1000);
 
-  vision_data.target_detected = 0;//测试用
+  //vision_data.target_detected = 0;//测试用
 
   // 可选：测试用，模拟接收火源ID（调试时使用）
   // Test_Fire_ID_Reception(1);  // 取消注释来测试火源1

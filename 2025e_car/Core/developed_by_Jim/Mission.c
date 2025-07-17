@@ -114,12 +114,54 @@ static PathPoint_t pathFromFire2[] = {
     {3.5f, 0.0f, NORMAL_SPEED},                      
     {START_X, START_Y, APPROACH_SPEED}            
 };
-
+//火源3路径点
+static PathPoint_t pathToFire3[] = {
+    {3.5f, 0.0f, NORMAL_SPEED},                        
+    {3.5f, 19.0f, TURNING_SPEED},              
+    {33.0f, 19.0f, NORMAL_SPEED},                       
+    {33.0f, 20.0f, NORMAL_SPEED},                      
+};
+// 火源3路径点（返回）- 原路返回
+static PathPoint_t pathFromFire3[] = {       
+    {33.0f, 20.0f, NORMAL_SPEED},                      
+    {33.0f, 19.0f, NORMAL_SPEED},                        
+    {3.5f, 19.0f, TURNING_SPEED},              
+    {3.5f, 0.0f, NORMAL_SPEED},                      
+    {START_X, START_Y, APPROACH_SPEED}            
+};
+//火源4路径点
+static PathPoint_t pathToFire4[] = {
+    {0.0f, 3.0f, NORMAL_SPEED},                       
+    {-5.0f, 3.0f, TURNING_SPEED},              
+    {-5.0f, 4.0f, NORMAL_SPEED},                       
+};
+// 火源4路径点（返回）- 原路返回
+static PathPoint_t pathFromFire4[] = {
+     {-5.0f, 4.0f, NORMAL_SPEED},                      
+    {-5.0f, 3.0f, TURNING_SPEED},                        
+    {0.0f, 3.0f, NORMAL_SPEED},                                   
+    {START_X, START_Y, APPROACH_SPEED}            
+};    
+//火源5路径点
+static PathPoint_t pathToFire5[] = {
+    {3.5f, 0.0f, NORMAL_SPEED},                       
+    {3.5f, 3.0f, TURNING_SPEED},              
+    {12.5f, 3.0f, NORMAL_SPEED},                       
+    {12.5f, 4.0f, NORMAL_SPEED}                     
+};
+// 火源5路径点（返回）- 原路返回
+static PathPoint_t pathFromFire5[] = {
+    {12.5f, 4.0f, NORMAL_SPEED},                      
+    {12.5f, 3.0f, NORMAL_SPEED},                        
+    {3.5f, 3.0f, TURNING_SPEED},              
+    {3.5f, 0.0f, NORMAL_SPEED},                      
+    {START_X, START_Y, APPROACH_SPEED}            
+};
 // 火源6路径点（前往）- 从起点到右下部火源，走右侧通道
 static PathPoint_t pathToFire6[] = {
-    {3.5f, 0.0f, NORMAL_SPEED},                        // 避开左下角建筑物
-    {3.5f, 3.0f, TURNING_SPEED},              // 继续向右移动
-    {21.5f, 3.0f, NORMAL_SPEED},                       // 到达中间通道入口
+    {3.5f, 0.0f, NORMAL_SPEED},                       
+    {3.5f, 3.0f, TURNING_SPEED},              
+    {21.5f, 3.0f, NORMAL_SPEED},                       
     {21.0f, 6.0f, NORMAL_SPEED},    
         {22.0f, 6.0f, NORMAL_SPEED},    
 
@@ -203,6 +245,66 @@ void Mission_StartFire2(void)
     }
 }
 
+// 开始执行灭火任务3
+void Mission_StartFire3(void)
+{
+    if (currentMissionState == MISSION_IDLE)
+    {
+        currentMissionState = MISSION_FIRE3_GOING;
+        currentPathIndex = 0;
+        currentPath = pathToFire3;
+        totalPathPoints = sizeof(pathToFire3) / sizeof(PathPoint_t);
+        currentFireId = 3;
+
+        // 设置第一个路径点
+        setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+        startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+
+        // 记录开始时间
+        missionStartTime = HAL_GetTick();
+    }
+}
+
+// 开始执行灭火任务4
+void Mission_StartFire4(void)
+{
+    if (currentMissionState == MISSION_IDLE)
+    {
+        currentMissionState = MISSION_FIRE4_GOING;
+        currentPathIndex = 0;
+        currentPath = pathToFire4;
+        totalPathPoints = sizeof(pathToFire4) / sizeof(PathPoint_t);
+        currentFireId = 4;
+
+        // 设置第一个路径点
+        setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+        startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+
+        // 记录开始时间
+        missionStartTime = HAL_GetTick();
+    }
+}
+
+// 开始执行灭火任务5
+void Mission_StartFire5(void)
+{
+    if (currentMissionState == MISSION_IDLE)
+    {
+        currentMissionState = MISSION_FIRE5_GOING;
+        currentPathIndex = 0;
+        currentPath = pathToFire5;
+        totalPathPoints = sizeof(pathToFire5) / sizeof(PathPoint_t);
+        currentFireId = 5;
+
+        // 设置第一个路径点
+        setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+        startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+
+        // 记录开始时间
+        missionStartTime = HAL_GetTick();
+    }
+}
+
 // 开始执行灭火任务6（右下部火源）
 void Mission_StartFire6(void)
 {
@@ -240,16 +342,16 @@ uint8_t Mission_StartByFireId(uint8_t fireId)
         return 1;
         break;
     case 3:
-        // 任务3未定义，返回失败
-        return 0;
+        Mission_StartFire3();
+        return 1;
         break;
     case 4:
-        // 任务4未定义，返回失败
-        return 0;
+        Mission_StartFire4();
+        return 1;
         break;
     case 5:
-        // 任务5未定义，返回失败
-        return 0;
+        Mission_StartFire5();
+        return 1;
         break;
     case 6:
         Mission_StartFire6();
@@ -343,6 +445,21 @@ static void Mission_HandleFireFighting(void)
             currentMissionState = MISSION_FIRE2_RETURN;
             currentPath = pathFromFire2;
             totalPathPoints = sizeof(pathFromFire2) / sizeof(PathPoint_t);
+            break;
+        case 3:
+            currentMissionState = MISSION_FIRE3_RETURN;
+            currentPath = pathFromFire3;
+            totalPathPoints = sizeof(pathFromFire3) / sizeof(PathPoint_t);
+            break;
+        case 4:
+            currentMissionState = MISSION_FIRE4_RETURN;
+            currentPath = pathFromFire4;
+            totalPathPoints = sizeof(pathFromFire4) / sizeof(PathPoint_t);
+            break;
+        case 5:
+            currentMissionState = MISSION_FIRE5_RETURN;
+            currentPath = pathFromFire5;
+            totalPathPoints = sizeof(pathFromFire5) / sizeof(PathPoint_t);
             break;
         case 6:
             currentMissionState = MISSION_FIRE6_RETURN;
@@ -459,6 +576,21 @@ static void Mission_HandleFireFighting(void)
                 currentPath = pathFromFire2;
                 totalPathPoints = sizeof(pathFromFire2) / sizeof(PathPoint_t);
                 break;
+            case 3:
+                currentMissionState = MISSION_FIRE3_RETURN;
+                currentPath = pathFromFire3;
+                totalPathPoints = sizeof(pathFromFire3) / sizeof(PathPoint_t);
+                break;
+            case 4:
+                currentMissionState = MISSION_FIRE4_RETURN;
+                currentPath = pathFromFire4;
+                totalPathPoints = sizeof(pathFromFire4) / sizeof(PathPoint_t);
+                break;
+            case 5:
+                currentMissionState = MISSION_FIRE5_RETURN;
+                currentPath = pathFromFire5;
+                totalPathPoints = sizeof(pathFromFire5) / sizeof(PathPoint_t);
+                break;
             case 6:
                 currentMissionState = MISSION_FIRE6_RETURN;
                 currentPath = pathFromFire6;
@@ -515,9 +647,13 @@ static uint8_t Mission_IsFireExtinguished(void)
         // 检查舵机角度是否稳定
        // if (fabs(Servo_GetXAngle() - SERVO_X_CENTER_ANGLE) < 20.0f &&
            // fabs(Servo_GetYAngle() - SERVO_Y_CENTER_ANGLE) < 20.0f)
-        if(vision_data.target_detected == 0)//5记得改回来
+        if(vision_data.target_detected == 1)//5记得改回来
         {
-            fireSuccessCounter++;
+            if (fabs(vision_data.error_x)< 20.0f &&(vision_data.error_x) < 20.0f)
+            {
+                 fireSuccessCounter++;
+            }
+         
           //  printf("检测到舵机稳定，计数器：%d\n", fireSuccessCounter);
             flag_jim=52; // 显示进入计数状态
 
@@ -689,6 +825,156 @@ void Mission_Update(void)
 
     case MISSION_FIRE2_RETURN:
         // 火源2返回状态
+        if (navyState == NAVY_STATE_ARRIVED)
+        {
+            // 到达当前路径点
+            currentPathIndex++;
+
+            if (currentPathIndex < totalPathPoints)
+            {
+                // 继续前往下一个路径点
+                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+            }
+            else
+            {
+                // 返回完成，任务结束
+                currentMissionState = MISSION_COMPLETE;
+            }
+        }
+        break;
+
+    case MISSION_FIRE3_GOING:
+        // 前往火源3状态
+        if (navyState == NAVY_STATE_ARRIVED)
+        {
+            // 到达当前路径点
+            currentPathIndex++;
+
+            if (currentPathIndex < totalPathPoints)
+            {
+                // 继续前往下一个路径点
+                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+            }
+            else
+            {
+                // 到达火源3附近，切换到灭火状态
+                currentMissionState = MISSION_FIRE3_FIGHTING;
+
+                // 开始灭火处理
+                Mission_StartFireProcessing(3);
+            }
+        }
+        break;
+
+    case MISSION_FIRE3_FIGHTING:
+        // 灭火3状态
+        Mission_HandleFireFighting();
+        break;
+
+    case MISSION_FIRE3_RETURN:
+        // 火源3返回状态
+        if (navyState == NAVY_STATE_ARRIVED)
+        {
+            // 到达当前路径点
+            currentPathIndex++;
+
+            if (currentPathIndex < totalPathPoints)
+            {
+                // 继续前往下一个路径点
+                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+            }
+            else
+            {
+                // 返回完成，任务结束
+                currentMissionState = MISSION_COMPLETE;
+            }
+        }
+        break;
+
+    case MISSION_FIRE4_GOING:
+        // 前往火源4状态
+        if (navyState == NAVY_STATE_ARRIVED)
+        {
+            // 到达当前路径点
+            currentPathIndex++;
+
+            if (currentPathIndex < totalPathPoints)
+            {
+                // 继续前往下一个路径点
+                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+            }
+            else
+            {
+                // 到达火源4附近，切换到灭火状态
+                currentMissionState = MISSION_FIRE4_FIGHTING;
+
+                // 开始灭火处理
+                Mission_StartFireProcessing(4);
+            }
+        }
+        break;
+
+    case MISSION_FIRE4_FIGHTING:
+        // 灭火4状态
+        Mission_HandleFireFighting();
+        break;
+
+    case MISSION_FIRE4_RETURN:
+        // 火源4返回状态
+        if (navyState == NAVY_STATE_ARRIVED)
+        {
+            // 到达当前路径点
+            currentPathIndex++;
+
+            if (currentPathIndex < totalPathPoints)
+            {
+                // 继续前往下一个路径点
+                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+            }
+            else
+            {
+                // 返回完成，任务结束
+                currentMissionState = MISSION_COMPLETE;
+            }
+        }
+        break;
+
+    case MISSION_FIRE5_GOING:
+        // 前往火源5状态
+        if (navyState == NAVY_STATE_ARRIVED)
+        {
+            // 到达当前路径点
+            currentPathIndex++;
+
+            if (currentPathIndex < totalPathPoints)
+            {
+                // 继续前往下一个路径点
+                setTargetPosition(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+                startNavigation(currentPath[currentPathIndex].x, currentPath[currentPathIndex].y);
+            }
+            else
+            {
+                // 到达火源5附近，切换到灭火状态
+                currentMissionState = MISSION_FIRE5_FIGHTING;
+
+                // 开始灭火处理
+                Mission_StartFireProcessing(5);
+            }
+        }
+        break;
+
+    case MISSION_FIRE5_FIGHTING:
+        // 灭火5状态
+        Mission_HandleFireFighting();
+        break;
+
+    case MISSION_FIRE5_RETURN:
+        // 火源5返回状态
         if (navyState == NAVY_STATE_ARRIVED)
         {
             // 到达当前路径点
@@ -1175,6 +1461,33 @@ void Display_DebugStatus(void)
             break;
         case MISSION_FIRE2_RETURN:
             OLED_ShowString(16, 0, "RETN2", 12, 0);
+            break;
+        case MISSION_FIRE3_GOING:
+            OLED_ShowString(16, 0, "GOING3", 12, 0);
+            break;
+        case MISSION_FIRE3_FIGHTING:
+            OLED_ShowString(16, 0, "FIGHT3", 12, 0);
+            break;
+        case MISSION_FIRE3_RETURN:
+            OLED_ShowString(16, 0, "RETN3", 12, 0);
+            break;
+        case MISSION_FIRE4_GOING:
+            OLED_ShowString(16, 0, "GOING4", 12, 0);
+            break;
+        case MISSION_FIRE4_FIGHTING:
+            OLED_ShowString(16, 0, "FIGHT4", 12, 0);
+            break;
+        case MISSION_FIRE4_RETURN:
+            OLED_ShowString(16, 0, "RETN4", 12, 0);
+            break;
+        case MISSION_FIRE5_GOING:
+            OLED_ShowString(16, 0, "GOING5", 12, 0);
+            break;
+        case MISSION_FIRE5_FIGHTING:
+            OLED_ShowString(16, 0, "FIGHT5", 12, 0);
+            break;
+        case MISSION_FIRE5_RETURN:
+            OLED_ShowString(16, 0, "RETN5", 12, 0);
             break;
         case MISSION_FIRE6_GOING:
             OLED_ShowString(16, 0, "GOING6", 12, 0);
