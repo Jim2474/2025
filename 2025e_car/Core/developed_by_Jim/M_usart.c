@@ -38,7 +38,7 @@ void Uart_Init(void)
 	__HAL_DMA_DISABLE_IT(&hdma_usart3_rx, DMA_IT_HT);
 	
 	// 初始化USART3 DMA接收陀螺仪数据
-	HAL_UARTEx_ReceiveToIdle_DMA(&huart1, USART1_RxData, sizeof(USART1_DMA_Buffer));
+	HAL_UARTEx_ReceiveToIdle_DMA(&huart1, USART1_RxData, sizeof(USART1_RxData));
 	__HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
      
 	drone_data.drone_x = 0.0f;
