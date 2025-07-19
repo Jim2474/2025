@@ -1026,6 +1026,16 @@
               <FileType>5</FileType>
               <FilePath>..\Core\developed_by_Jim\Waypoint.h</FilePath>
             </File>
+            <File>
+              <FileName>tjc_usart_hmi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\developed_by_Jim\tjc_usart_hmi.c</FilePath>
+            </File>
+            <File>
+              <FileName>tjc_usart_hmi.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\developed_by_Jim\tjc_usart_hmi.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

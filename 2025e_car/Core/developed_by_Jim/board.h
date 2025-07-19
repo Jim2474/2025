@@ -26,6 +26,8 @@
 #include "M_servo.h"
 #include "Waypoint.h"
 #include "tjc_usart_hmi.h"
+extern float fire_x_f;
+extern float fire_y_f;
 
 //资源分配表：
 /*

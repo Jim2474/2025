@@ -57,7 +57,8 @@ static uint32_t fireProcessStartTime = 0;                              // 灭火
 static FireProcessState_t fireProcessState = FIRE_PROCESS_POSITIONING; // 灭火过程状态
 static uint8_t fireSuccessCounter = 0;                                 // 灭火成功计数器
 static uint8_t currentFireId = 0;                                      // 当前火源ID
-
+float fire_x_f=0.0f;
+float fire_y_f=0.0f;
 
 //测试用 
         // 添加导航错误处理
@@ -721,7 +722,7 @@ void Mission_Update(void)
             {
                 // 已到达路口，根据飞机发来的火源坐标计算最终位置
                 // 计算目标位置：X轴与火源对齐，Y轴相差3dm
-                float target_x = drone_data.drone_x-13.5f;  // X轴与火源对齐
+                float target_x = fire_x_f-13.5f;  // X轴与火源对齐
                 float target_y = 20.0f;  // Y轴相差3dm（安全距离）
 
                 // 设置最终目标位置
@@ -823,7 +824,7 @@ void Mission_Update(void)
             {
                 // 已到达路口，根据飞机发来的火源坐标计算最终位置
                 // 计算目标位置：X轴与火源对齐，Y轴相差3dm
-                float target_x = drone_data.drone_x-13.5f;  // X轴与火源对齐
+                float target_x = fire_x_f-13.5f;  // X轴与火源对齐
                 float target_y =19.0f;// Y轴相差3dm（安全距离;
 
                 // 设置最终目标位置
@@ -841,7 +842,7 @@ void Mission_Update(void)
         if (navyState == NAVY_STATE_ARRIVED)
         {
             // 到达第一个位置，现在设置转向位置
-            float target_x = drone_data.drone_x-13.5f;
+            float target_x =fire_x_f-13.5f;
             float target_y = 20.0f; // Y+1实现转向
 
             // 设置转向位置
@@ -899,7 +900,7 @@ void Mission_Update(void)
             {
                 // 已到达路口，根据飞机发来的火源坐标计算最终位置
                 // 计算目标位置：X轴与火源对齐，Y轴相差3dm
-                float target_x = drone_data.drone_x-13.5;  // X轴与火源对齐
+                float target_x = fire_x_f-13.5;  // X轴与火源对齐
                 float target_y = 20.0f;  // Y轴相差3dm（安全距离）
 
                 // 设置最终目标位置
@@ -958,7 +959,7 @@ void Mission_Update(void)
             {
                 // 已到达路口，根据飞机发来的火源坐标计算最终位置
                 // 计算目标位置：X轴与火源对齐，Y轴相差3dm
-                float target_x = drone_data.drone_x-13.5;  // X轴与火源对齐
+                float target_x = fire_x_f-13.5;  // X轴与火源对齐
                 float target_y = 4.0f;  // Y轴相差3dm（安全距离）
 
                 // 设置最终目标位置
@@ -1017,7 +1018,7 @@ void Mission_Update(void)
             {
                 // 已到达路口，根据飞机发来的火源坐标计算最终位置
                 // 计算目标位置：X轴与火源对齐，Y轴相差3dm
-                float target_x = drone_data.drone_x-13.5;  // X轴与火源对齐
+                float target_x = fire_x_f-13.5;  // X轴与火源对齐
                 float target_y =4.0f;  // Y轴相差3dm（安全距离）
 
                 // 设置最终目标位置
@@ -1075,7 +1076,7 @@ void Mission_Update(void)
             {
                 // 已到达路口，根据飞机发来的火源坐标计算最终位置
                 // 计算目标位置：X轴与火源对齐，Y轴相差3dm
-                float target_x = drone_data.drone_x-13.5;  // X轴与火源对齐
+                float target_x = fire_x_f-13.5;  // X轴与火源对齐
                 float target_y =4.0f;  // Y轴相差3dm（安全距离）
 
                 // 设置最终目标位置

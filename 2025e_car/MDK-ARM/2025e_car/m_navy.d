@@ -41,4 +41,5 @@
   F:\1_keil5\ARM\ARMCLANG\include\string.h \
   ..\Core\developed_by_Jim\Mission.h ..\Core\developed_by_Jim\M_servo.h \
   ..\Core\developed_by_Jim\Waypoint.h \
+  ..\Core\developed_by_Jim\tjc_usart_hmi.h \
   F:\1_keil5\ARM\ARMCLANG\include\math.h

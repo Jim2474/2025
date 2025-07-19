@@ -8,6 +8,7 @@
 */
 
 #include "tjc_usart_hmi.h"
+#include "Mytimer.h"  // °üº¬ÑÓÊ±º¯Êı
 
 void set_image_aph(uint8_t pic_id, uint8_t aph_val)  //ÎÒ·â×°µÄÍ¼Æ¬ÇĞ»»º¯Êı£¬µÚÒ»¸öÊÇ»ğÔ´±àºÅ1-6£¬µÚ¶ş¸öÊÇ0»òÕß127£¬0¾ÍÊÇ²»¿É¼û£¬127ÊÇ¿É¼û
 {
@@ -18,7 +19,7 @@ void set_image_aph(uint8_t pic_id, uint8_t aph_val)  //ÎÒ·â×°µÄÍ¼Æ¬ÇĞ»»º¯Êı£¬µÚÒ
 
     // ¹¹½¨×Ö·û´®£ºmain.pX.aph=127»ò0£¬ÔÙ¼Ó½áÊø·û
     sprintf(str, "main.p%d.aph=%d\xFF\xFF\xFF", pic_id, aph_val);
-
+    //OLED_ShowString(0, 0, str, 16, 1); // ÏÔÊ¾ÔÚOLEDÆÁÄ»ÉÏ£¬µ÷ÊÔÓÃ
     // ·¢ËÍµ½´®¿ÚÆÁ
     tjc_send_string(str);
 }
@@ -28,23 +29,35 @@ void display_coordinates(const char* txt_id, int x, int y,int z) //×ø±êÏÔÊ¾º¯Êı
     sprintf(str, "%s.txt=\"(%d,%d,%d)\"\xFF\xFF\xFF", txt_id, x, y,z);  //main.t1
     tjc_send_string(str);
 }
+
+/**
+ * @brief ¸üĞÂ¿Ø¼şºóÖØ»æ¹ì¼££¨×¨ÃÅÓÃÓÚ¿Ø¼ş¸üĞÂºóµÄ¹ì¼£»Ö¸´£©
+ */
+void redraw_tracks_after_control_update(void)
+{
+    // ¸ø´®¿ÚÆÁ³ä×ãÊ±¼ä´¦Àí¿Ø¼ş¸üĞÂ
+    HAL_Delay(10);  // ¶ÌÔİÑÓÊ±£¬È·±£¿Ø¼ş¸üĞÂÍê³É
+
+    // Á¢¼´ÖØ»æËùÓĞ¹ì¼£
+    redraw_all_tracks();
+}
 void draw_line_on_screen(int x1, int y1, int x2, int y2, int color) //»­ÏßÖ¸Áî
 {
     char cmd[64];
 
     // ×ø±êÏµ×ª»»,·É»úºÍ´®¿ÚÆÁµÄ×ø±êÏµ²»Í¬
-      int screen_x1 = x1+150;
-      int screen_x2 = x2+150;    
+    int screen_x1 = x1+150;
+    int screen_x2 = x2+150;    
     int screen_y1 = 450-y1;
     int screen_y2 = 450-y2;
     
-      HAL_Delay(500);
-
+   if (delay_ms_nb(500)) 
+   {
     sprintf(cmd, "line %d,%d,%d,%d,%d\xFF\xFF\xFF", screen_x1, screen_y1, screen_x2, screen_y2, color);
-
     tjc_send_string(cmd);  // Ò»´ÎĞÔÍ¨¹ıÒÑÑéÖ¤µÄ´®¿Úº¯Êı·¢ËÍ
+    }
+   
 }
-
 
 
 typedef struct
@@ -121,7 +134,8 @@ void uart_send_char(char ch)
 	//while(__HAL_UART_GET_FLAG(&TJC_UART, UART_FLAG_TXE) == RESET);	//µÈ´ı·¢ËÍÍê±Ï
 	while(__HAL_UART_GET_FLAG(&TJC_UART, UART_FLAG_TC) == RESET);
     //·¢ËÍµ¥¸ö×Ö·û
-	HAL_UART_Transmit_IT(&TJC_UART, &ch2, 1);
+	//HAL_UART_Transmit_IT(&TJC_UART, &ch2, 1);
+	HAL_UART_Transmit_DMA(&TJC_UART, &ch2, 1);
 	return;
 }
 
@@ -374,5 +388,184 @@ uint8_t isRingBufferOverflow()
 	return ringBuffer.Length < RINGBUFFER_LEN;
 }
 
+// ==================== ·É»ú¹ì¼£ÏÔÊ¾¹¦ÄÜ ====================
 
+// ·É»ú¹ì¼£Ïà¹Ø±äÁ¿
+static int track_points_x[100];  // ¹ì¼£µãX×ø±êÊı×é
+static int track_points_y[100];  // ¹ì¼£µãY×ø±êÊı×é
+static uint8_t track_count = 0;  // µ±Ç°¹ì¼£µãÊıÁ¿
+static int last_drone_x = -999;  // ÉÏ´Î·É»úX×ø±ê
+static int last_drone_y = -999;  // ÉÏ´Î·É»úY×ø±ê
+static uint8_t last_fire_id = 0;  // ÉÏ´ÎÏÔÊ¾µÄ»ğÔ´ID
 
+/**
+ * @brief ×ø±êÏµ×ª»»£º·É»ú×ø±ê×ªÆÁÄ»×ø±ê
+ * @param drone_x ·É»úX×ø±ê
+ * @param drone_y ·É»úY×ø±ê
+ * @param screen_x ×ª»»ºóµÄÆÁÄ»X×ø±êÖ¸Õë
+ * @param screen_y ×ª»»ºóµÄÆÁÄ»Y×ø±êÖ¸Õë
+ */
+static void convert_to_screen_coords(float drone_x, float drone_y, int *screen_x, int *screen_y)
+{
+    *screen_x = (int)drone_x + 150;
+    *screen_y = 450 - (int)drone_y;
+}
+
+/**
+ * @brief Ìí¼Ó¹ì¼£µã
+ * @param x ·É»úX×ø±ê
+ * @param y ·É»úY×ø±ê
+ */
+static void add_track_point(int x, int y)
+{
+    // ¼ì²éÊÇ·ñÓëÉÏÒ»¸öµãÏàÍ¬£¬±ÜÃâÖØ¸´Ìí¼Ó
+    if (track_count > 0 &&
+        track_points_x[track_count-1] == x &&
+        track_points_y[track_count-1] == y) {
+        return;
+    }
+
+    // Èç¹ûÊı×éÂúÁË£¬ÒÆ³ı×îÀÏµÄµã
+    if (track_count >= 100) {
+        for (uint8_t i = 0; i < 99; i++) {
+            track_points_x[i] = track_points_x[i+1];
+            track_points_y[i] = track_points_y[i+1];
+        }
+        track_count = 99;
+    }
+
+    // Ìí¼ÓĞÂµã
+    track_points_x[track_count] = x;
+    track_points_y[track_count] = y;
+    track_count++;
+}
+
+/**
+ * @brief ÖØ»æËùÓĞ¹ì¼£Ïß
+ */
+static void redraw_all_tracks(void)
+{
+    char cmd[64];
+    int screen_x1, screen_y1, screen_x2, screen_y2;
+
+    // ¸ø´®¿ÚÆÁÒ»µãÊ±¼ä´¦ÀíÖ®Ç°µÄ¿Ø¼ş¸üĞÂÃüÁî
+    HAL_Delay(5);  // ¶ÌÔİÑÓÊ±£¬È·±£¿Ø¼ş¸üĞÂÍê³É
+
+    // »æÖÆ¹ì¼£Ïß£¨À¶É«£©
+    for (uint8_t i = 1; i < track_count; i++)
+    {
+        // ¹ì¼£µãÒÑ¾­ÊÇ·É»ú×ø±ê£¬ĞèÒª×ª»»ÎªÆÁÄ»×ø±ê
+        screen_x1 = track_points_x[i-1] + 150;
+        screen_y1 = 450 - track_points_y[i-1];
+        screen_x2 = track_points_x[i] + 150;
+        screen_y2 = 450 - track_points_y[i];
+
+        sprintf(cmd, "line %d,%d,%d,%d,%d\xFF\xFF\xFF", screen_x1, screen_y1, screen_x2, screen_y2, 1023);  // ÇàÉ«¹ì¼££¬¸üÃ÷ÏÔ
+        tjc_send_string(cmd);
+
+        // Ã¿ÌõÏßÖ®¼äÉÔÎ¢ÑÓÊ±£¬±ÜÃâ´®¿ÚÆÁ´¦Àí²»¹ıÀ´
+        HAL_Delay(1);
+    }
+
+    // »æÖÆµ±Ç°·É»úÎ»ÖÃ£¨ºìÉ«Ô²µã£©
+    if (track_count > 0) {
+        screen_x1 = track_points_x[track_count-1] + 150;
+        screen_y1 = 450 - track_points_y[track_count-1];
+        sprintf(cmd, "cirs %d,%d,5,%d\xFF\xFF\xFF", screen_x1, screen_y1, 63488);  // ºìÉ«Ô²µã
+        tjc_send_string(cmd);
+    }
+}
+
+/**
+ * @brief ¸üĞÂ·É»úÊµÊ±Î»ÖÃºÍ¹ì¼£ÏÔÊ¾
+ * @param drone_x ·É»úµ±Ç°X×ø±ê
+ * @param drone_y ·É»úµ±Ç°Y×ø±ê
+ * @param fire_id »ğÔ´ID£¨1-6£©
+ */
+void update_drone_display_with_fire(float drone_x, float drone_y, uint8_t fire_id)
+{
+    int current_x = (int)drone_x;
+    int current_y = (int)drone_y;
+
+    // ¼ì²éÎ»ÖÃÊÇ·ñÓĞ±ä»¯
+    if (current_x == last_drone_x && current_y == last_drone_y) {
+        return;  // Î»ÖÃÃ»±ä»¯£¬²»ĞèÒª¸üĞÂ
+    }
+
+    // Ìí¼ÓĞÂµÄ¹ì¼£µã£¨ÔÚ¸üĞÂ¿Ø¼şÖ®Ç°£©
+    add_track_point(current_x, current_y);
+
+    // ========== µÚÒ»²½£º¸üĞÂËùÓĞÎÄ±¾/¿Ø¼ş ==========
+    uint8_t need_redraw = 0;  // ±ê¼ÇÊÇ·ñĞèÒªÖØ»æ¹ì¼£
+
+    // ¸üĞÂÎÄ±¾ÏÔÊ¾£¨×ø±êĞÅÏ¢£©
+    display_coordinates("main.t1", current_x, current_y, 0);
+    need_redraw = 1;  // ÎÄ±¾¸üĞÂ»áÓ°Ïì¹ì¼£ÏÔÊ¾
+
+    // ÏÔÊ¾»ğÔ´Î»ÖÃ£¨Í¨¹ıÍ¸Ã÷¶È¿ØÖÆ£©- Ö»ÔÚ»ğÔ´ID±ä»¯Ê±¸üĞÂ
+    if (fire_id >= 1 && fire_id <= 6 && fire_id != last_fire_id)
+     {
+        // Òş²ØÉÏ´ÎµÄ»ğÔ´Í¼Æ¬
+        if (last_fire_id >= 1 && last_fire_id <= 6)
+        {
+            set_image_aph(last_fire_id, 0);  // ÉèÖÃÎª²»¿É¼û
+        }
+        // ÏÔÊ¾µ±Ç°»ğÔ´
+        set_image_aph(fire_id, 127);  // ÉèÖÃÎª¿É¼û
+        last_fire_id = fire_id;  // ¸üĞÂÉÏ´Î»ğÔ´ID
+        need_redraw = 1;  // »ğÔ´¸üĞÂ»áÓ°Ïì¹ì¼£ÏÔÊ¾
+    }
+
+    // ========== µÚ¶ş²½£ºÖØ»æËùÓĞ¹ì¼£ÏßºÍÍ¼ĞÎ ==========
+    // Ã¿´Î¿Ø¼ş¸üĞÂºó£¬Á¢¼´ÖØĞÂ»æÖÆËùÓĞ¹ì¼£Ïß£¬°Ñ±»Çå³ıµÄÏßÌõ"²¹»ØÀ´"
+    if (need_redraw) {
+        redraw_tracks_after_control_update();
+    }
+
+    // ¸üĞÂÉÏ´ÎÎ»ÖÃ
+    last_drone_x = current_x;
+    last_drone_y = current_y;
+}
+
+/**
+ * @brief ¸üĞÂ·É»úÊµÊ±Î»ÖÃºÍ¹ì¼£ÏÔÊ¾£¨¼æÈİ¾É°æ±¾£©
+ * @param drone_x ·É»úµ±Ç°X×ø±ê
+ * @param drone_y ·É»úµ±Ç°Y×ø±ê
+ */
+void update_drone_display(float drone_x, float drone_y)
+{
+    // Ê¹ÓÃÍâ²¿µÄdrone_data»ñÈ¡fire_id
+    extern drone_data_t drone_data;
+    update_drone_display_with_fire(drone_x, drone_y, drone_data.fire_id);
+}
+
+/**
+ * @brief Çå³ı·É»ú¹ì¼£
+ */
+void clear_drone_track(void)
+{
+    track_count = 0;
+    last_drone_x = -999;
+    last_drone_y = -999;
+    last_fire_id = 0;  // ÖØÖÃ»ğÔ´ID
+
+    // Òş²ØËùÓĞ»ğÔ´Í¼Æ¬
+    for (uint8_t i = 1; i <= 6; i++) {
+        set_image_aph(i, 0);  // ÉèÖÃÎª²»¿É¼û
+    }
+
+    // ·¢ËÍÇåÆÁÃüÁî
+    tjc_send_string("cls 0\xFF\xFF\xFF");  // Çå³ı±³¾°É«
+}
+
+/**
+ * @brief ¶¨Ê±¸üĞÂ·É»úÏÔÊ¾£¨½¨ÒéÔÚ10HzÈÎÎñÖĞµ÷ÓÃ£©
+ */
+void drone_display_task(void)
+{
+    // Ê¹ÓÃÍâ²¿µÄdrone_data±äÁ¿
+    extern drone_data_t drone_data;  // ĞèÒªÔÚÍ·ÎÄ¼şÖĞÉùÃ÷
+
+    // Ö±½Ó¸üĞÂÏÔÊ¾£¬ÓÉµ÷ÓÃÕß¿ØÖÆÆµÂÊ
+    update_drone_display_with_fire(drone_data.drone_x, drone_data.drone_y, drone_data.fire_id);
+}

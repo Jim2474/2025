@@ -2,7 +2,6 @@
 #include "usart.h"
 #include "jy61p.h"
 
-
 uint8_t USART3_DMA_Buffer[JY61P_PACKET_SIZE*3]; // JY61P DMA接收缓冲区
 uint8_t USART1_RxData[200];
 uint8_t USART3_RxData;
@@ -69,7 +68,9 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 	if (huart == &huart1)//飞机和单片机
 	{
 		
-        sscanf((char*)USART1_RxData,"!,%f,%f,%d,#", &drone_data.drone_x, &drone_data.drone_y, &drone_data.fire_id);
+        sscanf((char*)USART1_RxData,"code,%f,%f,@", &drone_data.drone_x, &drone_data.drone_y);
+		sscanf((char*)USART1_RxData,"fire,%f,%f,%d,@", &fire_x_f, &fire_y_f, &drone_data.fire_id);
+
 		// 重新启动DMA接收
 		HAL_UARTEx_ReceiveToIdle_DMA(&huart1, USART1_RxData, sizeof(USART1_RxData));
 		__HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);
