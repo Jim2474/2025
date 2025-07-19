@@ -10,7 +10,7 @@ typedef struct
 {
     float drone_x;
     float drone_y;
-    uint8_t fire_id; // 0-360度
+    uint8_t fire_id; 
 
 }drone_data_t;
 extern drone_data_t drone_data;

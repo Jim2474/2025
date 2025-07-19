@@ -85,7 +85,7 @@ void car_init(void)
 	Mission_Init();
 }
 
-// �??查并处理飞机发�?�的火源ID
+// �??查并处理飞机发�?�的火源ID 
 void Check_And_Start_Mission(void)
 {
     // �??查是否接收到有效的火源ID
@@ -185,20 +185,7 @@ void TIM2_Task_100Hz(void)
 
     }
 }
-void draw_fly(int x1, int y1) //给图片的坐标赋值的指令
-{
-    char cmd[64];
 
-    // 坐标系转换,飞机和串口屏的坐标系不同
-      int screen_x1 = x1+35;
-    int screen_y1 = 435-y1;
-    
-
-    sprintf(cmd, "p8.x=%d\xFF\xFF\xFF", screen_x1);
-     tjc_send_string(cmd);  //通过已验证的串口函数发送
-      sprintf(cmd, "p8.y=%d\xFF\xFF\xFF", screen_y1);
-    tjc_send_string(cmd);  //通过已验证的串口函数发送
-}
 
 /* USER CODE END 0 */
 
@@ -250,8 +237,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
   car_init();
   Uart_Init();
-  drone_data.drone_x=27.0f;
-  Mission_StartFire2();
+ // drone_data.drone_x=27.0f;
+  //Mission_StartFire2();
   HAL_Delay(1000);
   //vision_data.target_detected = 0;//测试�??
 
@@ -268,7 +255,7 @@ int main(void)
     {
         Check_And_Start_Mission();
     }
-      if (delay_ms_nb_id(1000, 5)) 
+      if (delay_ms_nb_id(500, 5)) 
       {  // 使用ID=3的延�?
 
           //drone_data.fire_id=2;
@@ -279,8 +266,9 @@ int main(void)
 
 	     // set_image_aph(3, 0); // 显示火源1
       }
-    OLED_ShowNum(10,1,drone_data.drone_x,2,16,0);
-    OLED_ShowNum(10,3,drone_data.drone_y,2,16,0);
+    OLED_ShowNum(10,1,drone_data.drone_x,5,16,0); 
+    OLED_ShowNum(30,1,drone_data.fire_id,5,16,0); 
+    OLED_ShowNum(10,3,drone_data.drone_y,5,16,0); 
         OLED_ShowNum(10,5,fire_x_f,2,16,0);
     OLED_ShowNum(30,5,fire_y_f,2,16,0);
 

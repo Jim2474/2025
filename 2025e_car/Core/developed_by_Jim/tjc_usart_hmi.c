@@ -569,3 +569,17 @@ void drone_display_task(void)
     // 直接更新显示，由调用者控制频率
     update_drone_display_with_fire(drone_data.drone_x, drone_data.drone_y, drone_data.fire_id);
 }
+void draw_fly(int x1, int y1) //给图片的坐标赋值的指令
+{
+    char cmd[64];
+
+    // 坐标系转换,飞机和串口屏的坐标系不同
+      int screen_x1 = x1+35;
+    int screen_y1 = 435-y1;
+    
+
+    sprintf(cmd, "p8.x=%d\xFF\xFF\xFF", screen_x1);
+     tjc_send_string(cmd);  //通过已验证的串口函数发送
+      sprintf(cmd, "p8.y=%d\xFF\xFF\xFF", screen_y1);
+    tjc_send_string(cmd);  //通过已验证的串口函数发送
+}
