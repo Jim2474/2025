@@ -721,12 +721,13 @@ void Mission_Update(void)
             {
                 // 已到达路口，根据飞机发来的火源坐标计算最终位置
                 // 计算目标位置：X轴与火源对齐，Y轴相差3dm
-                float target_x = drone_data.drone_x;  // X轴与火源对齐
+                float target_x = drone_data.drone_x-13.5f;  // X轴与火源对齐
                 float target_y = 20.0f;  // Y轴相差3dm（安全距离）
 
                 // 设置最终目标位置
                 setTargetPosition(target_x, target_y);
                 startNavigation(target_x, target_y);
+
 
                 // 切换到灭火状态
                 currentMissionState = MISSION_FIRE1_FIGHTING;
@@ -820,21 +821,38 @@ void Mission_Update(void)
             }
             else
             {
-                          // 已到达路口，根据飞机发来的火源坐标计算最终位置
+                // 已到达路口，根据飞机发来的火源坐标计算最终位置
                 // 计算目标位置：X轴与火源对齐，Y轴相差3dm
-                float target_x = drone_data.drone_x-13.5;  // X轴与火源对齐
-                float target_y = 20.0f;  // Y轴相差3dm（安全距离）
+                float target_x = drone_data.drone_x-13.5f;  // X轴与火源对齐
+                float target_y =19.0f;// Y轴相差3dm（安全距离;
 
                 // 设置最终目标位置
                 setTargetPosition(target_x, target_y);
                 startNavigation(target_x, target_y);
 
-                // 到达火源2附近，切换到灭火状态
-                currentMissionState = MISSION_FIRE2_FIGHTING;
-
-                // 开始灭火处理
-                Mission_StartFireProcessing(2);
+                // 切换到定位状态，等待到达第一个位置
+                currentMissionState = MISSION_FIRE2_POSITIONING;
             }
+        }
+        break;
+
+    case MISSION_FIRE2_POSITIONING:
+        // 等待到达第一个位置
+        if (navyState == NAVY_STATE_ARRIVED)
+        {
+            // 到达第一个位置，现在设置转向位置
+            float target_x = drone_data.drone_x-13.5f;
+            float target_y = 20.0f; // Y+1实现转向
+
+            // 设置转向位置
+            setTargetPosition(target_x, target_y);
+            startNavigation(target_x, target_y);
+
+            // 切换到灭火状态
+            currentMissionState = MISSION_FIRE2_FIGHTING;
+
+            // 开始灭火处理
+            Mission_StartFireProcessing(2);
         }
         break;
 

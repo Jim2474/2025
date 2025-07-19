@@ -3,7 +3,7 @@
 <title>Static Call Graph - [2025e_car\2025e_car.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image 2025e_car\2025e_car.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6210000: Last Updated: Thu Jul 17 19:05:51 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6210000: Last Updated: Fri Jul 18 17:39:09 2025
 <BR><P>
 <H3>Maximum Stack Usage =        324 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -113,7 +113,7 @@ Function Pointers
  <LI><a href="#[62]">UART_DMAReceiveCplt</a> from stm32f4xx_hal_uart.o(.text.UART_DMAReceiveCplt) referenced 2 times from stm32f4xx_hal_uart.o(.text.HAL_UARTEx_ReceiveToIdle_DMA)
  <LI><a href="#[63]">UART_DMARxHalfCplt</a> from stm32f4xx_hal_uart.o(.text.UART_DMARxHalfCplt) referenced 2 times from stm32f4xx_hal_uart.o(.text.HAL_UARTEx_ReceiveToIdle_DMA)
  <LI><a href="#[2f]">USART1_IRQHandler</a> from stm32f4xx_it.o(.text.USART1_IRQHandler) referenced from startup_stm32f407xx.o(RESET)
- <LI><a href="#[30]">USART2_IRQHandler</a> from startup_stm32f407xx.o(.text) referenced from startup_stm32f407xx.o(RESET)
+ <LI><a href="#[30]">USART2_IRQHandler</a> from stm32f4xx_it.o(.text.USART2_IRQHandler) referenced from startup_stm32f407xx.o(RESET)
  <LI><a href="#[31]">USART3_IRQHandler</a> from stm32f4xx_it.o(.text.USART3_IRQHandler) referenced from startup_stm32f407xx.o(RESET)
  <LI><a href="#[51]">USART6_IRQHandler</a> from startup_stm32f407xx.o(.text) referenced from startup_stm32f407xx.o(RESET)
  <LI><a href="#[5]">UsageFault_Handler</a> from stm32f4xx_it.o(.text.UsageFault_Handler) referenced from startup_stm32f407xx.o(RESET)
@@ -351,9 +351,6 @@ Global Symbols
 <P><STRONG><a name="[36]"></a>TIM8_UP_TIM13_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f407xx.o(.text))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f407xx.o(RESET)
 </UL>
-<P><STRONG><a name="[30]"></a>USART2_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f407xx.o(.text))
-<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f407xx.o(RESET)
-</UL>
 <P><STRONG><a name="[51]"></a>USART6_IRQHandler</STRONG> (Thumb, 0 bytes, Stack size 0 bytes, startup_stm32f407xx.o(.text))
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f407xx.o(RESET)
 </UL>
@@ -533,9 +530,9 @@ Global Symbols
 <BR><BR>[Called By]<UL><LI><a href="#[61]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;isspace
 </UL>
 
-<P><STRONG><a name="[110]"></a>__decompress</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __dclz77c.o(.text), UNUSED)
+<P><STRONG><a name="[110]"></a>__decompress</STRONG> (Thumb, 0 bytes, Stack size unknown bytes, __dczerorl2.o(.text), UNUSED)
 
-<P><STRONG><a name="[111]"></a>__decompress2</STRONG> (Thumb, 94 bytes, Stack size unknown bytes, __dclz77c.o(.text), UNUSED)
+<P><STRONG><a name="[111]"></a>__decompress1</STRONG> (Thumb, 86 bytes, Stack size unknown bytes, __dczerorl2.o(.text), UNUSED)
 
 <P><STRONG><a name="[4]"></a>BusFault_Handler</STRONG> (Thumb, 2 bytes, Stack size 0 bytes, stm32f4xx_it.o(.text.BusFault_Handler))
 <BR><BR>[Calls]<UL><LI><a href="#[4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;BusFault_Handler
@@ -704,8 +701,9 @@ Global Symbols
 <LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_Init
 <LI><a href="#[93]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_ClockConfig
 <LI><a href="#[95]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_RCC_OscConfig
+<LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_Update
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
-<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_StartByFireId
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_StartFire2
 <LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Servo_Init
 <LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_StartFireProcessing
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_HandleFireFighting
@@ -1025,6 +1023,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[3f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART5_IRQHandler
 <LI><a href="#[3e]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;UART4_IRQHandler
 <LI><a href="#[31]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART3_IRQHandler
+<LI><a href="#[30]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART2_IRQHandler
 <LI><a href="#[2f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;USART1_IRQHandler
 </UL>
 
@@ -1042,7 +1041,7 @@ Global Symbols
 <LI><a href="#[c7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_UART4_Init
 </UL>
 
-<P><STRONG><a name="[b3]"></a>HAL_UART_MspInit</STRONG> (Thumb, 1252 bytes, Stack size 64 bytes, usart.o(.text.HAL_UART_MspInit))
+<P><STRONG><a name="[b3]"></a>HAL_UART_MspInit</STRONG> (Thumb, 1260 bytes, Stack size 64 bytes, usart.o(.text.HAL_UART_MspInit))
 <BR><BR>[Stack]<UL><LI>Max Depth = 108<LI>Call Chain = HAL_UART_MspInit &rArr; HAL_GPIO_Init
 </UL>
 <BR>[Calls]<UL><LI><a href="#[83]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_DMA_Init
@@ -1245,8 +1244,8 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[d8]"></a>Mission_StartByFireId</STRONG> (Thumb, 326 bytes, Stack size 8 bytes, mission.o(.text.Mission_StartByFireId))
-<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = Mission_StartByFireId
+<P><STRONG><a name="[d8]"></a>Mission_StartFire2</STRONG> (Thumb, 86 bytes, Stack size 8 bytes, mission.o(.text.Mission_StartFire2))
+<BR><BR>[Stack]<UL><LI>Max Depth = 8<LI>Call Chain = Mission_StartFire2
 </UL>
 <BR>[Calls]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
 <LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;startNavigation
@@ -1255,11 +1254,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[5b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 </UL>
 
-<P><STRONG><a name="[da]"></a>Mission_Update</STRONG> (Thumb, 342 bytes, Stack size 16 bytes, mission.o(.text.Mission_Update))
-<BR><BR>[Stack]<UL><LI>Max Depth = 256<LI>Call Chain = Mission_Update &rArr; Mission_HandleFireFighting &rArr; OLED_ShowString &rArr; OLED_ShowChar &rArr; HAL_I2C_Mem_Write &rArr; I2C_RequestMemoryWrite &rArr; I2C_WaitOnMasterAddressFlagUntilTimeout
+<P><STRONG><a name="[da]"></a>Mission_Update</STRONG> (Thumb, 768 bytes, Stack size 32 bytes, mission.o(.text.Mission_Update))
+<BR><BR>[Stack]<UL><LI>Max Depth = 272<LI>Call Chain = Mission_Update &rArr; Mission_HandleFireFighting &rArr; OLED_ShowString &rArr; OLED_ShowChar &rArr; HAL_I2C_Mem_Write &rArr; I2C_RequestMemoryWrite &rArr; I2C_WaitOnMasterAddressFlagUntilTimeout
 </UL>
-<BR>[Calls]<UL><LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_StartFireProcessing
+<BR>[Calls]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
+<LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_StartFireProcessing
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_HandleFireFighting
+<LI><a href="#[d0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Servo_Reset
 <LI><a href="#[ce]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getNavigationState
 <LI><a href="#[d2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;startNavigation
 <LI><a href="#[db]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;getCurrentPosition
@@ -1355,7 +1356,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;pid_reset_servo
 </UL>
-<BR>[Called By]<UL><LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_StartFireProcessing
+<BR>[Called By]<UL><LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_Update
+<LI><a href="#[d9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_StartFireProcessing
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_HandleFireFighting
 </UL>
 
@@ -1450,6 +1452,13 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> startup_stm32f407xx.o(RESET)
 </UL>
+<P><STRONG><a name="[30]"></a>USART2_IRQHandler</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32f4xx_it.o(.text.USART2_IRQHandler))
+<BR><BR>[Stack]<UL><LI>Max Depth = 324<LI>Call Chain = USART2_IRQHandler &rArr; HAL_UART_IRQHandler &rArr; UART_Receive_IT &rArr; HAL_UARTEx_RxEventCallback &rArr; __0sscanf &rArr; __vfscanf_char &rArr; __vfscanf &rArr; _scanf_real
+</UL>
+<BR>[Calls]<UL><LI><a href="#[ad]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UART_IRQHandler
+</UL>
+<BR>[Address Reference Count : 1]<UL><LI> startup_stm32f407xx.o(RESET)
+</UL>
 <P><STRONG><a name="[31]"></a>USART3_IRQHandler</STRONG> (Thumb, 12 bytes, Stack size 0 bytes, stm32f4xx_it.o(.text.USART3_IRQHandler))
 <BR><BR>[Stack]<UL><LI>Max Depth = 324<LI>Call Chain = USART3_IRQHandler &rArr; HAL_UART_IRQHandler &rArr; UART_Receive_IT &rArr; HAL_UARTEx_RxEventCallback &rArr; __0sscanf &rArr; __vfscanf_char &rArr; __vfscanf &rArr; _scanf_real
 </UL>
@@ -1495,11 +1504,12 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[aa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_UARTEx_RxEventCallback
 </UL>
 
-<P><STRONG><a name="[5b]"></a>main</STRONG> (Thumb, 228 bytes, Stack size 0 bytes, main.o(.text.main))
-<BR><BR>[Stack]<UL><LI>Max Depth = 256<LI>Call Chain = main &rArr; Mission_Update &rArr; Mission_HandleFireFighting &rArr; OLED_ShowString &rArr; OLED_ShowChar &rArr; HAL_I2C_Mem_Write &rArr; I2C_RequestMemoryWrite &rArr; I2C_WaitOnMasterAddressFlagUntilTimeout
+<P><STRONG><a name="[5b]"></a>main</STRONG> (Thumb, 192 bytes, Stack size 0 bytes, main.o(.text.main))
+<BR><BR>[Stack]<UL><LI>Max Depth = 272<LI>Call Chain = main &rArr; Mission_Update &rArr; Mission_HandleFireFighting &rArr; OLED_ShowString &rArr; OLED_ShowChar &rArr; HAL_I2C_Mem_Write &rArr; I2C_RequestMemoryWrite &rArr; I2C_WaitOnMasterAddressFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_Update
 <LI><a href="#[84]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_StartFire2
 <LI><a href="#[bd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_I2C3_Init
 <LI><a href="#[bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_I2C1_Init
 <LI><a href="#[be]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_TIM1_Init
@@ -1518,7 +1528,6 @@ Global Symbols
 <LI><a href="#[b9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MX_GPIO_Init
 <LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SystemClock_Config
 <LI><a href="#[8d]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Init
-<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_StartByFireId
 <LI><a href="#[d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_Init
 <LI><a href="#[e2]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Servo_Init
 <LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;navy_init
@@ -1573,7 +1582,7 @@ Global Symbols
 
 <P><STRONG><a name="[d1]"></a>setTargetPosition</STRONG> (Thumb, 18 bytes, Stack size 0 bytes, m_navy.o(.text.setTargetPosition))
 <BR><BR>[Called By]<UL><LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_Update
-<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_StartByFireId
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_StartFire2
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_HandleFireFighting
 </UL>
 
@@ -1584,7 +1593,7 @@ Global Symbols
 
 <P><STRONG><a name="[d2]"></a>startNavigation</STRONG> (Thumb, 94 bytes, Stack size 0 bytes, m_navy.o(.text.startNavigation))
 <BR><BR>[Called By]<UL><LI><a href="#[da]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_Update
-<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_StartByFireId
+<LI><a href="#[d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_StartFire2
 <LI><a href="#[cd]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Mission_HandleFireFighting
 </UL>
 
@@ -1829,7 +1838,7 @@ Local Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> stm32f4xx_hal_uart.o(.text.HAL_UART_IRQHandler)
 </UL>
-<P><STRONG><a name="[cd]"></a>Mission_HandleFireFighting</STRONG> (Thumb, 628 bytes, Stack size 24 bytes, mission.o(.text.Mission_HandleFireFighting))
+<P><STRONG><a name="[cd]"></a>Mission_HandleFireFighting</STRONG> (Thumb, 620 bytes, Stack size 24 bytes, mission.o(.text.Mission_HandleFireFighting))
 <BR><BR>[Stack]<UL><LI>Max Depth = 240<LI>Call Chain = Mission_HandleFireFighting &rArr; OLED_ShowString &rArr; OLED_ShowChar &rArr; HAL_I2C_Mem_Write &rArr; I2C_RequestMemoryWrite &rArr; I2C_WaitOnMasterAddressFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[82]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick

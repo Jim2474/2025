@@ -25,6 +25,7 @@
 #include "Mission.h"
 #include "M_servo.h"
 #include "Waypoint.h"
+#include "tjc_usart_hmi.h"
 
 //资源分配表：
 /*

@@ -10,6 +10,7 @@ typedef enum {
     MISSION_FIRE1_FIGHTING, // 灭火1
     MISSION_FIRE1_RETURN,   // 火源1返回
     MISSION_FIRE2_GOING,    // 前往火源2
+    MISSION_FIRE2_POSITIONING, // 火源2定位阶段
     MISSION_FIRE2_FIGHTING, // 灭火2
     MISSION_FIRE2_RETURN,   // 火源2返回
     MISSION_FIRE3_GOING,    // 前往火源3
