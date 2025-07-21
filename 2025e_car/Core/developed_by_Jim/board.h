@@ -53,7 +53,10 @@ TIM7：
 TIM8：
 
 USART1：飞机与单片机通信
-USART2：
+USART2：串口屏  -+
+
+
+
 USART3：串口陀螺仪 波特率：115200 DMA接收
 USART4：蓝牙模块 用于调试 DMA转运
 USART5：摄像头数据解析

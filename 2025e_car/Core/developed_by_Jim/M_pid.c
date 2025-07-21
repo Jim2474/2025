@@ -333,8 +333,8 @@ int turn_in_place(float target_angle, float max_turn_speed)
     }
 
     // 根据PID输出设置左右轮速度（原地转向）
-    float left_speed = -yaw_output;   // 左轮速度
-    float right_speed = yaw_output;   // 右轮速度
+    float left_speed = yaw_output;   // 左轮速度
+    float right_speed =- yaw_output;   // 右轮速度
 
     // 设置电机速度
     set_target_speed(left_speed, right_speed);

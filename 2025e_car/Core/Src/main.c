@@ -83,6 +83,7 @@ void car_init(void)
   navy_init();
   Servo_Init();
 	Mission_Init();
+  
 }
 
 // �??查并处理飞机发�?�的火源ID 
@@ -152,7 +153,6 @@ void TIM2_Task_100Hz(void)
   // 100HzäťťĺĄďźćŻ10msć§čĄ??????????????????????????????
     HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1);
 
-//HAL_GPIO_TogglePin(GPIOD, GPIO_PIN_1);
   // 1. ć´ć°ĺ˝ĺä˝ç˝Žĺć 
   updatePosition();
  	//HAL_UART_Transmit(&huart3, (uint8_t *)&jim, 1, HAL_MAX_DELAY);
@@ -167,10 +167,12 @@ void TIM2_Task_100Hz(void)
   // čżéććśä¸ćˇťĺ ĺśäťäťť???????????????
 	//printf("vision:%f,%f\n",vision_data.error_x,vision_data.error_y);
 
-    
+    //printf("count:%d,%d\n",left_encoder_count,right_encoder_count);
+   // printf("%f,%f\n", left_wheel_speed, right_wheel_speed);
+   printf("%f\n", IMU_data.YawZ);
     // 更新舵机控制
     Servo_Update(); //已在Mission_Update();调用 3 记得改回�?????
-    	//printf("%f,%f\n",left_wheel_speed,g_left_target_speed);
+    	//printf("%f\n",IMU_data.YawZ);
 
   //update_rotation_task();
 
@@ -237,24 +239,27 @@ int main(void)
   /* USER CODE BEGIN 2 */
   car_init();
   Uart_Init();
+  //init_example();
  // drone_data.drone_x=27.0f;
-  //Mission_StartFire2();
+  Mission_StartFire2();
+  fire_x_f=255.0f;
+  fire_y_f=155.0f;
   HAL_Delay(1000);
   //vision_data.target_detected = 0;//测试�??
 
   // 可�?�：测试用，模拟接收火源ID（调试时使用�??
   // Test_Fire_ID_Reception(1);  // 取消注释来测试火�??1
   /* USER CODE END 2 */
-
+  //turn_in_place(90,20); // 测试转向功能
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
     // �??查并处理飞机发�?�的火源ID（只在任务未启动时检查）
-    if (!mission_started)
-    {
-        Check_And_Start_Mission();
-    }
+    // if (!mission_started)
+    // {
+    //     Check_And_Start_Mission();
+    // }
       if (delay_ms_nb_id(500, 5)) 
       {  // 使用ID=3的延�?
 
@@ -266,12 +271,15 @@ int main(void)
 
 	     // set_image_aph(3, 0); // 显示火源1
       }
-    OLED_ShowNum(10,1,drone_data.drone_x,5,16,0); 
-    OLED_ShowNum(30,1,drone_data.fire_id,5,16,0); 
-    OLED_ShowNum(10,3,drone_data.drone_y,5,16,0); 
-        OLED_ShowNum(10,5,fire_x_f,2,16,0);
-    OLED_ShowNum(30,5,fire_y_f,2,16,0);
-
+    // OLED_ShowNum(10,1,drone_data.drone_x,5,16,0); 
+    // OLED_ShowNum(30,1,drone_data.fire_id,5,16,0); 
+    // OLED_ShowNum(10,3,drone_data.drone_y,5,16,0); 
+    //     OLED_ShowNum(10,5,fire_x_f,5,16,0);
+    // OLED_ShowNum(30,5,fire_y_f,5,16,0);
+    OLED_ShowNum(10,1,left_wheel_speed,5,16,0);
+     OLED_ShowNum(10,3,right_wheel_speed,5,16,0); 
+    // printf("%f,%f\n",left_wheel_speed,right_wheel_speed);
+		//navyTest();
     // 更新任务状�?�机
     Mission_Update();
 
@@ -283,12 +291,12 @@ int main(void)
     // Display_DebugStatus();
     // Waypoint_Update();
        //HAL_Delay(100);  // 添加延时，降低刷新频�??????
-//     HAL_GPIO_WritePin(GPIOE, GPIO_PIN_12, GPIO_PIN_SET);
-//       HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, GPIO_PIN_RESET);
+    // HAL_GPIO_WritePin(GPIOE, GPIO_PIN_12, GPIO_PIN_SET);
+    //   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, GPIO_PIN_RESET);
 //  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_9, GPIO_PIN_SET);
 //        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_RESET);
-//           __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 80);
-//              __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 50);
+//            __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 200);
+             // __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 200);
 
 
 

@@ -349,8 +349,8 @@ void updateNavigation_control(void)
         if (angularControl < -maxAngularControl) angularControl = -maxAngularControl;
 
         // 设置左右轮目标速度
-        float leftSpeed = velocityControl - angularControl;
-        float rightSpeed = velocityControl + angularControl;
+        float leftSpeed = velocityControl + angularControl;
+        float rightSpeed = velocityControl - angularControl;
 
         // 确保两个轮子都是正向的（不后退）
         if (leftSpeed < 0) leftSpeed = 0;
@@ -424,9 +424,9 @@ void navyTest(void)
   // ĺŽäšć­Łćšĺ˝˘çĺä¸ŞéĄśçšĺć 
   float waypoints[4][2] = {
     {0.0f, 0.0f},    // čľˇçš/çťçš
-    {5.0f, 0.0f},   // çŹŹä¸ä¸ŞéĄśçš
-    {5.0f, 5.0f},  // çŹŹäşä¸ŞéĄśçš
-    {0.0f, 5.0f}    // çŹŹä¸ä¸ŞéĄśçš
+    {1.0f, 0.0f},   // çŹŹä¸ä¸ŞéĄśçš
+    {3.0f, 0.0f},  // çŹŹäşä¸ŞéĄśçš
+    {5.0f, 0.0f}    // çŹŹä¸ä¸ŞéĄśçš
   };
   
   // éç˝Žä˝ç˝Žĺ°ĺçš

@@ -69,7 +69,7 @@ static PathPoint_t pathToFire1[] = {
    // {START_X, START_Y, NORMAL_SPEED},                  // 起点
 
     {3.5f, 0.0f, NORMAL_SPEED},                        // 避开左下角建筑物
-    {3.5f, 19.0f, TURNING_SPEED},                      // 左转准备沿左边界
+    {3.5f, 3.0f, TURNING_SPEED},                      // 左转准备沿左边界
    //{0.0f, 19.0f, NORMAL_SPEED},                       // 沿左边界向上
     //{0.0f, 20.0f, NORMAL_SPEED},                       // 沿左边界向上
     //{6.0f, 26.0f, NORMAL_SPEED},                       // 继续向上到火源1高度
@@ -91,7 +91,7 @@ static PathPoint_t pathFromFire1[] = {
 //    {START_X, START_Y, APPROACH_SPEED}                // 返回起点
     //{0.0f, 20.0f, NORMAL_SPEED},                       // 沿左边界向上
     //{0.0f, 19.0f, NORMAL_SPEED},                       // 沿左边界向上
-    {3.5f, 19.0f, TURNING_SPEED},                      // 左转准备沿左边界
+    {3.5f, 3.0f, TURNING_SPEED},                      // 左转准备沿左边界
     {3.5f, 0.0f, NORMAL_SPEED},                        // 避开左下角建筑物
     {START_X, START_Y, APPROACH_SPEED}                 // 返回起点
 
@@ -102,7 +102,7 @@ static PathPoint_t pathFromFire1[] = {
 // 火源2路径点（前往）- 从起点到中上部火源，走中间通道
 static PathPoint_t pathToFire2[] = {
     {3.5f, 0.0f, NORMAL_SPEED},                        // 避开左下角建筑物
-    {3.5f, 19.0f, TURNING_SPEED},              // 继续向右移动
+    {3.5f, 3.0f, TURNING_SPEED},              // 继续向右移动
     //{13.0f, 19.0f, NORMAL_SPEED},                       // 到达中间通道入口
     //{13.0f, 20.0f, NORMAL_SPEED},                      // 沿中间通道向上
 };
@@ -111,14 +111,14 @@ static PathPoint_t pathToFire2[] = {
 static PathPoint_t pathFromFire2[] = {
        // {13.0f, 20.0f, NORMAL_SPEED},                      
         //{13.0f, 19.0f, NORMAL_SPEED},                        
-    {3.5f, 19.0f, TURNING_SPEED},              
+    {3.5f, 3.0f, TURNING_SPEED},              
     {3.5f, 0.0f, NORMAL_SPEED},                      
     {START_X, START_Y, APPROACH_SPEED}            
 };
 //火源3路径点
 static PathPoint_t pathToFire3[] = {
     {3.5f, 0.0f, NORMAL_SPEED},                        
-    {3.5f, 19.0f, TURNING_SPEED},              
+    {3.5f, 3.0f, TURNING_SPEED},              
     //{25.0f, 19.0f, NORMAL_SPEED},                       
    // {25.0f, 20.0f, NORMAL_SPEED},                      
 };
@@ -126,14 +126,14 @@ static PathPoint_t pathToFire3[] = {
 static PathPoint_t pathFromFire3[] = {       
    // {25.0f, 20.0f, NORMAL_SPEED},                      
     //{25.0f, 19.0f, NORMAL_SPEED},                        
-    {3.5f, 19.0f, TURNING_SPEED},              
+    {3.5f, 3.0f, TURNING_SPEED},              
     {3.5f, 0.0f, NORMAL_SPEED},                      
     {START_X, START_Y, APPROACH_SPEED}            
 };
 //火源4路径点
 static PathPoint_t pathToFire4[] = {
     {3.5f, 0.0f, NORMAL_SPEED},                       
-    {3.5f, 3.0f, TURNING_SPEED},               
+    {3.5f, 19.0f, TURNING_SPEED},               
     //{-5.0f, 4.0f, NORMAL_SPEED},                       
 };
 // 火源4路径点（返回）- 原路返回
@@ -141,14 +141,14 @@ static PathPoint_t pathFromFire4[] = {
     // {-5.0f, 4.0f, NORMAL_SPEED},                      
    // {-5.0f, 3.0f, TURNING_SPEED},                        
    // {0.0f, 3.0f, NORMAL_SPEED},
-    {3.5f, 3.0f, TURNING_SPEED},               
+    {3.5f, 19.0f, TURNING_SPEED},               
     {3.5f, 0.0f, NORMAL_SPEED},                       
     {START_X, START_Y, APPROACH_SPEED}            
 };    
 //火源5路径点
 static PathPoint_t pathToFire5[] = {
     {3.5f, 0.0f, NORMAL_SPEED},                       
-    {3.5f, 3.0f, TURNING_SPEED},              
+    {3.5f, 19.0f, TURNING_SPEED},  //正确的            
    // {12.5f, 3.0f, NORMAL_SPEED},                       
     //{12.5f, 4.0f, NORMAL_SPEED}                     
 };
@@ -156,14 +156,14 @@ static PathPoint_t pathToFire5[] = {
 static PathPoint_t pathFromFire5[] = {
     //{12.5f, 4.0f, NORMAL_SPEED},                      
     //{12.5f, 3.0f, NORMAL_SPEED},                        
-    {3.5f, 3.0f, TURNING_SPEED},              
+    {3.5f, 19.0f, TURNING_SPEED},              
     {3.5f, 0.0f, NORMAL_SPEED},                      
     {START_X, START_Y, APPROACH_SPEED}            
 };
 // 火源6路径点（前往）- 从起点到右下部火源，走右侧通道
 static PathPoint_t pathToFire6[] = {
     {3.5f, 0.0f, NORMAL_SPEED},                       
-    {3.5f, 3.0f, TURNING_SPEED},              
+    {3.5f, 19.0f, TURNING_SPEED},              
     //{21.5f, 3.0f, NORMAL_SPEED},                       
   //  {21.0f, 6.0f, NORMAL_SPEED},    
         //{22.0f, 6.0f, NORMAL_SPEED},    
@@ -174,7 +174,7 @@ static PathPoint_t pathToFire6[] = {
 static PathPoint_t pathFromFire6[] = {
        // {22.0f, 6.0f, NORMAL_SPEED},    
    // {21.0f, 6.0f, NORMAL_SPEED},    
-    {3.5f, 3.0f, TURNING_SPEED},              // 继续向右移动
+    {3.5f, 19.0f, TURNING_SPEED},              // 继续向右移动
     {3.5f, 0.0f, NORMAL_SPEED},                        // 避开左下角建筑物
     {START_X, START_Y, APPROACH_SPEED}         
 };
@@ -722,20 +722,36 @@ void Mission_Update(void)
             {
                 // 已到达路口，根据飞机发来的火源坐标计算最终位置
                 // 计算目标位置：X轴与火源对齐，Y轴相差3dm
-                float target_x = fire_x_f-13.5f;  // X轴与火源对齐
-                float target_y = 20.0f;  // Y轴相差3dm（安全距离）
+                float target_x = fire_x_f/10-13.5f;  // X轴与火源对齐
+                float target_y = 3.0f;  // Y轴相差3dm（安全距离）
 
                 // 设置最终目标位置
                 setTargetPosition(target_x, target_y);
                 startNavigation(target_x, target_y);
 
-
-                // 切换到灭火状态
-                currentMissionState = MISSION_FIRE1_FIGHTING;
-
-                // 开始灭火处理
-                Mission_StartFireProcessing(1);
+                // 切换到定位状态，等待到达第一个位置
+                currentMissionState = MISSION_FIRE1_POSITIONING;
             }
+        }
+        break;
+
+    case MISSION_FIRE1_POSITIONING:
+        // 等待到达第一个位置
+        if (navyState == NAVY_STATE_ARRIVED)
+        {
+            // 到达第一个位置，现在设置转向位置
+            float target_x = fire_x_f/10-13.5f;
+            float target_y = 4.0f; // Y+1实现转向
+
+            // 设置转向位置
+            setTargetPosition(target_x, target_y);
+            startNavigation(target_x, target_y);
+
+            // 切换到灭火状态
+            currentMissionState = MISSION_FIRE1_FIGHTING;
+
+            // 开始灭火处理
+            Mission_StartFireProcessing(1);
         }
         break;
 
@@ -824,8 +840,8 @@ void Mission_Update(void)
             {
                 // 已到达路口，根据飞机发来的火源坐标计算最终位置
                 // 计算目标位置：X轴与火源对齐，Y轴相差3dm
-                float target_x = fire_x_f-13.5f;  // X轴与火源对齐
-                float target_y =19.0f;// Y轴相差3dm（安全距离;
+                float target_x = fire_x_f/10-13.5f;  // X轴与火源对齐
+                float target_y =3.0f;// Y轴相差3dm（安全距离;
 
                 // 设置最终目标位置
                 setTargetPosition(target_x, target_y);
@@ -842,8 +858,8 @@ void Mission_Update(void)
         if (navyState == NAVY_STATE_ARRIVED)
         {
             // 到达第一个位置，现在设置转向位置
-            float target_x =fire_x_f-13.5f;
-            float target_y = 20.0f; // Y+1实现转向
+            float target_x =fire_x_f/10-13.5f;
+            float target_y = 4.0f; // Y+1实现转向
 
             // 设置转向位置
             setTargetPosition(target_x, target_y);
@@ -900,19 +916,36 @@ void Mission_Update(void)
             {
                 // 已到达路口，根据飞机发来的火源坐标计算最终位置
                 // 计算目标位置：X轴与火源对齐，Y轴相差3dm
-                float target_x = fire_x_f-13.5;  // X轴与火源对齐
-                float target_y = 20.0f;  // Y轴相差3dm（安全距离）
+                float target_x = fire_x_f/10-13.5f;  // X轴与火源对齐
+                float target_y = 3.0f;  // Y轴相差3dm（安全距离）
 
                 // 设置最终目标位置
                 setTargetPosition(target_x, target_y);
                 startNavigation(target_x, target_y);
 
-                // 切换到灭火状态
-                currentMissionState = MISSION_FIRE3_FIGHTING;
-
-                // 开始灭火处理
-                Mission_StartFireProcessing(3);
+                // 切换到定位状态，等待到达第一个位置
+                currentMissionState = MISSION_FIRE3_POSITIONING;
             }
+        }
+        break;
+
+    case MISSION_FIRE3_POSITIONING:
+        // 等待到达第一个位置
+        if (navyState == NAVY_STATE_ARRIVED)
+        {
+            // 到达第一个位置，现在设置转向位置
+            float target_x = fire_x_f/10-13.5f;
+            float target_y =4.0f; // Y+1实现转向
+
+            // 设置转向位置
+            setTargetPosition(target_x, target_y);
+            startNavigation(target_x, target_y);
+
+            // 切换到灭火状态
+            currentMissionState = MISSION_FIRE3_FIGHTING;
+
+            // 开始灭火处理
+            Mission_StartFireProcessing(3);
         }
         break;
 
@@ -959,19 +992,36 @@ void Mission_Update(void)
             {
                 // 已到达路口，根据飞机发来的火源坐标计算最终位置
                 // 计算目标位置：X轴与火源对齐，Y轴相差3dm
-                float target_x = fire_x_f-13.5;  // X轴与火源对齐
-                float target_y = 4.0f;  // Y轴相差3dm（安全距离）
+                float target_x = fire_x_f/10-13.5f;  // X轴与火源对齐
+                float target_y = 19.0f;  // Y轴相差3dm（安全距离）
 
                 // 设置最终目标位置
                 setTargetPosition(target_x, target_y);
                 startNavigation(target_x, target_y);
 
-                // 切换到灭火状态
-                currentMissionState = MISSION_FIRE4_FIGHTING;
-
-                // 开始灭火处理
-                Mission_StartFireProcessing(4);
+                // 切换到定位状态，等待到达第一个位置
+                currentMissionState = MISSION_FIRE4_POSITIONING;
             }
+        }
+        break;
+
+    case MISSION_FIRE4_POSITIONING:
+        // 等待到达第一个位置
+        if (navyState == NAVY_STATE_ARRIVED)
+        {
+            // 到达第一个位置，现在设置转向位置
+            float target_x = fire_x_f/10-13.5f;
+            float target_y = 20.0f; // Y+1实现转向
+
+            // 设置转向位置
+            setTargetPosition(target_x, target_y);
+            startNavigation(target_x, target_y);
+
+            // 切换到灭火状态
+            currentMissionState = MISSION_FIRE4_FIGHTING;
+
+            // 开始灭火处理
+            Mission_StartFireProcessing(4);
         }
         break;
 
@@ -1018,19 +1068,36 @@ void Mission_Update(void)
             {
                 // 已到达路口，根据飞机发来的火源坐标计算最终位置
                 // 计算目标位置：X轴与火源对齐，Y轴相差3dm
-                float target_x = fire_x_f-13.5;  // X轴与火源对齐
-                float target_y =4.0f;  // Y轴相差3dm（安全距离）
+                float target_x = fire_x_f/10-13.5f;  // X轴与火源对齐
+                float target_y = 19.0f;  // Y轴相差3dm（安全距离）
 
                 // 设置最终目标位置
                 setTargetPosition(target_x, target_y);
                 startNavigation(target_x, target_y);
 
-                // 切换到灭火状态
-                currentMissionState = MISSION_FIRE5_FIGHTING;
-
-                // 开始灭火处理
-                Mission_StartFireProcessing(5);
+                // 切换到定位状态，等待到达第一个位置
+                currentMissionState = MISSION_FIRE5_POSITIONING;
             }
+        }
+        break;
+
+    case MISSION_FIRE5_POSITIONING:
+        // 等待到达第一个位置
+        if (navyState == NAVY_STATE_ARRIVED)
+        {
+            // 到达第一个位置，现在设置转向位置
+            float target_x = fire_x_f/10-13.5f;
+            float target_y =20.0f; // Y+1实现转向
+
+            // 设置转向位置
+            setTargetPosition(target_x, target_y);
+            startNavigation(target_x, target_y);
+
+            // 切换到灭火状态
+            currentMissionState = MISSION_FIRE5_FIGHTING;
+
+            // 开始灭火处理
+            Mission_StartFireProcessing(5);
         }
         break;
 
@@ -1076,19 +1143,36 @@ void Mission_Update(void)
             {
                 // 已到达路口，根据飞机发来的火源坐标计算最终位置
                 // 计算目标位置：X轴与火源对齐，Y轴相差3dm
-                float target_x = fire_x_f-13.5;  // X轴与火源对齐
-                float target_y =4.0f;  // Y轴相差3dm（安全距离）
+                float target_x = fire_x_f/10-13.5f;  // X轴与火源对齐
+                float target_y = 19.0f;  // Y轴相差3dm（安全距离）
 
                 // 设置最终目标位置
                 setTargetPosition(target_x, target_y);
                 startNavigation(target_x, target_y);
 
-                // 切换到灭火状态
-                currentMissionState = MISSION_FIRE6_FIGHTING;
-
-                // 开始灭火处理
-                Mission_StartFireProcessing(6);
+                // 切换到定位状态，等待到达第一个位置
+                currentMissionState = MISSION_FIRE6_POSITIONING;
             }
+        }
+        break;
+
+    case MISSION_FIRE6_POSITIONING:
+        // 等待到达第一个位置
+        if (navyState == NAVY_STATE_ARRIVED)
+        {
+            // 到达第一个位置，现在设置转向位置
+            float target_x = fire_x_f/10-13.5f;
+            float target_y = 20.0f; // Y+1实现转向
+
+            // 设置转向位置
+            setTargetPosition(target_x, target_y);
+            startNavigation(target_x, target_y);
+
+            // 切换到灭火状态
+            currentMissionState = MISSION_FIRE6_FIGHTING;
+
+            // 开始灭火处理
+            Mission_StartFireProcessing(6);
         }
         break;
 
@@ -1522,6 +1606,9 @@ void Display_DebugStatus(void)
         case MISSION_FIRE1_GOING:
             OLED_ShowString(16, 0, "GOING1", 12, 0);
             break;
+        case MISSION_FIRE1_POSITIONING:
+            OLED_ShowString(16, 0, "POS1", 12, 0);
+            break;
         case MISSION_FIRE1_FIGHTING:
             OLED_ShowString(16, 0, "FIGHT1", 12, 0);
             break;
@@ -1530,6 +1617,9 @@ void Display_DebugStatus(void)
             break;
         case MISSION_FIRE2_GOING:
             OLED_ShowString(16, 0, "GOING2", 12, 0);
+            break;
+        case MISSION_FIRE2_POSITIONING:
+            OLED_ShowString(16, 0, "POS2", 12, 0);
             break;
         case MISSION_FIRE2_FIGHTING:
             OLED_ShowString(16, 0, "FIGHT2", 12, 0);
@@ -1540,6 +1630,9 @@ void Display_DebugStatus(void)
         case MISSION_FIRE3_GOING:
             OLED_ShowString(16, 0, "GOING3", 12, 0);
             break;
+        case MISSION_FIRE3_POSITIONING:
+            OLED_ShowString(16, 0, "POS3", 12, 0);
+            break;
         case MISSION_FIRE3_FIGHTING:
             OLED_ShowString(16, 0, "FIGHT3", 12, 0);
             break;
@@ -1548,6 +1641,9 @@ void Display_DebugStatus(void)
             break;
         case MISSION_FIRE4_GOING:
             OLED_ShowString(16, 0, "GOING4", 12, 0);
+            break;
+        case MISSION_FIRE4_POSITIONING:
+            OLED_ShowString(16, 0, "POS4", 12, 0);
             break;
         case MISSION_FIRE4_FIGHTING:
             OLED_ShowString(16, 0, "FIGHT4", 12, 0);
@@ -1558,6 +1654,9 @@ void Display_DebugStatus(void)
         case MISSION_FIRE5_GOING:
             OLED_ShowString(16, 0, "GOING5", 12, 0);
             break;
+        case MISSION_FIRE5_POSITIONING:
+            OLED_ShowString(16, 0, "POS5", 12, 0);
+            break;
         case MISSION_FIRE5_FIGHTING:
             OLED_ShowString(16, 0, "FIGHT5", 12, 0);
             break;
@@ -1566,6 +1665,9 @@ void Display_DebugStatus(void)
             break;
         case MISSION_FIRE6_GOING:
             OLED_ShowString(16, 0, "GOING6", 12, 0);
+            break;
+        case MISSION_FIRE6_POSITIONING:
+            OLED_ShowString(16, 0, "POS6", 12, 0);
             break;
         case MISSION_FIRE6_FIGHTING:
             OLED_ShowString(16, 0, "FIGHT6", 12, 0);

@@ -7,6 +7,7 @@
 typedef enum {
     MISSION_IDLE,           // 空闲状态
     MISSION_FIRE1_GOING,    // 前往火源1
+    MISSION_FIRE1_POSITIONING, // 火源1定位阶段
     MISSION_FIRE1_FIGHTING, // 灭火1
     MISSION_FIRE1_RETURN,   // 火源1返回
     MISSION_FIRE2_GOING,    // 前往火源2
@@ -14,15 +15,19 @@ typedef enum {
     MISSION_FIRE2_FIGHTING, // 灭火2
     MISSION_FIRE2_RETURN,   // 火源2返回
     MISSION_FIRE3_GOING,    // 前往火源3
+    MISSION_FIRE3_POSITIONING, // 火源3定位阶段
     MISSION_FIRE3_FIGHTING, // 灭火3
     MISSION_FIRE3_RETURN,   // 火源3返回
     MISSION_FIRE4_GOING,    // 前往火源4
+    MISSION_FIRE4_POSITIONING, // 火源4定位阶段
     MISSION_FIRE4_FIGHTING, // 灭火4
     MISSION_FIRE4_RETURN,   // 火源4返回
     MISSION_FIRE5_GOING,    // 前往火源5
+    MISSION_FIRE5_POSITIONING, // 火源5定位阶段
     MISSION_FIRE5_FIGHTING, // 灭火5
     MISSION_FIRE5_RETURN,   // 火源5返回
     MISSION_FIRE6_GOING,    // 前往火源6
+    MISSION_FIRE6_POSITIONING, // 火源6定位阶段
     MISSION_FIRE6_FIGHTING, // 灭火6
     MISSION_FIRE6_RETURN,   // 火源6返回
     MISSION_COMPLETE        // 任务完成
