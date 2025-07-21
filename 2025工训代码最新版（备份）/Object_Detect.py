@@ -133,7 +133,7 @@ class System:
     def init_yolo_mode(self):   #yolo模型识别初始化
 
         #self.detector = nn.YOLO11(model="/root/models/yolo11n.mud", dual_buff = True)
-        self.detector = nn.YOLO11(model="/root/models/yolo11fire.mud", dual_buff = True)
+        self.detector = nn.YOLO11(model="/root/models/fireincar.mud", dual_buff = True)
         #self.detector=nn.YOLOv5(model="/root/models/best.mud", dual_buff = True)
         #self.detector=nn.YOLO11(model="/root/models/sehuan.mud", dual_buff = True)
         #self.cam = camera.Camera(self.detector.input_width(), self.detector.input_height(), self.detector.input_format())
@@ -243,7 +243,7 @@ def My_ObjectDetect(detect1,dis,cam):
     #计算偏移角度
     angle = math.atan2(err_y_pos, err_x_pos) * 180 / math.pi
     angle=round(angle,2)
-    print(f"angle: {angle:.2f}")
+    #print(f"angle: {angle:.2f}")
     ttttt=f'{angle}'
     #img.draw_string(obj.x, obj.y+30, ttttt, color=image.COLOR_RED)
 
@@ -257,12 +257,16 @@ def My_ObjectDetect(detect1,dis,cam):
     # 将颜色字符串转换为对应的数字
     #color_num_map = {'red': 1, 'green': 2, 'blue': 3, 'unknown': 0}
     #global_vars.valid_data1 = color_num_map[color_str]
-    
+    #print(int(detect1.detector.labels[obj.class_id]))
+    if detect1.detector.labels[obj.class_id]=='Resistance':
     # 发送结果
-    result1 = f"!,{r_err_x_pos}, {r_err_y_pos}, {global_vars.valid_data1},#"
-    serial.write(result1.encode('utf-8'))
-    img.draw_string(obj.x, obj.y+15, result1, color=image.COLOR_RED)
-    print(result1)
+        result1 = f"!,{r_err_x_pos}, {r_err_y_pos}, {global_vars.valid_data1},#"
+        serial.write(result1.encode('utf-8'))
+        img.draw_string(obj.x, obj.y+15, result1, color=image.COLOR_RED)
+        print(result1)
+    else :
+
+        print("序号不对")
     
     dis.show(img)
 

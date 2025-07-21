@@ -169,7 +169,7 @@ void TIM2_Task_100Hz(void)
 
     //printf("count:%d,%d\n",left_encoder_count,right_encoder_count);
    // printf("%f,%f\n", left_wheel_speed, right_wheel_speed);
-   printf("%f\n", IMU_data.YawZ);
+   //printf("%f\n", IMU_data.YawZ);
     // 更新舵机控制
     Servo_Update(); //已在Mission_Update();调用 3 记得改回�?????
     	//printf("%f\n",IMU_data.YawZ);
@@ -241,9 +241,8 @@ int main(void)
   Uart_Init();
   //init_example();
  // drone_data.drone_x=27.0f;
-  Mission_StartFire2();
-  fire_x_f=255.0f;
-  fire_y_f=155.0f;
+  //Mission_StartFire1();
+
   HAL_Delay(1000);
   //vision_data.target_detected = 0;//测试�??
 
@@ -256,10 +255,11 @@ int main(void)
   while (1)
   {
     // �??查并处理飞机发�?�的火源ID（只在任务未启动时检查）
-    // if (!mission_started)
-    // {
-    //     Check_And_Start_Mission();
-    // }
+    Process_Drone_Data();
+    if (!mission_started)
+    {
+        Check_And_Start_Mission();
+    }
       if (delay_ms_nb_id(500, 5)) 
       {  // 使用ID=3的延�?
 
@@ -271,13 +271,13 @@ int main(void)
 
 	     // set_image_aph(3, 0); // 显示火源1
       }
-    // OLED_ShowNum(10,1,drone_data.drone_x,5,16,0); 
-    // OLED_ShowNum(30,1,drone_data.fire_id,5,16,0); 
-    // OLED_ShowNum(10,3,drone_data.drone_y,5,16,0); 
-    //     OLED_ShowNum(10,5,fire_x_f,5,16,0);
-    // OLED_ShowNum(30,5,fire_y_f,5,16,0);
-    OLED_ShowNum(10,1,left_wheel_speed,5,16,0);
-     OLED_ShowNum(10,3,right_wheel_speed,5,16,0); 
+    OLED_ShowNum(10,1,drone_data.drone_x,5,16,0); 
+    OLED_ShowNum(30,1,drone_data.fire_id,5,16,0); 
+    OLED_ShowNum(10,3,drone_data.drone_y,5,16,0); 
+        OLED_ShowNum(10,5,fire_x_f,5,16,0);
+    OLED_ShowNum(30,5,fire_y_f,5,16,0);
+   // OLED_ShowNum(10,1,left_wheel_speed,5,16,0);
+   //  OLED_ShowNum(10,3,right_wheel_speed,5,16,0); 
     // printf("%f,%f\n",left_wheel_speed,right_wheel_speed);
 		//navyTest();
     // 更新任务状�?�机

@@ -20,6 +20,7 @@ extern DMA_HandleTypeDef hdma_usart1_rx;
 extern DMA_HandleTypeDef hdma_usart3_rx;
 
 drone_data_t drone_data ; // 初始化无人机数据
+uint8_t new_data_flag = 0;  // 新数据标志位（全局变量）
 
 void Uart_Init(void)
 {
@@ -67,9 +68,30 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
 {
 	if (huart == &huart1)//飞机和单片机
 	{
-		
-        sscanf((char*)USART1_RxData,"code,%f,%f,@", &drone_data.drone_x, &drone_data.drone_y);
-		sscanf((char*)USART1_RxData,"fire,%f,%f,%d,@", &fire_x_f, &fire_y_f, &drone_data.fire_id);
+		static uint8_t fire_data_received = 0;  // 标志：是否已接收过火源数据
+
+		// 接收中断只设置标志位，不做解析
+		new_data_flag = 1;
+
+		// 只在第一次接收到有效火源数据时赋值
+		if (!fire_data_received)
+		 {
+			float temp_fire_x, temp_fire_y;
+			uint8_t temp_fire_id;
+
+			// 尝试解析火源数据
+			if (sscanf((char*)USART1_RxData,"fire,%f,%f,%d,@", &temp_fire_x, &temp_fire_y, &temp_fire_id) == 3) {
+				// 验证火源ID是否有效
+				if (temp_fire_id >= 1 && temp_fire_id <= 6)
+				{
+					// 只在第一次接收到有效数据时赋值
+					fire_x_f = temp_fire_x;
+					fire_y_f = temp_fire_y;
+					drone_data.fire_id = temp_fire_id;
+					fire_data_received = 1;  // 标记已接收过数据
+				}
+			}
+		}
 
 		// 重新启动DMA接收
 		HAL_UARTEx_ReceiveToIdle_DMA(&huart1, USART1_RxData, sizeof(USART1_RxData));
@@ -158,3 +180,24 @@ int fputc(int ch, FILE *f)
 //     // 使用DMA发送数据
 //     HAL_UART_Transmit_DMA(&huart4, uart_tx_buffer, sizeof(data) + sizeof(tail));
 // }
+
+/**
+ * @brief 处理飞机数据（在主循环中每500ms调用一次）
+ */
+void Process_Drone_Data(void)
+{
+	static uint32_t last_process_time = 0;
+	uint32_t current_time = HAL_GetTick();
+
+	// 每500ms处理一次，且有新数据时才处理
+	if ((current_time - last_process_time) >= 500 && new_data_flag) {
+		// 验证数据包完整性（简单检查是否包含@结束符）
+		if (strstr((char*)USART1_RxData, "@") != NULL) {
+			// 解析code数据
+			sscanf((char*)USART1_RxData,"code,%f,%f,@", &drone_data.drone_x, &drone_data.drone_y);
+		}
+
+		new_data_flag = 0;  // 清除标志位
+		last_process_time = current_time;
+	}
+}

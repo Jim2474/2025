@@ -741,7 +741,7 @@ void Mission_Update(void)
         {
             // 到达第一个位置，现在设置转向位置
             float target_x = fire_x_f/10-13.5f;
-            float target_y = 4.0f; // Y+1实现转向
+            float target_y = 5.0f; // Y+1实现转向
 
             // 设置转向位置
             setTargetPosition(target_x, target_y);
@@ -859,7 +859,7 @@ void Mission_Update(void)
         {
             // 到达第一个位置，现在设置转向位置
             float target_x =fire_x_f/10-13.5f;
-            float target_y = 4.0f; // Y+1实现转向
+            float target_y = 5.0f; // Y+1实现转向
 
             // 设置转向位置
             setTargetPosition(target_x, target_y);
@@ -935,7 +935,7 @@ void Mission_Update(void)
         {
             // 到达第一个位置，现在设置转向位置
             float target_x = fire_x_f/10-13.5f;
-            float target_y =4.0f; // Y+1实现转向
+            float target_y =5.0f; // Y+1实现转向
 
             // 设置转向位置
             setTargetPosition(target_x, target_y);
@@ -1011,7 +1011,7 @@ void Mission_Update(void)
         {
             // 到达第一个位置，现在设置转向位置
             float target_x = fire_x_f/10-13.5f;
-            float target_y = 20.0f; // Y+1实现转向
+            float target_y = 21.0f; // Y+1实现转向
 
             // 设置转向位置
             setTargetPosition(target_x, target_y);
@@ -1087,7 +1087,7 @@ void Mission_Update(void)
         {
             // 到达第一个位置，现在设置转向位置
             float target_x = fire_x_f/10-13.5f;
-            float target_y =20.0f; // Y+1实现转向
+            float target_y =21.0f; // Y+1实现转向
 
             // 设置转向位置
             setTargetPosition(target_x, target_y);
@@ -1162,7 +1162,7 @@ void Mission_Update(void)
         {
             // 到达第一个位置，现在设置转向位置
             float target_x = fire_x_f/10-13.5f;
-            float target_y = 20.0f; // Y+1实现转向
+            float target_y = 21.0f; // Y+1实现转向
 
             // 设置转向位置
             setTargetPosition(target_x, target_y);

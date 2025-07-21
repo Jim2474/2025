@@ -6,6 +6,7 @@ extern uint8_t USART3_RxData;
 
 void Uart_Init(void);
 void send_firewater_data(void);
+void Process_Drone_Data(void);  // 处理飞机数据函数
 typedef struct
 {
     float drone_x;
