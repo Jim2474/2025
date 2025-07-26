@@ -14,7 +14,9 @@ def show_menu():
     print("2. 目标检测模式 (object_detect)")
     print("3. 颜色块检测模式 (Find_blobs)")
     print("4. 激光笔识别模式 (laser_detect)")
-    print("5. 退出程序")
+    print("5. 激光笔+触摸GUI调试 (laser_gui)")
+    print("6. 激光笔+简化GUI调试 (laser_simple)")
+    print("7. 退出程序")
     print("="*50)
 
 def select_mode():
@@ -22,8 +24,8 @@ def select_mode():
     while True:
         show_menu()
         try:
-            choice = input("请输入选择的模式编号 (1-5): ").strip()
-            
+            choice = input("请输入选择的模式编号 (1-7): ").strip()
+
             if choice == "1":
                 global_vars.mode = "find_qr"
                 print("已切换到二维码识别模式")
@@ -41,11 +43,21 @@ def select_mode():
                 print("已切换到激光笔识别模式")
                 break
             elif choice == "5":
+                global_vars.mode = "laser_gui"
+                print("已切换到激光笔+触摸GUI调试模式")
+                print("提示: 触摸屏幕顶部可切换调试/检测模式")
+                break
+            elif choice == "6":
+                global_vars.mode = "laser_simple"
+                print("已切换到激光笔+简化GUI调试模式")
+                print("提示: 自动切换模式，无需触摸操作")
+                break
+            elif choice == "7":
                 print("退出程序...")
                 app.set_exit_flag(True)
                 return False
             else:
-                print("无效选择，请输入1-5之间的数字")
+                print("无效选择，请输入1-7之间的数字")
                 time.sleep(1)
         except KeyboardInterrupt:
             print("\n程序被用户中断")

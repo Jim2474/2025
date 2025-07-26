@@ -1,13 +1,33 @@
 from maix import image, camera, display, app
-import cv2 
+import cv2
+import json
+import os
 
-def laser_detection_mode(disp,cam):
+def load_lab_config():
+    """加载LAB阈值配置"""
+    config_file = "laser_lab_config.json"
+    default_thresholds = (0, 100, -128, 127, -128, 127)
+
+    try:
+        if os.path.exists(config_file):
+            with open(config_file, 'r') as f:
+                config = json.load(f)
+                thresholds = config.get('lab_thresholds', list(default_thresholds))
+                return tuple(thresholds)
+    except Exception as e:
+        print(f"加载LAB配置失败: {e}")
+
+    return default_thresholds
+
+def laser_detection_mode(disp, cam):
     """
     激光笔识别模式
     通过帧差法检测激光点位置并在屏幕上显示
+    使用可配置的LAB阈值进行颜色验证
     """
-    #cam = camera.Camera(320, 240)
-    #disp = display.Display()
+    # 加载LAB阈值配置
+    lab_thresholds = load_lab_config()
+    print(f"使用LAB阈值: {lab_thresholds}")
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))  # 创建一个 5x5 的矩形膨胀核
 
@@ -17,7 +37,6 @@ def laser_detection_mode(disp,cam):
 
     last_img_cv_gray = None  # 用于保存前一帧图像的灰度值，用于帧差计算( 前后两帧是否相同 ，来判断是否有运动的物体)
     
-    print("激光笔识别模式已启动，按Ctrl+C退出")
     
     while not app.need_exit():
         img = cam.read()
@@ -55,11 +74,11 @@ def laser_detection_mode(disp,cam):
                 point_y = int(M["m01"] / M["m00"])
                 # 获取激光点轮廓的外接矩形
                 x, y, w, h = cv2.boundingRect(contour)
-                # 获取区域的直方图统计数据，以区分绿色激光点
-                hist = img.get_histogram(thresholds=[(0, 100, -128, 127, -128, 127)], roi=(x, y, w, h))
+                # 使用配置的LAB阈值进行颜色验证
+                hist = img.get_histogram(thresholds=[lab_thresholds], roi=(x, y, w, h))
                 value = hist.get_statistics().a_median()
-                
-                print('statistic value {} and contour area : {}'.format(value, contour_area))
+
+                print('LAB统计值: {} 轮廓面积: {} LAB阈值: {}'.format(value, contour_area, lab_thresholds))
         
         last_img_cv_gray = img_cv_gray.copy()
         img.draw_cross(point_x, point_y, image.COLOR_BLUE, 5, 2)

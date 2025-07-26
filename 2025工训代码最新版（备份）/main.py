@@ -14,17 +14,13 @@ System_Detect2= System(init_mode="Find_blobs")
 
 dis = display.Display()
 cam=camera.Camera(320,240)
-# 创建激光笔识别的包装函数
-def laser_wrapper(system, dis, cam):
-    """激光笔识别的包装函数，用于统一接口"""
-    laser_detection_mode()
 
 # 创建函数字典
 function_dict = {
     "find_qr": My_FindQR,
     "object_detect": My_ObjectDetect,
     "Find_blobs": Myfind_blobs,
-    "laser_detect": laser_detection_mode
+    "laser_detect": laser_detection_mode,
 }
 
 
@@ -47,4 +43,4 @@ while not app.need_exit():
         function_dict["Find_blobs"](System_Detect2,dis,cam)
 
     elif global_vars.mode == "laser_detect":
-        function_dict["laser_detect"](dis, cam)
+        function_dict["laser_detect"](dis,cam)
