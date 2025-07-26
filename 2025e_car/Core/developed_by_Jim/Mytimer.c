@@ -12,7 +12,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
     if(htim->Instance == TIM2)
     {
-
+		Key_Loop();
         static uint8_t cnt_100Hz = 0;
         TIM2_Task_1000Hz(); // 每1ms调用一次
         if(++cnt_100Hz >= 10)

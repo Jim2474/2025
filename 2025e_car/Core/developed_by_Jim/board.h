@@ -26,8 +26,13 @@
 #include "M_servo.h"
 #include "Waypoint.h"
 #include "tjc_usart_hmi.h"
+#include "Flash.h"
+#include "key.h"
+
+
 extern float fire_x_f;
 extern float fire_y_f;
+extern int8_t Key_KeyNumber;
 
 //资源分配表：
 /*

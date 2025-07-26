@@ -2,6 +2,7 @@ from maix import time,uart,pinmap,camera,display,image,nn,app
 import Object_Detect
 import global_vars
 from Object_Detect  import System,My_FindQR,My_ObjectDetect,Myfind_blobs
+from laser_find import laser_detection_mode
 #from Uart_Protocol import TTest,RTest,Timer,TimerStart #串口发送接收的类
 
 
@@ -13,15 +14,21 @@ System_Detect2= System(init_mode="Find_blobs")
 
 dis = display.Display()
 cam=camera.Camera(320,240)
+# 创建激光笔识别的包装函数
+def laser_wrapper(system, dis, cam):
+    """激光笔识别的包装函数，用于统一接口"""
+    laser_detection_mode()
+
 # 创建函数字典
 function_dict = {
     "find_qr": My_FindQR,
     "object_detect": My_ObjectDetect,
-    "Find_blobs":Myfind_blobs
+    "Find_blobs": Myfind_blobs,
+    "laser_detect": laser_detection_mode
 }
 
 
-global_vars.mode = "object_detect"  # 定义初始模式
+global_vars.mode = "laser_detect"  # 定义初始模式
 qr_detected = False  # 标志是否识别到二维码
 timec=0
 while not app.need_exit():   
@@ -38,3 +45,6 @@ while not app.need_exit():
 
     elif global_vars.mode == "Find_blobs":
         function_dict["Find_blobs"](System_Detect2,dis,cam)
+
+    elif global_vars.mode == "laser_detect":
+        function_dict["laser_detect"](dis, cam)

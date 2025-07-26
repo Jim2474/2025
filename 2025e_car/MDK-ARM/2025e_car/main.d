@@ -21,6 +21,9 @@
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dma.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_dma_ex.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_cortex.h \
+  ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_adc.h \
+  ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_ll_adc.h \
+  ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_adc_ex.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ex.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_flash_ramfunc.h \
@@ -28,12 +31,13 @@
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_i2c_ex.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pwr.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_pwr_ex.h \
+  ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_spi.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_uart.h \
-  ..\Core\Inc\dma.h ..\Core\Inc\i2c.h ..\Core\Inc\tim.h \
-  ..\Core\Inc\usart.h ..\Core\Inc\gpio.h \
-  ..\Core\developed_by_Jim\board.h \
+  ..\Core\Inc\adc.h ..\Core\Inc\dma.h ..\Core\Inc\i2c.h \
+  ..\Core\Inc\spi.h ..\Core\Inc\tim.h ..\Core\Inc\usart.h \
+  ..\Core\Inc\gpio.h ..\Core\developed_by_Jim\board.h \
   F:\1_keil5\ARM\ARMCLANG\include\stdio.h \
   ..\Core\developed_by_Jim\M_pid.h ..\Core\developed_by_Jim\motor_pwm.h \
   ..\Core\developed_by_Jim\Mytimer.h ..\Core\developed_by_Jim\Encoder.h \
@@ -44,4 +48,5 @@
   F:\1_keil5\ARM\ARMCLANG\include\string.h \
   ..\Core\developed_by_Jim\Mission.h ..\Core\developed_by_Jim\M_servo.h \
   ..\Core\developed_by_Jim\Waypoint.h \
-  ..\Core\developed_by_Jim\tjc_usart_hmi.h
+  ..\Core\developed_by_Jim\tjc_usart_hmi.h \
+  ..\Core\developed_by_Jim\Flash.h ..\Core\developed_by_Jim\key.h

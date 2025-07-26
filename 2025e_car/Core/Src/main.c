@@ -18,8 +18,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "adc.h"
 #include "dma.h"
 #include "i2c.h"
+#include "spi.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -35,11 +37,11 @@
 extern int32_t left_encoder_count;
 extern int32_t right_encoder_count;
 
-// 视觉数据结构体定�???????????
+// 视觉数据结构体定�????????????
 typedef struct {
     float error_x;           // X方向误差
     float error_y;           // Y方向误差
-    uint8_t target_detected; // 目标�???????????测标�???????????
+    uint8_t target_detected; // 目标�????????????测标�????????????
     uint8_t data_ready;      // 数据就绪标志
 } Vision_Data_t;
 
@@ -58,11 +60,11 @@ typedef struct {
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-// 任务状�?�标�??
-static uint8_t mission_started = 0;  // 任务是否已启动标�??
+// 任务状�?�标�???
+static uint8_t mission_started = 0;  // 任务是否已启动标�???
 static uint8_t last_fire_id = 0;     // 上次接收到的火源ID
 
-// 小车初始化函�???????????
+// 小车初始化函�????????????
 void car_init(void)
 {
 
@@ -86,10 +88,10 @@ void car_init(void)
   
 }
 
-// �??查并处理飞机发�?�的火源ID 
+// �???查并处理飞机发�?�的火源ID 
 void Check_And_Start_Mission(void)
 {
-    // �??查是否接收到有效的火源ID
+    // �???查是否接收到有效的火源ID
     if (drone_data.fire_id != 0 && drone_data.fire_id != last_fire_id)
     {
         // 接收到新的火源ID
@@ -98,13 +100,13 @@ void Check_And_Start_Mission(void)
         // 验证火源ID是否在有效范围内
         if (drone_data.fire_id >= 1 && drone_data.fire_id <= 6)
         {
-            // 尝试启动对应的灭火任�??
+            // 尝试启动对应的灭火任�???
             uint8_t result = Mission_StartByFireId(drone_data.fire_id);
 
             switch (result)
             {
             case 0:
-                // 任务启动失败（无效ID或未定义任务�??
+                // 任务启动失败（无效ID或未定义任务�???
                 // 可以在这里添加错误指示，比如LED闪烁
                // HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_RESET); // 错误指示
                 break;
@@ -115,8 +117,8 @@ void Check_And_Start_Mission(void)
                 //HAL_GPIO_WritePin(GPIOD, GPIO_PIN_1, GPIO_PIN_SET); // 成功指示
                 break;
             case 2:
-                // 相同任务已在执行�??
-                mission_started = 1; // 确保标志位正�??
+                // 相同任务已在执行�???
+                mission_started = 1; // 确保标志位正�???
                 break;
             }
         }
@@ -171,15 +173,15 @@ void TIM2_Task_100Hz(void)
    // printf("%f,%f\n", left_wheel_speed, right_wheel_speed);
    //printf("%f\n", IMU_data.YawZ);
     // 更新舵机控制
-    Servo_Update(); //已在Mission_Update();调用 3 记得改回�?????
+    Servo_Update(); //已在Mission_Update();调用 3 记得改回�??????
     	//printf("%f\n",IMU_data.YawZ);
 
   //update_rotation_task();
 
-      // 10Hz任务计数�?
+      // 10Hz任务计数�??
     static uint8_t counter_10hz = 0;
     counter_10hz++;
-    if (counter_10hz >= 10) // �?10次调用，�?100ms
+    if (counter_10hz >= 10) // �??10次调用，�??100ms
     {
         counter_10hz = 0;
      // drone_display_task(); 
@@ -236,6 +238,10 @@ int main(void)
   MX_TIM1_Init();
   MX_I2C1_Init();
   MX_I2C3_Init();
+  MX_SPI1_Init();
+  MX_SPI2_Init();
+  MX_ADC1_Init();
+  MX_ADC2_Init();
   /* USER CODE BEGIN 2 */
   car_init();
   Uart_Init();
@@ -244,38 +250,46 @@ int main(void)
   //Mission_StartFire1();
 
   HAL_Delay(1000);
-  //vision_data.target_detected = 0;//测试�??
+  //vision_data.target_detected = 0;//测试�???
 
-  // 可�?�：测试用，模拟接收火源ID（调试时使用�??
-  // Test_Fire_ID_Reception(1);  // 取消注释来测试火�??1
+  // 可�?�：测试用，模拟接收火源ID（调试时使用�???
+  // Test_Fire_ID_Reception(1);  // 取消注释来测试火�???1
   /* USER CODE END 2 */
-  //turn_in_place(90,20); // 测试转向功能
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-    // �??查并处理飞机发�?�的火源ID（只在任务未启动时检查）
+    // �???查并处理飞机发�?�的火源ID（只在任务未启动时检查）
     Process_Drone_Data();
+	  Key();
     if (!mission_started)
     {
         Check_And_Start_Mission();
     }
       if (delay_ms_nb_id(500, 5)) 
-      {  // 使用ID=3的延�?
+      {  // 使用ID=3的延�??
 
           //drone_data.fire_id=2;
           //drone_display_task();
           //set_image_aph(drone_data.fire_id, 127); // 显示火源1
           draw_fly((int)drone_data.drone_x, (int)drone_data.drone_y);
-              //display_coordinates("main.t0", drone_data.drone_x, drone_data.drone_y, 0);  // 假设t0是坐标显示控件
+              //display_coordinates("main.t0", drone_data.drone_x, drone_data.drone_y, 0);  // 假设t0是坐标显示控�?
 
 	     // set_image_aph(3, 0); // 显示火源1
       }
-    OLED_ShowNum(10,1,drone_data.drone_x,5,16,0); 
-    OLED_ShowNum(30,1,drone_data.fire_id,5,16,0); 
-    OLED_ShowNum(10,3,drone_data.drone_y,5,16,0); 
-        OLED_ShowNum(10,5,fire_x_f,5,16,0);
-    OLED_ShowNum(30,5,fire_y_f,5,16,0);
+//    OLED_ShowNum(10,1,drone_data.drone_x,5,16,0); 
+//    OLED_ShowNum(30,1,drone_data.fire_id,5,16,0); 
+//    OLED_ShowNum(10,3,drone_data.drone_y,5,16,0); 
+//        OLED_ShowNum(10,5,fire_x_f,5,16,0);
+//    OLED_ShowNum(30,5,fire_y_f,5,16,0);
+	  OLED_ShowNum(10,1,Key_KeyNumber,5,16,0); 
+	  static int ftest=123;
+	  if(Key_KeyNumber!=0)
+	  {
+	   OLED_ShowNum(30,3,ftest++,5,16,0); 
+	  
+	  }
    // OLED_ShowNum(10,1,left_wheel_speed,5,16,0);
    //  OLED_ShowNum(10,3,right_wheel_speed,5,16,0); 
     // printf("%f,%f\n",left_wheel_speed,right_wheel_speed);
@@ -290,7 +304,7 @@ int main(void)
 
     // Display_DebugStatus();
     // Waypoint_Update();
-       //HAL_Delay(100);  // 添加延时，降低刷新频�??????
+       //HAL_Delay(100);  // 添加延时，降低刷新频�???????
     // HAL_GPIO_WritePin(GPIOE, GPIO_PIN_12, GPIO_PIN_SET);
     //   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, GPIO_PIN_RESET);
 //  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_9, GPIO_PIN_SET);
