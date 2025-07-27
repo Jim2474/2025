@@ -28,11 +28,60 @@ Project File Date:  07/25/2025
 *** Using Compiler 'V6.21', folder: 'F:\1_keil5\ARM\ARMCLANG\Bin'
 Build target '2025e_car'
 compiling gpio.c...
-compiling key.c...
+../Core/developed_by_Jim/M_servo.c(35): warning: incompatible pointer types passing 'PID_TypeDef1 *' to parameter of type 'PID_TypeDef *' [-Wincompatible-pointer-types]
+   35 |    pid_init_servo(&servo_x.pid, SERVO_PID_KP, SERVO_PID_KI, SERVO_PID_KD,
+      |                   ^~~~~~~~~~~~
+../Core/developed_by_Jim/M_pid.h(32): note: passing argument to parameter 'pid' here
+   32 | void pid_init_servo(PID_TypeDef *pid, float kp, float ki, float kd, float out_max, float out_min);// 初始化PID结构体
+      |                                  ^
+../Core/developed_by_Jim/M_servo.c(44): warning: incompatible pointer types passing 'PID_TypeDef1 *' to parameter of type 'PID_TypeDef *' [-Wincompatible-pointer-types]
+   44 |    pid_init_servo(&servo_y.pid, SERVO_PID_KP, SERVO_PID_KI, SERVO_PID_KD,
+      |                   ^~~~~~~~~~~~
+../Core/developed_by_Jim/M_pid.h(32): note: passing argument to parameter 'pid' here
+   32 | void pid_init_servo(PID_TypeDef *pid, float kp, float ki, float kd, float out_max, float out_min);// 初始化PID结构体
+      |                                  ^
+../Core/developed_by_Jim/M_servo.c(300): warning: incompatible pointer types passing 'PID_TypeDef1 *' to parameter of type 'PID_TypeDef *' [-Wincompatible-pointer-types]
+  300 |            x_correction = pid_calc_servo(&servo_x.pid, 0, -vision_data.error_x);
+      |                                          ^~~~~~~~~~~~
+../Core/developed_by_Jim/M_pid.h(34): note: passing argument to parameter 'pid' here
+   34 | float pid_calc_servo(PID_TypeDef *pid, float set, float actual);
+      |                                   ^
+../Core/developed_by_Jim/M_servo.c(302): warning: incompatible pointer types passing 'PID_TypeDef1 *' to parameter of type 'PID_TypeDef *' [-Wincompatible-pointer-types]
+  302 |            pid_reset_servo(&servo_x.pid); // 在死区内重置积分项
+      |                            ^~~~~~~~~~~~
+../Core/developed_by_Jim/M_pid.h(49): note: passing argument to parameter 'pid' here
+   49 | void pid_reset_servo(PID_TypeDef *pid);
+      |                                   ^
+../Core/developed_by_Jim/M_servo.c(305): warning: incompatible pointer types passing 'PID_TypeDef1 *' to parameter of type 'PID_TypeDef *' [-Wincompatible-pointer-types]
+  305 |            y_correction = pid_calc_servo(&servo_y.pid, 0, -vision_data.error_y);
+      |                                          ^~~~~~~~~~~~
+../Core/developed_by_Jim/M_pid.h(34): note: passing argument to parameter 'pid' here
+   34 | float pid_calc_servo(PID_TypeDef *pid, float set, float actual);
+      |                                   ^
+../Core/developed_by_Jim/M_servo.c(307): warning: incompatible pointer types passing 'PID_TypeDef1 *' to parameter of type 'PID_TypeDef *' [-Wincompatible-pointer-types]
+  307 |            pid_reset_servo(&servo_y.pid); // 在死区内重置积分项
+      |                            ^~~~~~~~~~~~
+../Core/developed_by_Jim/M_pid.h(49): note: passing argument to parameter 'pid' here
+   49 | void pid_reset_servo(PID_TypeDef *pid);
+      |                                   ^
+../Core/developed_by_Jim/M_servo.c(341): warning: incompatible pointer types passing 'PID_TypeDef1 *' to parameter of type 'PID_TypeDef *' [-Wincompatible-pointer-types]
+  341 |     pid_reset_servo(&servo_x.pid);
+      |                     ^~~~~~~~~~~~
+../Core/developed_by_Jim/M_pid.h(49): note: passing argument to parameter 'pid' here
+   49 | void pid_reset_servo(PID_TypeDef *pid);
+      |                                   ^
+../Core/developed_by_Jim/M_servo.c(342): warning: incompatible pointer types passing 'PID_TypeDef1 *' to parameter of type 'PID_TypeDef *' [-Wincompatible-pointer-types]
+  342 |     pid_reset_servo(&servo_y.pid);
+      |                     ^~~~~~~~~~~~
+../Core/developed_by_Jim/M_pid.h(49): note: passing argument to parameter 'pid' here
+   49 | void pid_reset_servo(PID_TypeDef *pid);
+      |                                   ^
+8 warnings generated.
+compiling M_servo.c...
 linking...
-Program Size: Code=40224 RO-data=2632 RW-data=412 ZI-data=5068  
+Program Size: Code=40312 RO-data=2632 RW-data=420 ZI-data=5076  
 FromELF: creating hex file...
-"2025e_car\2025e_car.axf" - 0 Error(s), 0 Warning(s).
+"2025e_car\2025e_car.axf" - 0 Error(s), 8 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -55,7 +104,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE@5.6.0
       Include file:  CMSIS/Core/Include/tz_context.h
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

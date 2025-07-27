@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "headfile.h": "c",
+        "tjc_usart_hmi.h": "c",
+        "new_my_usart.h": "c",
+        "stm32f1xx_hal_uart.h": "c",
+        "m_timer.h": "c",
+        "usart.h": "c",
+        "gpio.h": "c",
+        "myusart.h": "c",
+        "tim.h": "c",
+        "string.h": "c"
+    }
+}

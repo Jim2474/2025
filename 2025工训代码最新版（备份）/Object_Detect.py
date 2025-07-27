@@ -183,7 +183,7 @@ class System:
 """
 def My_ObjectDetect(detect1,dis,cam):
     img = cam.read()
-    img = img.lens_corr(strength=1.5)	# 调整strength的值直到画面不再畸变
+    #img = img.lens_corr(strength=1.5)	# 调整strength的值直到画面不再畸变
 
     objs = detect1.detector.detect(img, conf_th = 0.65, iou_th = 0.45)
     color_map_2 = {1: 'red', 2: 'green', 3: 'blue'}  # yolo模型识别的颜色映射
@@ -582,24 +582,24 @@ def Myfind_blobs(detect1,dis,cam):
     img.draw_string(30, 50, msg1, color = image.COLOR_RED)
 
     #if global_vars.switch_priority_flag==2  :  
-    if wait_for_ack(timeout=5) :
-        print("收到切换确认，切换到物体识别模式")
-        global_vars.mode = "object_detect"
-    else:
-        print("未收到切换确认，保持当前模式")  
+    #if wait_for_ack(timeout=5) :
+       # print("收到切换确认，切换到物体识别模式")
+       # global_vars.mode = "object_detect"
+    #else:
+       # print("未收到切换确认，保持当前模式")  
 
     global grad_count,priority_index
     
-    if not wait_for_priority_order():      #等待接收优先级顺序
-        print("等待接收优先级顺序")
-        return
+   # if not wait_for_priority_order():      #等待接收优先级顺序
+       # print("等待接收优先级顺序")
+        #return
     #if global_vars.priority_order_flag==0:
        # return
     
     #change_priority_order()                        #改变抓取优先级
 
-    if global_vars.Find_blobs_enable==0:        #完成一轮抓取失能找色块
-        return
+   #if global_vars.Find_blobs_enable==0:        #完成一轮抓取失能找色块
+       # return
 
 
     #if not check_priority_index(): # 检查是否所有物料都已抓取完成

@@ -283,7 +283,7 @@ int main(void)
 //    OLED_ShowNum(10,3,drone_data.drone_y,5,16,0); 
 //        OLED_ShowNum(10,5,fire_x_f,5,16,0);
 //    OLED_ShowNum(30,5,fire_y_f,5,16,0);
-	  OLED_ShowNum(10,1,Key_KeyNumber,5,16,0); 
+	 // OLED_ShowNum(10,1,Key_KeyNumber,5,16,0); 
 	  static int ftest=123;
 	  if(Key_KeyNumber!=0)
 	  {
@@ -298,8 +298,8 @@ int main(void)
     Mission_Update();
 
     // 可�?�：显示调试信息
-    // OLED_ShowNum(10,1,vision_data.error_x,2,16,0);
-    // OLED_ShowNum(10,4,vision_data.error_y,2,16,0);
+     OLED_ShowNum(10,1,vision_data.error_x,10,16,0);
+     OLED_ShowNum(10,4,vision_data.error_y,10,16,0);
     // OLED_ShowNum(10,6,drone_data.fire_id,1,16,0);  // 显示接收到的火源ID
 
     // Display_DebugStatus();

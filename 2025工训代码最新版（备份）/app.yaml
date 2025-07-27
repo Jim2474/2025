@@ -1,11 +1,12 @@
-id: test_detect
-name: TEST
+id: e2025e
+name: Laser track
 version: 1.0.0
 author: Jim
 icon: app.png
 desc: for testing
 files:
   - global_vars.py
+  - laser_find.py
   - main.py
   - Object_Detect.py
   - Uart_Protocol.py

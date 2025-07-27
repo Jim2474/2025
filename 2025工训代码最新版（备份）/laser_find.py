@@ -1,23 +1,59 @@
-from maix import image, camera, display, app
+from maix import image, camera, display, app,uart
 import cv2
 import json
 import os
 
-def load_lab_config():
-    """加载LAB阈值配置"""
-    config_file = "laser_lab_config.json"
-    default_thresholds = (0, 100, -128, 127, -128, 127)
+##将串口实例化放在这里 方便后面发送
+devices = uart.list_devices()
+serial=uart.UART(devices[0],115200,uart.BITS.BITS_8,uart.PARITY.PARITY_NONE,uart.STOP.STOP_1)
 
-    try:
-        if os.path.exists(config_file):
-            with open(config_file, 'r') as f:
-                config = json.load(f)
-                thresholds = config.get('lab_thresholds', list(default_thresholds))
-                return tuple(thresholds)
-    except Exception as e:
-        print(f"加载LAB配置失败: {e}")
+def load_thresholds_from_file(task_key="laser_detect"):
+    """
+    从文件中加载阈值配置
+    参数:
+        task_key: 任务键名，默认为"laser_detect"
+    返回:
+        阈值元组 (L_min, L_max, A_min, A_max, B_min, B_max)
+    """
+    CONFIG_PY_FILE = "/mnt/data/thresholds.py"
+    ALL_THRESHOLDS = {}
 
-    return default_thresholds
+    # 检查文件是否存在并加载
+    if os.path.exists(CONFIG_PY_FILE):
+        try:
+            with open(CONFIG_PY_FILE, 'r') as f:
+                file_content = f.read()
+            # 执行文件后，THRESHOLDS变量会在exec的命名空间中
+            exec_globals = {}
+            exec(file_content, exec_globals)
+            if 'THRESHOLDS' in exec_globals:
+                ALL_THRESHOLDS = exec_globals['THRESHOLDS']
+                print("Successfully loaded thresholds from:", CONFIG_PY_FILE)
+                print("Available profiles:", list(ALL_THRESHOLDS.keys()))
+            else:
+                print(f"Warning: THRESHOLDS dictionary not found in {CONFIG_PY_FILE}")
+        except Exception as e:
+            print(f"Error loading or parsing {CONFIG_PY_FILE}: {e}")
+    else:
+        print(f"Warning: Thresholds config file not found at {CONFIG_PY_FILE}")
+
+    # 根据任务键获取对应的阈值
+    if task_key == "laser_detect":
+        # 激光笔检测的默认阈值（适合绿色激光笔）
+        default_threshold = (20, 100, -128, -20, -50, 50)
+    else:
+        # 其他任务的默认阈值
+        default_threshold = (80, 100, -10, 10, -10, 10)
+
+    threshold = ALL_THRESHOLDS.get(task_key, default_threshold)
+
+    print("-" * 30)
+    print(f"Using threshold for '{task_key}': {threshold}")
+    print("-" * 30)
+
+    return threshold
+
+#主程序开始
 
 def laser_detection_mode(disp, cam):
     """
@@ -26,7 +62,7 @@ def laser_detection_mode(disp, cam):
     使用可配置的LAB阈值进行颜色验证
     """
     # 加载LAB阈值配置
-    lab_thresholds = load_lab_config()
+    lab_thresholds = load_thresholds_from_file("laser_detect")
     print(f"使用LAB阈值: {lab_thresholds}")
 
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (5,5))  # 创建一个 5x5 的矩形膨胀核
@@ -72,13 +108,20 @@ def laser_detection_mode(disp, cam):
             if M["m00"] != 0:  # 避免除零错误
                 point_x = int(M["m10"] / M["m00"])
                 point_y = int(M["m01"] / M["m00"])
+                center_x = 320 / 2
+                center_y = 240 / 2  
+                err_x_pos = center_x- point_x
+                err_y_pos = center_y - point_y
+                result1 = f"!,{-err_x_pos}, {-err_y_pos},#"
+                print(result1)
+                serial.write(result1.encode('utf-8'))
                 # 获取激光点轮廓的外接矩形
                 x, y, w, h = cv2.boundingRect(contour)
                 # 使用配置的LAB阈值进行颜色验证
                 hist = img.get_histogram(thresholds=[lab_thresholds], roi=(x, y, w, h))
                 value = hist.get_statistics().a_median()
 
-                print('LAB统计值: {} 轮廓面积: {} LAB阈值: {}'.format(value, contour_area, lab_thresholds))
+                #print('LAB统计值: {} 轮廓面积: {} LAB阈值: {}'.format(value, contour_area, lab_thresholds))
         
         last_img_cv_gray = img_cv_gray.copy()
         img.draw_cross(point_x, point_y, image.COLOR_BLUE, 5, 2)

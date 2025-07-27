@@ -236,6 +236,13 @@ void Servo_ProcessVisionData(float error_x, float error_y, uint8_t target_detect
  */
 void Servo_Update(void)
 {
+    // 静态变量记录上一次的视觉误差值
+    static float last_error_x = -999.0f;  // 初始化为不可能的值
+    static float last_error_y = -999.0f;  // 初始化为不可能的值
+    static uint8_t first_run = 1;         // 首次运行标志
+
+  
+
     // 处理X舵机平滑运动
     if (servo_x.is_running)
     {
@@ -268,7 +275,17 @@ void Servo_Update(void)
         uint32_t pulse = Servo_AngleToPulse180(servo_y.current_angle, servo_y.offset);
         Servo_SetPWM(SERVO_Y_CHANNEL, pulse);
     }
+    // 如果不是首次运行且视觉误差值没有变化，直接返回，避免重复校准
+    if (!first_run && vision_data.error_x == last_error_x && vision_data.error_y == last_error_y)
+    {
+        return;
+    }
 
+    // 首次运行后清除标志
+    if (first_run)
+    {
+        first_run = 0;
+    }
     //只在检测到目标且舵机不在运动状态时进行PID控制
   //if (vision_data.target_detected && !servo_x.is_running && !servo_y.is_running)
     //if (!servo_y.is_running&&!servo_y.is_running)
@@ -309,6 +326,10 @@ void Servo_Update(void)
        if (fabsf(y_correction) > 0.1f)
            Servo_SetYAngle(new_y_angle, 40);
    }
+
+   // 更新记录的误差值（在所有处理完成后）
+   last_error_x = vision_data.error_x;
+   last_error_y = vision_data.error_y;
 }
 
 /**
