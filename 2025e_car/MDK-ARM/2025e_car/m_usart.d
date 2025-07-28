@@ -48,4 +48,4 @@
   ..\Core\developed_by_Jim\Waypoint.h \
   ..\Core\developed_by_Jim\tjc_usart_hmi.h \
   ..\Core\developed_by_Jim\Flash.h ..\Core\developed_by_Jim\key.h \
-  ..\Core\Inc\usart.h
+  ..\Core\developed_by_Jim\My_Flash.h ..\Core\Inc\usart.h

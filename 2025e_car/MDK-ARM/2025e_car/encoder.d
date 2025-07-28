@@ -47,4 +47,5 @@
   ..\Core\developed_by_Jim\Mission.h ..\Core\developed_by_Jim\M_servo.h \
   ..\Core\developed_by_Jim\Waypoint.h \
   ..\Core\developed_by_Jim\tjc_usart_hmi.h \
-  ..\Core\developed_by_Jim\Flash.h ..\Core\developed_by_Jim\key.h
+  ..\Core\developed_by_Jim\Flash.h ..\Core\developed_by_Jim\key.h \
+  ..\Core\developed_by_Jim\My_Flash.h

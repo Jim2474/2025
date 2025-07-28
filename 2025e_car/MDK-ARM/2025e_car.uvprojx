@@ -1382,6 +1382,26 @@
               <FileType>5</FileType>
               <FilePath>..\Core\developed_by_Jim\key.h</FilePath>
             </File>
+            <File>
+              <FileName>Flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\developed_by_Jim\Flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>Flash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\developed_by_Jim\Flash.h</FilePath>
+            </File>
+            <File>
+              <FileName>My_Flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\developed_by_Jim\My_Flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>My_Flash.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\Core\developed_by_Jim\My_Flash.h</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

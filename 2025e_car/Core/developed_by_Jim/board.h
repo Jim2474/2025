@@ -28,7 +28,7 @@
 #include "tjc_usart_hmi.h"
 #include "Flash.h"
 #include "key.h"
-
+#include "My_Flash.h"
 
 extern float fire_x_f;
 extern float fire_y_f;

@@ -49,12 +49,23 @@ static void W25Q128_WaitBusy(void)
 uint32_t W25Q128_ReadID(void)
 {
     uint32_t id = 0;
+    uint8_t byte1, byte2, byte3;
+    
     W25Q128_CS_LOW();
+    HAL_Delay(1);
+    
     W25Q128_SPI_Transfer(W25Q128_CMD_JEDEC_ID);
-    id |= W25Q128_SPI_Transfer(0xFF) << 16;
-    id |= W25Q128_SPI_Transfer(0xFF) << 8;
-    id |= W25Q128_SPI_Transfer(0xFF);
+    byte1 = W25Q128_SPI_Transfer(0xFF);
+    byte2 = W25Q128_SPI_Transfer(0xFF);  
+    byte3 = W25Q128_SPI_Transfer(0xFF);
+    
     W25Q128_CS_HIGH();
+    
+    // 在OLED上分别显示三个字节，看看是否都是0
+    // 如果都是0，说明SPI通信有问题
+    // 如果是0xFF，说明Flash没有响应
+    
+    id = (byte1 << 16) | (byte2 << 8) | byte3;
     return id;
 }
 
