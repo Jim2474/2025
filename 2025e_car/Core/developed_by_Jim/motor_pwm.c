@@ -70,7 +70,7 @@ void Motor_PWM_StopAll(void)
 }
 
 // 修改后的左轮控制函数
-void Motor_PWM_SetLeft(int16_t duty)
+void Motor_PWM_SetRight(int16_t duty)
 {
    uint16_t pwm_value;
    
@@ -111,7 +111,7 @@ void Motor_PWM_SetLeft(int16_t duty)
 }
 
 // 右轮控制函数也需要类似修改
-void Motor_PWM_SetRight(int16_t duty)
+void Motor_PWM_SetLeft(int16_t duty)
 {
   
    // 使用PE13和PE14作为方向控制

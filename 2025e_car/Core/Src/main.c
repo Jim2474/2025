@@ -185,7 +185,7 @@ void TIM2_Task_100Hz(void)
   // čżéććśä¸ćˇťĺ ĺśäťäťť???????????????
 	//printf("vision:%f,%f\n",vision_data.error_x,vision_data.error_y);
 
-    //printf("count:%d,%d\n",left_encoder_count,right_encoder_count);
+    printf("count:%d,%d\n",left_encoder_count,right_encoder_count);
    // printf("%f,%f\n", left_wheel_speed, right_wheel_speed);
    //printf("%f\n", IMU_data.YawZ);
     // 更新舵机控制
@@ -267,53 +267,12 @@ int main(void)
 
   HAL_Delay(1000);
 
-  // // ??Flash?? - ??????0x90???????ID?
-  // uint8_t tx_cmd = 0x90;  // ????"????ID"??
-  // uint8_t tx_addr[3] = {0x00, 0x00, 0x00};  // 0x90????3????
-  // uint8_t rx_data[2] = {0};  // 0x90????2??ID
-  // HAL_StatusTypeDef status;
-
-        // // ??CS
-        // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
-        // HAL_Delay(1);
-
-        // // ??0x90??
-        // status = HAL_SPI_Transmit(&hspi1, &tx_cmd, 1, 1000);
-
-        // // ??3????
-        // HAL_SPI_Transmit(&hspi1, tx_addr, 3, 1000);
-
-        // // ??2??ID
-        // HAL_SPI_Receive(&hspi1, rx_data, 2, 1000);
-
-        // // ??CS
-        // HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-
-        // // ????
-        // spi_status_code = status;  // SPI??
-        // flash_byte1 = rx_data[0];  // ???ID
-        // flash_byte2 = rx_data[1];  // ??ID
-        // flash_byte3 = 0;           // 0x90?????2??
-
-        // flash_id = (flash_byte1 << 8) | flash_byte2;
-
-        // // ???????ftest?
-        // uint8_t saved_ftest = 0;
-        // W25Q128_Read(write_addr, &saved_ftest, sizeof(ftest));
-
-        // // ?????????????0xFF??????0
-        // if (saved_ftest == 0xFF) {
-        //     saved_ftest = 0;
-        // }
-
-  ////ftest = saved_ftest;
-
-   
-
 
   //vision_data.target_detected = 0;//测试�???
 
-  // 可�?�：测试用，模拟接收火源ID（调试时使用�???
+  // 可�?�：测试用，模拟接
+  
+  //收火源ID（调试时使用�???
   // Test_Fire_ID_Reception(1);  // 取消注释来测试火�???1
   /* USER CODE END 2 */
 
@@ -361,7 +320,7 @@ int main(void)
    // OLED_ShowNum(10,1,left_wheel_speed,5,16,0);
    //  OLED_ShowNum(10,3,right_wheel_speed,5,16,0); 
     // printf("%f,%f\n",left_wheel_speed,right_wheel_speed);
-		//navyTest();
+	//	navyTest();
     // 更新任务状�?�机
     Mission_Update();
 
@@ -372,20 +331,16 @@ int main(void)
      // ??SPI???Flash ID?????0x90???
     //  OLED_ShowNum(10,5,spi_status_code,1,16,0);  // SPI?? (0=??)
     //  OLED_ShowNum(30,5,flash_byte1,3,16,0);      // ???ID
-    //  OLED_ShowNum(60,5,flash_byte2,3,16,0);      // ??ID
+      OLED_ShowNum(60,5,IMU_data.YawZ,3,16,0);      // ??ID
     // OLED_ShowNum(90,5,flash_id,5,16,0);         // ??ID?
     // OLED_ShowNum(10,6,drone_data.fire_id,1,16,0);  // 显示接收到的火源ID
 
     // Display_DebugStatus();
     // Waypoint_Update();
        //HAL_Delay(100);  // 添加延时，降低刷新频�???????
-    // HAL_GPIO_WritePin(GPIOE, GPIO_PIN_12, GPIO_PIN_SET);
-    //   HAL_GPIO_WritePin(GPIOE, GPIO_PIN_15, GPIO_PIN_RESET);
-//  HAL_GPIO_WritePin(GPIOE, GPIO_PIN_9, GPIO_PIN_SET);
-//        HAL_GPIO_WritePin(GPIOE, GPIO_PIN_11, GPIO_PIN_RESET);
-//            __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_3, 200);
-             // __HAL_TIM_SET_COMPARE(&htim4, TIM_CHANNEL_4, 200);
 
+// Motor_PWM_SetRight(300);
+// Motor_PWM_SetLeft(100);
 
 
     /*
