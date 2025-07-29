@@ -325,13 +325,13 @@ int main(void)
     Mission_Update();
 
     // 可�?�：显示调试信息
-     //OLED_ShowNum(10,1,vision_data.error_x,10,16,0);
-    // OLED_ShowNum(10,4,vision_data.error_y,10,16,0);
+     OLED_ShowNum(10,1,vision_data.error_x,10,16,0);
+    OLED_ShowNum(10,4,vision_data.error_y,10,16,0);
 
      // ??SPI???Flash ID?????0x90???
     //  OLED_ShowNum(10,5,spi_status_code,1,16,0);  // SPI?? (0=??)
     //  OLED_ShowNum(30,5,flash_byte1,3,16,0);      // ???ID
-      OLED_ShowNum(60,5,IMU_data.YawZ,3,16,0);      // ??ID
+      //OLED_ShowNum(60,5,IMU_data.YawZ,3,16,0);      // ??ID
     // OLED_ShowNum(90,5,flash_id,5,16,0);         // ??ID?
     // OLED_ShowNum(10,6,drone_data.fire_id,1,16,0);  // 显示接收到的火源ID
 

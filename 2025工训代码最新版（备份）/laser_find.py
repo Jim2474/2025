@@ -112,7 +112,7 @@ def laser_detection_mode(disp, cam):
                 center_y = 240 / 2  
                 err_x_pos = center_x- point_x
                 err_y_pos = center_y - point_y
-                result1 = f"!,{-err_x_pos}, {-err_y_pos},#"
+                result1 = f"!,{err_x_pos}, {-err_y_pos},#"
                 print(result1)
                 serial.write(result1.encode('utf-8'))
                 # 获取激光点轮廓的外接矩形

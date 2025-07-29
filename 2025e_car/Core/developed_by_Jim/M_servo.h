@@ -13,11 +13,11 @@
 /* 舵机角度限制 */
 #define SERVO_X_MIN_ANGLE 0.0f
 #define SERVO_X_MAX_ANGLE 360.0f
-#define SERVO_X_CENTER_ANGLE 180.0f
+#define SERVO_X_CENTER_ANGLE 90.0f
 
 #define SERVO_Y_MIN_ANGLE 30.0f
 #define SERVO_Y_MAX_ANGLE 180.0f
-#define SERVO_Y_CENTER_ANGLE 150.0f
+#define SERVO_Y_CENTER_ANGLE 180.0f
 
 /* PID控制参数 */
 #define SERVO_PID_KP 0.5f
